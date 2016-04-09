@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".ui.DebugSettings">
+
+    <!-- Service status -->
+    <TableLayout android:id="@+id/conf_ServiceStatusTable"
+                 android:layout_width="fill_parent"
+                 android:layout_height="wrap_content"
+                 android:background="@drawable/border"
+                 android:padding="3dp"
+                 android:layout_alignParentLeft="true"
+                 android:layout_alignParentStart="true">
+    <TableRow android:background="@color/white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/debug_setting_ServiceStateLabel"
+            android:id="@+id/textView2"
+            android:layout_column="1"/>
+
+        <TextView android:id="@+id/debug_setting_ServiceStateIndicator"
+                  style="@android:style/TextAppearance.Medium"
+                  android:text="@string/debug_setting_initialServiceStatus"
+                  android:textStyle="bold"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:layout_weight="3"
+                  android:textColor="@color/black"
+                  android:background="@color/white"
+                  android:layout_column="6"
+                  android:gravity="end"/>
+    </TableRow>
+    <TableRow android:padding="2dp"
+              android:background="@color/white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/debug_setting_ToggleService"
+            android:id="@+id/textView3"
+            android:layout_column="1"/>
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/debug_setting_ToggleServiceSwitch"
+            android:layout_column="1"
+            android:layout_weight="1"
+            android:checked="true"
+            android:foregroundTint="#4caf50"
+            android:textOn="On"
+            android:textOff="Off"
+            android:showText="true"
+            android:splitTrack="false"
+            android:switchMinWidth="60sp"/>
+    </TableRow>
+    </TableLayout>
+
+</RelativeLayout>
