@@ -25,10 +25,12 @@ public class LocationSensor implements LocationListener {
     private int sleep_priority = LocationRequest.PRIORITY_NO_POWER;
 
     private GoogleApiClient mGoogleApiClient;
+    private SensorController mSensorController;
 
     /* Constructor */
-    public LocationSensor(GoogleApiClient apiClient, Context sContext) {
+    public LocationSensor(GoogleApiClient apiClient, Context sContext, SensorController controller) {
         mGoogleApiClient = apiClient;
+        mSensorController = controller;
 
         // subscribe for location updates
         if (ContextCompat.checkSelfPermission(sContext, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -68,8 +70,8 @@ public class LocationSensor implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
-        // Do something here
-        Timber.d("Received location update");
+        mSensorController.addLocation(location);
+//        Timber.d("Received location update");
     }
 
     public void disconnect(GoogleApiClient apiClient) {

@@ -1,0 +1,158 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              tools:context="fi.aalto.trafficsense.trafficsense.ui.DebugShowFragment"
+              android:background="@android:color/transparent">
+
+    <!-- Service State -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="3dp"
+        android:background="@drawable/border">
+
+        <TableLayout android:id="@+id/debug_show_service_table"
+                     android:layout_width="fill_parent"
+                     android:layout_height="wrap_content">
+            <TableRow>
+                <TextView android:id="@+id/debug_show_service_header"
+                          android:textColor="@color/material_blue_grey_800"
+                          android:layout_width="fill_parent"
+                          android:layout_height="wrap_content"
+                          style="@android:style/TextAppearance.Large"
+                          android:background="#F1F1F1"
+                          android:text="@string/debug_show_service_label" />
+                <TextView android:id="@+id/debug_show_service_state"
+                          android:textColor="@color/black"
+                          android:layout_column="2"
+                          android:gravity="end"/>
+            </TableRow>
+        </TableLayout>
+    </RelativeLayout>
+
+
+    <!-- Recognized Activity -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="3dp"
+        android:background="@drawable/border">
+
+        <TextView android:id="@+id/debug_show_activity_header"
+                  android:textColor="@color/material_blue_grey_800"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  style="@android:style/TextAppearance.Large"
+                  android:background="#F1F1F1"
+                  android:text="@string/debug_show_activity_label" />
+
+
+        <TableLayout android:id="@+id/debug_show_activity_table"
+                     android:layout_width="fill_parent"
+                     android:layout_height="wrap_content"
+                     android:layout_below="@+id/debug_show_activity_header">
+            <TableRow>
+                <TextView style="@android:style/TextAppearance.Medium"
+                          android:text="@string/debug_show_activitylist_prefix"
+                          android:textColor="@color/black" />
+            </TableRow>
+            <TableRow>
+                <TextView android:id="@+id/debug_show_activities"
+                          android:textColor="@color/black" />
+            </TableRow>
+        </TableLayout>
+    </RelativeLayout>
+
+    <!-- Location -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="3dp"
+        android:background="@drawable/border">
+
+        <TextView android:id="@+id/debug_show_location_header"
+                  android:textColor="@color/material_blue_grey_800"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  style="@android:style/TextAppearance.Large"
+                  android:background="#F1F1F1"
+                  android:text="@string/debug_show_location_label" />
+
+        <TableLayout android:id="@+id/debug_show_TableData"
+                     android:layout_width="fill_parent"
+                     android:layout_height="wrap_content"
+                     android:layout_below="@+id/debug_show_location_header">
+            <TableRow>
+                <TextView style="@android:style/TextAppearance.Medium"
+                          android:text="@string/debug_show_location_provider_label"
+                          android:textColor="@color/black" />
+            </TableRow>
+            <TableRow>
+                <TextView android:id="@+id/debug_show_location_provider"
+                          android:textColor="@color/black"
+                          android:background="@color/white" />
+            </TableRow>
+            <TableRow>
+                <TextView style="@android:style/TextAppearance.Medium"
+                          android:text="@string/debug_show_location_time_label"
+                          android:textColor="@color/black" />
+            </TableRow>
+            <TableRow>
+                <TextView android:id="@+id/debug_show_location_time"
+                          android:textColor="@color/black"
+                          android:background="@color/white" />
+            </TableRow>
+            <TableRow>
+                <TextView style="@android:style/TextAppearance.Medium"
+                          android:text="@string/debug_show_location_accuracy_label"
+                          android:textColor="@color/black" />
+            </TableRow>
+            <TableRow>
+                <TextView android:id="@+id/debug_show_location_accuracy"
+                          android:textColor="@color/black"
+                          android:background="@color/white" />
+            </TableRow>
+
+        </TableLayout>
+    </RelativeLayout>
+
+    <!-- Upload -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="3dp"
+        android:background="@drawable/border">
+
+        <TextView android:id="@+id/debug_show_upload_header"
+                  android:textColor="@color/material_blue_grey_800"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  style="@android:style/TextAppearance.Large"
+                  android:background="#F1F1F1"
+                  android:text="@string/debug_show_upload_label" />
+
+        <TableLayout android:id="@+id/debug_show_upload"
+                     android:layout_width="fill_parent"
+                     android:layout_height="wrap_content"
+                     android:layout_below="@+id/debug_show_upload_header">
+
+        <TableRow>
+            <TextView style="@android:style/TextAppearance.Medium"
+                android:text="@string/debug_show_upload_queue_length_label"
+                android:id="@+id/debug_show_queue_length_label"/>
+            <TextView
+                android:id="@+id/debug_show_queue_length"/>
+        </TableRow>
+            <TableRow>
+                <TextView style="@android:style/TextAppearance.Medium"
+                    android:text="@string/debug_show_upload_latest_upload_label"
+                    android:id="@+id/debug_show_latest_upload_label"/>
+                <TextView
+                    android:id="@+id/debug_show_latest_upload"/>
+            </TableRow>
+        </TableLayout>
+    </RelativeLayout>
+
+</LinearLayout>

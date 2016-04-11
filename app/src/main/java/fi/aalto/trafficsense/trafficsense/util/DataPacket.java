@@ -1,4 +1,7 @@
-package fi.aalto.trafficsense.trafficsense.backend.backend_util;
+package fi.aalto.trafficsense.trafficsense.util;
+
+import fi.aalto.trafficsense.trafficsense.util.ActivityData;
+import fi.aalto.trafficsense.trafficsense.util.LocationData;
 
 /**
  * Media data object to bind activity data with location data

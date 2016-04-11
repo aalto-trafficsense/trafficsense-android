@@ -1,6 +1,9 @@
-package fi.aalto.trafficsense.trafficsense.backend.backend_util;
+package fi.aalto.trafficsense.trafficsense.util;
 
-import com.google.android.gms.common.api.Api;
+import android.os.Parcel;
+import android.os.Parcelable;
+import com.google.gson.annotations.SerializedName;
+
 
 /**
  * Location data object used in transmission
@@ -13,17 +16,20 @@ public final class LocationData {
     private static final String KEY_TIME = "mTime";
     private static final String[] KEYS = {KEY_ACCURACY, KEY_LATITUDE, KEY_LONGITUDE, KEY_TIME};
 
+    @SerializedName("accuracy")
     public final double mAccuracy;
+    @SerializedName("latitude")
     public final double mLatitude;
+    @SerializedName("longitude")
     public final double mLongitude;
+    @SerializedName("time")
     public final long mTime;
 
     /*
-
     public static Optional<LocationData> parseJson(IJsonObject data) {
         for (String key : KEYS) {
             if (!data.has(key))
-                return Api.ApiOptions.Optional.absent();
+                return Optional.absent();
         }
 
         double accuracy = data.get(KEY_ACCURACY).getAsDouble();
@@ -31,11 +37,9 @@ public final class LocationData {
         double longitude = data.get(KEY_LONGITUDE).getAsDouble();
         long time = data.get(KEY_TIME).getAsLong();
 
-        return Api.ApiOptions.Optional.of(new LocationData(accuracy, latitude, longitude, time));
+        return Optional.of(new LocationData(accuracy, latitude, longitude, time));
     }
-
-    */
-
+*/
     public LocationData(double accuracy, double latitude, double longitude, long time) {
         this.mAccuracy = accuracy;
         this.mLatitude = latitude;

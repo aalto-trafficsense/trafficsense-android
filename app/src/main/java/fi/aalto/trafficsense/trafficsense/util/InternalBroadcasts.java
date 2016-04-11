@@ -29,8 +29,15 @@ public class InternalBroadcasts {
     public static final String KEY_SERVICE_STATE_UPDATE = "SERVICE_STATE_UPDATE";
     public static final String LABEL_SERVICE_STATE_INDEX = "STATE_IDX";
 
-
     public static final String KEY_SERVICE_START = "SERVICE_START";
     public static final String KEY_SERVICE_STOP = "SERVICE_STOP";
+
+    public static final String KEY_LOCATION_UPDATE = "LOCATION_UPDATE";
+    public static final String KEY_ACTIVITY_UPDATE = "ACTIVITY_UPDATE";
+
+    public static final String KEY_DEBUG_SETTINGS_REQ = "DEBUG_SETTINGS_REQ";
+    public static final String KEY_DEBUG_SETTINGS = "DEBUG_SETTINGS";
+    public static final String KEY_DEBUG_SHOW_REQ = "DEBUG_SHOW_REQ";
+    public static final String KEY_DEBUG_SHOW = "DEBUG_SHOW";
 
 }

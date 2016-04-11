@@ -21,7 +21,29 @@
 
     <string name="action_settings">Settings</string>
     <string name="action_exit">Exit</string>
-    <string name="debug_setting_initialServiceStatus">Off</string>
-    <string name="debug_setting_ToggleService">TrafficSense Service</string>
-    <string name="debug_setting_ServiceStateLabel">Service State:</string>
+    <string name="action_debug">Debug</string>
+
+    <string name="debug_settings_page_title">Debug settings</string>
+    <string name="debug_settings_initialServiceStatus">Off</string>
+    <string name="debug_settings_ToggleService">TrafficSense Service</string>
+    <string name="debug_settings_ServiceStateLabel">Service State:</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="debug_show_page_title">Debug values</string>
+    <string name="debug_show_activity_label">Activity:</string>
+    <string name="debug_show_activitylist_prefix">Latest activities:</string>
+
+    <string name="debug_show_location_label">Location:</string>
+    <string name="debug_show_location_provider_label">Provider:</string>
+    <string name="debug_show_location_time_label">Latest:</string>
+    <string name="debug_show_location_accuracy_label">Accuracy:</string>
+
+    <string name="debug_show_upload_label">Upload:</string>
+    <string name="debug_show_upload_queue_length_label">Queue length:</string>
+    <string name="debug_show_upload_latest_upload_label">Latest:</string>
+    <string name="debug_show_service_label">Service state:</string>
+
+
 </resources>

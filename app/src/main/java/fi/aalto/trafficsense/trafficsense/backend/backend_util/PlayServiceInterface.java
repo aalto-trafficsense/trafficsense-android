@@ -12,9 +12,12 @@ import android.support.v4.app.FragmentActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import fi.aalto.trafficsense.trafficsense.backend.sensors.ActivitySensor;
 import fi.aalto.trafficsense.trafficsense.backend.sensors.LocationSensor;
+import fi.aalto.trafficsense.trafficsense.backend.sensors.SensorController;
 import timber.log.Timber;
 
 import static android.app.Activity.RESULT_OK;
@@ -27,8 +30,11 @@ public class PlayServiceInterface implements
         GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleApiClient mGoogleApiClient;
+    private SensorController mSensorController;
     private LocationSensor mLocationSensor;
+    private ActivitySensor mActivitySensor;
     private Context mApplicationContext;
+    private Context mServiceContext;
 
     // Request code to use when launching the resolution activity
     private static final int REQUEST_RESOLVE_ERROR = 1001;
@@ -38,10 +44,8 @@ public class PlayServiceInterface implements
     private boolean mResolvingError = false;
 
     public PlayServiceInterface(Context context) {
+        mServiceContext = context;
         mApplicationContext = context.getApplicationContext();
-    }
-
-    public void initialize() {
 
         // Create an instance of GoogleAPIClient.
         if (mGoogleApiClient == null) {
@@ -49,9 +53,11 @@ public class PlayServiceInterface implements
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
+                    .addApi(ActivityRecognition.API)
                     .build();
         }
         mGoogleApiClient.connect();
+
     }
 
     @Override
@@ -59,7 +65,8 @@ public class PlayServiceInterface implements
         if (mApplicationContext == null) {
             Timber.e("mApplicationContext null onConnected");
         } else {
-            initLocationSensor();
+            mSensorController = new SensorController(mServiceContext);
+            initSensors();
         }
     }
 
@@ -136,7 +143,8 @@ public class PlayServiceInterface implements
         }
     }
 
-    private void initLocationSensor() {
+
+    private void initSensors() {
         if (mGoogleApiClient == null) {
             Timber.e("initLocationClient called with null mGoogleApiClient");
             return;
@@ -145,7 +153,8 @@ public class PlayServiceInterface implements
         if(!mGoogleApiClient.isConnected()) {
             Timber.e("initLocationClient called with non-connected mGoogleApiClient");
         } else {
-            mLocationSensor = new LocationSensor(mGoogleApiClient, mApplicationContext);
+            mLocationSensor = new LocationSensor(mGoogleApiClient, mApplicationContext, mSensorController);
+            mActivitySensor = new ActivitySensor();
         }
     }
 

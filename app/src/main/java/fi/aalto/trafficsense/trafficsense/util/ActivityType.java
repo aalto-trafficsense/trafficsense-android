@@ -1,4 +1,4 @@
-package fi.aalto.trafficsense.trafficsense.backend.backend_util;
+package fi.aalto.trafficsense.trafficsense.util;
 
 import com.google.android.gms.location.DetectedActivity;
 

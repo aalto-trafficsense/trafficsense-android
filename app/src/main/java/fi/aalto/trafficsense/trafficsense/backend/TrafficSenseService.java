@@ -27,7 +27,6 @@ public class TrafficSenseService extends Service {
         super.onCreate();
 
         mPlayServiceInterface = new PlayServiceInterface(this);
-        mPlayServiceInterface.initialize();
 
     }
 

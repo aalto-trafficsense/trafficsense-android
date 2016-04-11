@@ -1,4 +1,4 @@
-package fi.aalto.trafficsense.trafficsense.backend.backend_util;
+package fi.aalto.trafficsense.trafficsense.util;
 
 /**
  * Created by rinnem2 on 09/04/16.

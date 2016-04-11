@@ -22,6 +22,7 @@ public class TrafficSenseApplication extends Application {
     private static TrafficSenseService mTSService;
     private static TSServiceState mServiceState = STOPPED;
     private BroadcastReceiver mBroadcastReceiver;
+    private LocalBroadcastManager mLocalBroadcastManager;
 
 
     @Override
@@ -32,6 +33,7 @@ public class TrafficSenseApplication extends Application {
         }
         super.onCreate();
 
+        mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
         initBroadcastReceiver();
 
         // Start TrafficSenseService, if not already running
@@ -106,7 +108,6 @@ public class TrafficSenseApplication extends Application {
                 unbindService(mServiceConnection);
                 updateServiceState(STOPPED);
                 stopped = true;
-                Timber.d("TrafficSenseService stopped");
                 break;
             case STOPPING:
                 Timber.d("stopTSService called during service stopping (double call)");
@@ -165,6 +166,12 @@ public class TrafficSenseApplication extends Application {
                     case InternalBroadcasts.KEY_SERVICE_WAKING_UP:
                         updateServiceState(RUNNING);
                         break;
+                    case InternalBroadcasts.KEY_DEBUG_SETTINGS_REQ:
+                        updateDebugSettings();
+                        break;
+                    case InternalBroadcasts.KEY_DEBUG_SHOW_REQ:
+                        updateDebugShow();
+                        break;
                 }
             }
         };
@@ -174,19 +181,46 @@ public class TrafficSenseApplication extends Application {
         intentFilter.addAction(InternalBroadcasts.KEY_SERVICE_STOP);
         intentFilter.addAction(InternalBroadcasts.KEY_SERVICE_GOING_TO_SLEEP);
         intentFilter.addAction(InternalBroadcasts.KEY_SERVICE_WAKING_UP);
+        intentFilter.addAction(InternalBroadcasts.KEY_DEBUG_SETTINGS_REQ);
+        intentFilter.addAction(InternalBroadcasts.KEY_DEBUG_SHOW_REQ);
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, intentFilter);
+        if (mLocalBroadcastManager != null) {
+            mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, intentFilter);
+        }
     }
 
     // Update service state
     private void updateServiceState(TSServiceState newState) {
         mServiceState = newState;
-        LocalBroadcastManager mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
         if (mLocalBroadcastManager != null)
         {
             Intent intent = new Intent(InternalBroadcasts.KEY_SERVICE_STATE_UPDATE);
             Bundle args = new Bundle();
             args.putInt(LABEL_SERVICE_STATE_INDEX,newState.ordinal());
+            intent.putExtras(args);
+            mLocalBroadcastManager.sendBroadcast(intent);
+        }
+    }
+
+    // Update values for Debug Settings
+    private void updateDebugSettings () {
+        if (mLocalBroadcastManager != null)
+        {
+            Intent intent = new Intent(InternalBroadcasts.KEY_DEBUG_SETTINGS);
+            Bundle args = new Bundle();
+            args.putInt(LABEL_SERVICE_STATE_INDEX,mServiceState.ordinal());
+            intent.putExtras(args);
+            mLocalBroadcastManager.sendBroadcast(intent);
+        }
+    }
+
+    // Update values for Debug Show
+    private void updateDebugShow () {
+        if (mLocalBroadcastManager != null)
+        {
+            Intent intent = new Intent(InternalBroadcasts.KEY_DEBUG_SHOW);
+            Bundle args = new Bundle();
+            args.putInt(LABEL_SERVICE_STATE_INDEX,mServiceState.ordinal());
             intent.putExtras(args);
             mLocalBroadcastManager.sendBroadcast(intent);
         }
