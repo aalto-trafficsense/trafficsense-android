@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -13,14 +12,12 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.ActivityRecognition;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import fi.aalto.trafficsense.trafficsense.backend.sensors.ActivitySensor;
 import fi.aalto.trafficsense.trafficsense.backend.sensors.LocationSensor;
 import fi.aalto.trafficsense.trafficsense.backend.sensors.SensorController;
+import fi.aalto.trafficsense.trafficsense.backend.sensors.SensorFilter;
 import timber.log.Timber;
-
-import static android.app.Activity.RESULT_OK;
 
 /**
  * Google Play Services Interface
@@ -31,8 +28,6 @@ public class PlayServiceInterface implements
 
     private GoogleApiClient mGoogleApiClient;
     private SensorController mSensorController;
-    private LocationSensor mLocationSensor;
-    private ActivitySensor mActivitySensor;
     private Context mApplicationContext;
     private Context mServiceContext;
 
@@ -65,8 +60,7 @@ public class PlayServiceInterface implements
         if (mApplicationContext == null) {
             Timber.e("mApplicationContext null onConnected");
         } else {
-            mSensorController = new SensorController(mServiceContext);
-            initSensors();
+            mSensorController = new SensorController(mGoogleApiClient, mServiceContext);
         }
     }
 
@@ -143,21 +137,6 @@ public class PlayServiceInterface implements
         }
     }
 
-
-    private void initSensors() {
-        if (mGoogleApiClient == null) {
-            Timber.e("initLocationClient called with null mGoogleApiClient");
-            return;
-        }
-
-        if(!mGoogleApiClient.isConnected()) {
-            Timber.e("initLocationClient called with non-connected mGoogleApiClient");
-        } else {
-            mLocationSensor = new LocationSensor(mGoogleApiClient, mApplicationContext, mSensorController);
-            mActivitySensor = new ActivitySensor(mGoogleApiClient, mApplicationContext);
-        }
-    }
-
     /*
 
      // TODO: Figure out how to handle this result outside of an activity
@@ -180,7 +159,9 @@ public class PlayServiceInterface implements
     */
 
     public void disconnect() {
-        mLocationSensor.disconnect(mGoogleApiClient);
+        mLocationSensor.disconnect();
+        mActivitySensor.disconnect();
+        mSensorController.disconnect();
         mGoogleApiClient.disconnect();
     }
 

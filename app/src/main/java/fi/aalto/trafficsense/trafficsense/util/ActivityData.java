@@ -1,12 +1,15 @@
 package fi.aalto.trafficsense.trafficsense.util;
 
+import android.location.Location;
+import android.os.Parcel;
+import android.os.Parcelable;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import timber.log.Timber;
 
 import java.util.*;
 
-public class ActivityData {
+public class ActivityData implements Parcelable {
     private ArrayList<SensedActivity> Activities;
 
     public ActivityData() {
@@ -87,5 +90,31 @@ public class ActivityData {
 
         return result;
     }
+
+    public static final Parcelable.Creator<ActivityData> CREATOR =
+            new Parcelable.Creator<ActivityData>() {
+                @Override
+                public ActivityData createFromParcel(Parcel in) {
+                    ActivityData a = new ActivityData();
+                    a.Activities = in.createTypedArrayList(SensedActivity.CREATOR);
+                    return a;
+                }
+
+                @Override
+                public ActivityData[] newArray(int size) {
+                    return new ActivityData[size];
+                }
+            };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeTypedList(Activities);
+    }
+
 
 }

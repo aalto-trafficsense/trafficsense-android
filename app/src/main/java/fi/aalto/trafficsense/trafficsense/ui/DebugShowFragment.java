@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 import fi.aalto.trafficsense.trafficsense.R;
+import fi.aalto.trafficsense.trafficsense.util.ActivityData;
 import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
 import fi.aalto.trafficsense.trafficsense.util.TSServiceState;
 import timber.log.Timber;
@@ -122,7 +123,7 @@ public class DebugShowFragment extends Fragment {
                 switch (action) {
                     case InternalBroadcasts.KEY_DEBUG_SHOW:
                         // Add other stuff here later
-                        // DO NOT ADD ANYTHING IN BETWEEN - Falls through on purpose
+                        break;
                     case InternalBroadcasts.KEY_SERVICE_STATE_UPDATE:
                         TSServiceState newState = TSServiceState.values()[intent.getIntExtra(LABEL_SERVICE_STATE_INDEX,0)];
                         mServiceStatusTextField.setText(TSServiceState.getServiceStateString(newState));
@@ -135,6 +136,10 @@ public class DebugShowFragment extends Fragment {
                         mLocationTimeTextField.setText(formatter.format(date));
                         mLocationAccuracyTextField.setText(String.format("%.0fm", l.getAccuracy()));
                         break;
+                    case InternalBroadcasts.KEY_ACTIVITY_UPDATE:
+                        ActivityData a = intent.getParcelableExtra(InternalBroadcasts.KEY_ACTIVITY_UPDATE);
+                        Timber.d("ShowFragment received activity: " + a.toString());
+                        break;
                 }
             }
         };
@@ -142,6 +147,7 @@ public class DebugShowFragment extends Fragment {
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(InternalBroadcasts.KEY_SERVICE_STATE_UPDATE);
         intentFilter.addAction(InternalBroadcasts.KEY_LOCATION_UPDATE);
+        intentFilter.addAction(InternalBroadcasts.KEY_ACTIVITY_UPDATE);
         intentFilter.addAction(InternalBroadcasts.KEY_DEBUG_SHOW);
 
         mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, intentFilter);

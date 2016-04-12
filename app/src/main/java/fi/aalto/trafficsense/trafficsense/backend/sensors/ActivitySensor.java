@@ -18,10 +18,11 @@ public class ActivitySensor implements ResultCallback<Status> {
 
     private PendingIntent mCallbackIntent;
     private GoogleApiClient mGoogleApiClient;
+    private SensorFilter mSensorFilter;
 
-    public ActivitySensor(GoogleApiClient apiClient, Context sContext) {
-        Timber.d("ActivitySensor constructor");
+    public ActivitySensor(GoogleApiClient apiClient, Context sContext, SensorFilter filter) {
         mGoogleApiClient = apiClient;
+        mSensorFilter = filter;
 
         Intent intent = new Intent(sContext,ActivityRecognitionIntentService.class);
 
@@ -31,7 +32,6 @@ public class ActivitySensor implements ResultCallback<Status> {
         final long intervalInMilliseconds = interval * 1000L;
         ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(mGoogleApiClient,
                 intervalInMilliseconds, mCallbackIntent).setResultCallback(this);
-
     }
 
     /**
@@ -42,11 +42,16 @@ public class ActivitySensor implements ResultCallback<Status> {
      *               or removeActivityUpdates() are called.
      */
     public void onResult(Status status) {
-        if (status.isSuccess()) {
-            Timber.d("Activity updates successfully requested");
-        } else {
+        if (!status.isSuccess()) {
             Timber.e("Error adding or removing activity detection: " + status.getStatusMessage());
         }
     }
+
+    public void disconnect() {
+        if(mGoogleApiClient != null)
+            ActivityRecognition.ActivityRecognitionApi.removeActivityUpdates(mGoogleApiClient, mCallbackIntent).setResultCallback(this);
+        Timber.d("ActivitySensor stopped");
+    }
+
 
 }

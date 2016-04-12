@@ -10,7 +10,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import fi.aalto.trafficsense.trafficsense.backend.TrafficSenseService;
 import timber.log.Timber;
 
 /**
@@ -25,12 +24,12 @@ public class LocationSensor implements LocationListener {
     private int sleep_priority = LocationRequest.PRIORITY_NO_POWER;
 
     private GoogleApiClient mGoogleApiClient;
-    private SensorController mSensorController;
+    private SensorFilter mSensorFilter;
 
     /* Constructor */
-    public LocationSensor(GoogleApiClient apiClient, Context sContext, SensorController controller) {
+    public LocationSensor(GoogleApiClient apiClient, Context sContext, SensorFilter controller) {
         mGoogleApiClient = apiClient;
-        mSensorController = controller;
+        mSensorFilter = controller;
 
         // subscribe for location updates
         if (ContextCompat.checkSelfPermission(sContext, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -70,14 +69,14 @@ public class LocationSensor implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
-        mSensorController.addLocation(location);
+        mSensorFilter.addLocation(location);
 //        Timber.d("Received location update");
     }
 
-    public void disconnect(GoogleApiClient apiClient) {
-        if(apiClient != null)
-            LocationServices.FusedLocationApi.removeLocationUpdates(apiClient, this);
-        Timber.d("Fused Location Probe stopped");
+    public void disconnect() {
+        if(mGoogleApiClient != null)
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+        Timber.d("LocationSensor stopped");
     }
 
 }

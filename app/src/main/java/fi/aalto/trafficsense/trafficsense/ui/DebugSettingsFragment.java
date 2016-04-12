@@ -164,7 +164,7 @@ public class DebugSettingsFragment extends Fragment {
                 switch (action) {
                     case InternalBroadcasts.KEY_DEBUG_SETTINGS:
                         // Add other stuff here later
-                        // DO NOT ADD ANYTHING IN BETWEEN - Falls through on purpose
+                        break;
                     case InternalBroadcasts.KEY_SERVICE_STATE_UPDATE:
                         TSServiceState newState = TSServiceState.values()[intent.getIntExtra(LABEL_SERVICE_STATE_INDEX,0)];
                         mServiceStatusTextField.setText(TSServiceState.getServiceStateString(newState));

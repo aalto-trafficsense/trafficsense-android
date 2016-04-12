@@ -2,11 +2,15 @@ package fi.aalto.trafficsense.trafficsense.backend.sensors;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
 import fi.aalto.trafficsense.trafficsense.util.ActivityData;
+import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
 import timber.log.Timber;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -59,8 +63,10 @@ public class ActivityRecognitionIntentService extends IntentService {
 
         Timber.d("Activities sorted and chopped:" + selected.toString());
 
-        // TODO: Sorting added by MJR 3.11.2015: Remove the comment after it has been verified to work.
-        // activityConfidenceMap = MapUtil.sortByValue(activityConfidenceMap);
+        // Collect enough data to construct the result on the receiver side
+        Intent intent = new Intent(InternalBroadcasts.KEY_ACTIVITY_UPDATE);
+        intent.putExtra(InternalBroadcasts.KEY_ACTIVITY_UPDATE, selected);
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
     }
 
     private class Act implements Comparable<Act> {

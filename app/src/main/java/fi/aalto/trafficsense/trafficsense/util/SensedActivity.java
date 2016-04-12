@@ -1,12 +1,14 @@
 package fi.aalto.trafficsense.trafficsense.util;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import com.google.android.gms.location.DetectedActivity;
 
 /**
  * Created by rinnem2 on 09/04/16.
  */
 
-public class SensedActivity {
+public class SensedActivity implements Parcelable {
     /* Public Members */
     public int Type;
     public int Confidence;
@@ -77,4 +79,31 @@ public class SensedActivity {
     public String toString() {
         return asString();
     }
+
+    public static final Parcelable.Creator<SensedActivity> CREATOR =
+            new Parcelable.Creator<SensedActivity>() {
+                @Override
+                public SensedActivity createFromParcel(Parcel in) {
+                    SensedActivity sa = new SensedActivity(in.readInt(), in.readInt());
+                    return sa;
+                }
+
+                @Override
+                public SensedActivity[] newArray(int size) {
+                    return new SensedActivity[size];
+                }
+            };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeInt(Type);
+        parcel.writeInt(Confidence);
+    }
+
+
 }

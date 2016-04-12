@@ -1,43 +1,44 @@
 package fi.aalto.trafficsense.trafficsense.backend.sensors;
 
 import android.content.Context;
-import android.content.Intent;
-import android.location.Location;
-import android.os.Parcelable;
-import android.support.v4.content.LocalBroadcastManager;
-import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
+import com.google.android.gms.common.api.GoogleApiClient;
+import timber.log.Timber;
 
 /**
- * Created by rinnem2 on 10/04/16.
+ * Created by mikko.rinne@aalto.fi on 12/04/16.
  */
 public class SensorController {
 
-    private LocalBroadcastManager mLocalBroadcastManager;
+    private GoogleApiClient mGoogleApiClient;
+    private Context mApplicationContext;
+    private Context mServiceContext;
+    private SensorFilter mSensorFilter;
+    private LocationSensor mLocationSensor;
+    private ActivitySensor mActivitySensor;
+    /*
+        Constructor initialises all sensors and the filter
+    */
+    public SensorController (GoogleApiClient apiClient, Context serviceCntxt) {
+        mServiceContext = serviceCntxt;
+        mApplicationContext = serviceCntxt.getApplicationContext();
+        if (mGoogleApiClient == null) {
+            Timber.e("SensorController created with null mGoogleApiClient");
+            return;
+        }
 
-    private Location lastLocation;
+        if(!mGoogleApiClient.isConnected()) {
+            Timber.e("SensorController created with non-connected mGoogleApiClient");
+        } else {
+            mSensorFilter = new SensorFilter(this, mServiceContext);
+            mLocationSensor = new LocationSensor(mGoogleApiClient, mApplicationContext, mSensorFilter);
+            mActivitySensor = new ActivitySensor(mGoogleApiClient, mApplicationContext, mSensorFilter);
+        }
 
-    /* Constructor */
-    public SensorController(Context serviceContext) {
-        mLocalBroadcastManager = LocalBroadcastManager.getInstance(serviceContext);
     }
 
-    public void addLocation(Location l) {
-        lastLocation = l;
-
-        broadcastSensorData(InternalBroadcasts.KEY_LOCATION_UPDATE, l);
-
+    public void disconnect() {
+        mLocationSensor.disconnect();
+        mActivitySensor.disconnect();
     }
-
-    /*************************
-     Broadcast handling
-     *************************/
-
-    // Broadcast sensor data
-    private void broadcastSensorData(String key, Parcelable val) {
-        Intent i = new Intent(key);
-        i.putExtra(key, val);
-        mLocalBroadcastManager.sendBroadcast(i);
-    }
-
 
 }
