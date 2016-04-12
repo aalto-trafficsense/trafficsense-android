@@ -40,7 +40,7 @@ public class ActivityRecognitionIntentService extends IntentService {
         final int maxNumberOfActivitiesCollected = 3;
         final Date now = new Date();
         final List<DetectedActivity> activities = result.getProbableActivities();
-        Timber.d("Activities:" + activities.toString());
+        // Timber.d("Activities:" + activities.toString());
 
         List<Act> activityList = new ArrayList<>();
 
@@ -61,9 +61,6 @@ public class ActivityRecognitionIntentService extends IntentService {
             selected.add(entry.getType(),entry.getConfidence());
         }
 
-        Timber.d("Activities sorted and chopped:" + selected.toString());
-
-        // Collect enough data to construct the result on the receiver side
         Intent intent = new Intent(InternalBroadcasts.KEY_ACTIVITY_UPDATE);
         intent.putExtra(InternalBroadcasts.KEY_ACTIVITY_UPDATE, selected);
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);

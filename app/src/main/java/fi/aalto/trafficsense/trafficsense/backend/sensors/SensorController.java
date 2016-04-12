@@ -9,7 +9,6 @@ import timber.log.Timber;
  */
 public class SensorController {
 
-    private GoogleApiClient mGoogleApiClient;
     private Context mApplicationContext;
     private Context mServiceContext;
     private SensorFilter mSensorFilter;
@@ -18,20 +17,20 @@ public class SensorController {
     /*
         Constructor initialises all sensors and the filter
     */
-    public SensorController (GoogleApiClient apiClient, Context serviceCntxt) {
+    public SensorController (GoogleApiClient gApiClient, Context serviceCntxt) {
         mServiceContext = serviceCntxt;
         mApplicationContext = serviceCntxt.getApplicationContext();
-        if (mGoogleApiClient == null) {
-            Timber.e("SensorController created with null mGoogleApiClient");
+        if (gApiClient == null) {
+            Timber.e("SensorController created with null GoogleApiClient");
             return;
         }
 
-        if(!mGoogleApiClient.isConnected()) {
-            Timber.e("SensorController created with non-connected mGoogleApiClient");
+        if(!gApiClient.isConnected()) {
+            Timber.e("SensorController created with non-connected GoogleApiClient");
         } else {
             mSensorFilter = new SensorFilter(this, mServiceContext);
-            mLocationSensor = new LocationSensor(mGoogleApiClient, mApplicationContext, mSensorFilter);
-            mActivitySensor = new ActivitySensor(mGoogleApiClient, mApplicationContext, mSensorFilter);
+            mLocationSensor = new LocationSensor(gApiClient, mApplicationContext, mSensorFilter);
+            mActivitySensor = new ActivitySensor(gApiClient, mApplicationContext, mSensorFilter);
         }
 
     }

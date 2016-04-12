@@ -43,6 +43,7 @@ public class DebugShowFragment extends Fragment {
     private TextView mLocationTimeTextField;
     private TextView mLocationAccuracyTextField;
 
+
     /* Display values */
     private TSServiceState DS_ServiceState;
 
@@ -138,7 +139,7 @@ public class DebugShowFragment extends Fragment {
                         break;
                     case InternalBroadcasts.KEY_ACTIVITY_UPDATE:
                         ActivityData a = intent.getParcelableExtra(InternalBroadcasts.KEY_ACTIVITY_UPDATE);
-                        Timber.d("ShowFragment received activity: " + a.toString());
+                        mLatestActivitiesTextField.setText(a.toString());
                         break;
                 }
             }

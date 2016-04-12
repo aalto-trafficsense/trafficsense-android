@@ -159,8 +159,6 @@ public class PlayServiceInterface implements
     */
 
     public void disconnect() {
-        mLocationSensor.disconnect();
-        mActivitySensor.disconnect();
         mSensorController.disconnect();
         mGoogleApiClient.disconnect();
     }

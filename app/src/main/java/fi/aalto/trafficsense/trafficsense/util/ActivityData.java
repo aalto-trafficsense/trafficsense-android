@@ -3,6 +3,7 @@ package fi.aalto.trafficsense.trafficsense.util;
 import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
+import com.google.android.gms.location.DetectedActivity;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import timber.log.Timber;
@@ -46,17 +47,16 @@ public class ActivityData implements Parcelable {
         for (int i = 0; i < numOfDataEntries(); ++i) {
             SensedActivity a = get(i);
             if (i > 0)
-                activities.append(", ");
+                activities.append("\n");
 
             activities
-                    .append("{mActivityType=")
-                    .append(a.Type)
-                    .append(", mConfidence=")
+                    .append(DetectedActivity.zzho(a.Type))
+                    .append(" ")
                     .append(a.Confidence)
-                    .append("}");
+                    .append("%");
         }
 
-        return String.format("[%s]", activities.toString());
+        return activities.toString();
     }
 
     @Override
