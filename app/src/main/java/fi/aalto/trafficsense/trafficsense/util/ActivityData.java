@@ -2,33 +2,24 @@ package fi.aalto.trafficsense.trafficsense.util;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import timber.log.Timber;
 
 import java.util.*;
 
 public class ActivityData {
-    public final ImmutableCollection<SensedActivity> Activities;
+    private ArrayList<SensedActivity> Activities;
 
     public ActivityData() {
-        Activities = ImmutableList.of();
+        Activities = new ArrayList<>();
     }
 
-    public ActivityData(int activityType, int confidence) {
-        SensedActivity[] activities = new SensedActivity[]{new SensedActivity(activityType, confidence)};
-        Activities = ImmutableList.copyOf(activities);
-    }
-
-    public ActivityData(Map<Integer, Integer> activityConfidenceMap) {
-        ArrayList<SensedActivity> activities = new ArrayList<>();
-        for (Integer key : activityConfidenceMap.keySet())
-            activities.add(new SensedActivity(key, activityConfidenceMap.get(key)));
-
-        // Map is not in any guaranteed order -> sort results descending by conf. before using them
-        Collections.sort(activities, new ActivityDataComparator(true));
-        Activities = ImmutableList.copyOf(activities);
+    public void add(int activityType, int confidence) {
+        Activities.add(new SensedActivity(activityType, confidence));
     }
 
     public int numOfDataEntries() {
-        return Activities.size();
+        if (Activities != null) return Activities.size();
+        return 0;
     }
 
     public SensedActivity getFirst() {
@@ -39,33 +30,19 @@ public class ActivityData {
     }
 
     public SensedActivity get(int i) {
-        return Activities.asList().get(i);
-    }
-
-    public boolean equals(ActivityData other) {
-        if (other == null || numOfDataEntries() != other.numOfDataEntries())
-            return false;
-
-
-        for(int i = 0; i < numOfDataEntries(); ++i) {
-            if (!get(i).equals(other.get(i)))
-                return false;
-        }
-
-        return true;
+        return Activities.get(i);
     }
 
     public List<SensedActivity> getAll() {
-        return Activities.asList();
+        return Activities;
     }
 
     @Override
     public String toString() {
         StringBuilder activities = new StringBuilder();
-        List<SensedActivity> list  = getAll();
-        for (int i = 0; i < list.size(); ++i) {
-            SensedActivity a = list.get(i);
-            if (i >= 0)
+        for (int i = 0; i < numOfDataEntries(); ++i) {
+            SensedActivity a = get(i);
+            if (i > 0)
                 activities.append(", ");
 
             activities
@@ -109,43 +86,6 @@ public class ActivityData {
         }
 
         return result;
-    }
-
-    public class ActivityDataComparator implements Comparator<SensedActivity> {
-
-        private final boolean _descendingOrder;
-        public ActivityDataComparator(boolean descendingOrder) {
-            _descendingOrder = descendingOrder;
-        }
-
-        @Override
-        public int compare(SensedActivity lhs, SensedActivity rhs) {
-            final SensedActivity first;
-            final SensedActivity second;
-
-            if (_descendingOrder) {
-                first = rhs;
-                second = lhs;
-            }
-            else {
-                first = lhs;
-                second = rhs;
-            }
-
-            if (first == null && second == null)
-                return 0;
-            else if (second == null)
-                return -1;
-
-            else if (first == null)
-                return 1;
-
-            final Integer firstConf = first.Confidence;
-            final Integer secondConf = second.Confidence;
-
-            return firstConf.compareTo(secondConf);
-
-        }
     }
 
 }

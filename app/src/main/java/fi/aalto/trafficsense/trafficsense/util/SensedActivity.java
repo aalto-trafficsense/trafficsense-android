@@ -1,12 +1,14 @@
 package fi.aalto.trafficsense.trafficsense.util;
 
+import com.google.android.gms.location.DetectedActivity;
+
 /**
  * Created by rinnem2 on 09/04/16.
  */
 
 public class SensedActivity {
     /* Public Members */
-    public ActivityType Type;
+    public int Type;
     public int Confidence;
 
     /* Constructor(s) */
@@ -15,7 +17,7 @@ public class SensedActivity {
     }
     public SensedActivity(int activityType, int confidence) {
 
-        this.Type = ActivityType.getActivityTypeByReference(activityType);
+        this.Type = activityType;
         this.Confidence = confidence;
     }
 
@@ -43,7 +45,7 @@ public class SensedActivity {
 
     public boolean equals(SensedActivity other) {
         return other != null
-                && this.Type.equals(other.Type)
+                && this.Type == other.Type
                 && this.Confidence == other.Confidence;
     }
 
@@ -59,7 +61,7 @@ public class SensedActivity {
     @Override
     public int hashCode() {
         int result;
-        long temp = (long) ActivityType.getActivityTypeAsInteger(Type);
+        long temp = (long) Type;
         result = (int) (temp ^ (temp >>> 32));
         temp = (long) Confidence;
         result = 31 * result + (int) (temp ^ (temp >>> 32));
@@ -67,7 +69,8 @@ public class SensedActivity {
     }
 
     public String asString() {
-        return Type.name();
+        //TODO: zzho cannot be official, prepare a better method.
+        return DetectedActivity.zzho(Type);
     }
 
     @Override

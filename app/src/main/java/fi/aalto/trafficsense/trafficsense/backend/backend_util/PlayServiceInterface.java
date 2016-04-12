@@ -154,7 +154,7 @@ public class PlayServiceInterface implements
             Timber.e("initLocationClient called with non-connected mGoogleApiClient");
         } else {
             mLocationSensor = new LocationSensor(mGoogleApiClient, mApplicationContext, mSensorController);
-            mActivitySensor = new ActivitySensor();
+            mActivitySensor = new ActivitySensor(mGoogleApiClient, mApplicationContext);
         }
     }
 
