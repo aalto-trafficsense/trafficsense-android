@@ -8,13 +8,17 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import timber.log.Timber;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class ActivityData implements Parcelable {
     private ArrayList<SensedActivity> Activities;
+    private long activityTime = 0;
 
-    public ActivityData() {
+    public ActivityData(long inTime) {
         Activities = new ArrayList<>();
+        activityTime = inTime;
     }
 
     public void add(int activityType, int confidence) {
@@ -33,12 +37,23 @@ public class ActivityData implements Parcelable {
         return get(0);
     }
 
+    public String getFirstString() {
+        SensedActivity sa = getFirst();
+        if (sa != null) return sa.getActivityString();
+        else return null;
+    }
+
     public SensedActivity get(int i) {
         return Activities.get(i);
     }
 
     public List<SensedActivity> getAll() {
         return Activities;
+    }
+
+    public String timeString() {
+        Date actDate = new Date(activityTime);
+        return DateFormat.getTimeInstance().format(actDate);
     }
 
     @Override
@@ -50,7 +65,7 @@ public class ActivityData implements Parcelable {
                 activities.append("\n");
 
             activities
-                    .append(DetectedActivity.zzho(a.Type))
+                    .append(a.getActivityString())
                     .append(" ")
                     .append(a.Confidence)
                     .append("%");
@@ -95,7 +110,7 @@ public class ActivityData implements Parcelable {
             new Parcelable.Creator<ActivityData>() {
                 @Override
                 public ActivityData createFromParcel(Parcel in) {
-                    ActivityData a = new ActivityData();
+                    ActivityData a = new ActivityData(in.readLong());
                     a.Activities = in.createTypedArrayList(SensedActivity.CREATOR);
                     return a;
                 }
@@ -113,6 +128,7 @@ public class ActivityData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeLong(activityTime);
         parcel.writeTypedList(Activities);
     }
 

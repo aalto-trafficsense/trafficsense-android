@@ -34,10 +34,15 @@ public class InternalBroadcasts {
 
     public static final String KEY_LOCATION_UPDATE = "LOCATION_UPDATE";
     public static final String KEY_ACTIVITY_UPDATE = "ACTIVITY_UPDATE";
+    public static final String KEY_SENSORS_UPDATE = "SENSORS_UPDATE";
 
     public static final String KEY_DEBUG_SETTINGS_REQ = "DEBUG_SETTINGS_REQ";
     public static final String KEY_DEBUG_SETTINGS = "DEBUG_SETTINGS";
     public static final String KEY_DEBUG_SHOW_REQ = "DEBUG_SHOW_REQ";
     public static final String KEY_DEBUG_SHOW = "DEBUG_SHOW";
+
+    public static final String KEY_VIEW_PAUSED = "VIEW_PAUSED";
+    public static final String KEY_VIEW_RESUMED = "VIEW_RESUMED";
+
 
 }

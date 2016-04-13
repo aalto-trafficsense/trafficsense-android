@@ -24,14 +24,13 @@ public class TrafficSenseService extends Service {
     /* Private Members */
     private final IBinder mBinder = new LocalBinder<TrafficSenseService>(this);
     private PlayServiceInterface mPlayServiceInterface;
-    private TSServiceState mServiceState;
-    private LocalBroadcastManager mLocalBroadcastManager;
+    private static TSServiceState mServiceState;
+    private static LocalBroadcastManager mLocalBroadcastManager;
     private BroadcastReceiver mBroadcastReceiver;
+    private static boolean viewActive = false;
 
 
     /* Overridden Methods */
-
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -48,6 +47,7 @@ public class TrafficSenseService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
+        viewActive = true; // If someone binds, there is likely an active view
         return mBinder;
     }
 
@@ -57,6 +57,14 @@ public class TrafficSenseService extends Service {
         mPlayServiceInterface.disconnect();
         super.onDestroy();
     }
+
+    public static boolean isViewActive() { return viewActive; }
+
+    public static void setServiceState(TSServiceState newState) {
+        if (newState != mServiceState) updateServiceState(newState);
+    }
+
+    public static TSServiceState getServiceState() { return mServiceState; }
 
     /*************************
      Broadcast handler
@@ -74,6 +82,13 @@ public class TrafficSenseService extends Service {
                     case InternalBroadcasts.KEY_DEBUG_SHOW_REQ:
                         updateServiceState(mServiceState);
                         break;
+                    case InternalBroadcasts.KEY_VIEW_RESUMED:
+                        viewActive = true;
+                        break;
+                    case InternalBroadcasts.KEY_VIEW_PAUSED:
+                        viewActive = false;
+                        break;
+
                 }
             }
         };
@@ -81,6 +96,8 @@ public class TrafficSenseService extends Service {
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(InternalBroadcasts.KEY_DEBUG_SETTINGS_REQ);
         intentFilter.addAction(InternalBroadcasts.KEY_DEBUG_SHOW_REQ);
+        intentFilter.addAction(InternalBroadcasts.KEY_VIEW_RESUMED);
+        intentFilter.addAction(InternalBroadcasts.KEY_VIEW_PAUSED);
 
         if (mLocalBroadcastManager != null) {
             mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, intentFilter);
@@ -88,9 +105,9 @@ public class TrafficSenseService extends Service {
     }
 
     // Update service state
-    public void updateServiceState(TSServiceState newState) {
+    private static void updateServiceState(TSServiceState newState) {
         mServiceState = newState;
-        if (mLocalBroadcastManager != null)
+        if (mLocalBroadcastManager!=null && isViewActive())
         {
             Intent intent = new Intent(InternalBroadcasts.KEY_SERVICE_STATE_UPDATE);
             Bundle args = new Bundle();

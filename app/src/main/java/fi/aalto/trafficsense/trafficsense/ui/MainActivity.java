@@ -3,6 +3,7 @@ package fi.aalto.trafficsense.trafficsense.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -10,9 +11,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import fi.aalto.trafficsense.trafficsense.R;
+import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private LocalBroadcastManager mLocalBroadcastManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +43,25 @@ public class MainActivity extends AppCompatActivity
 //
 //        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 //        navigationView.setNavigationItemSelectedListener(this);
+
+        mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
+
     }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        broadcastViewResumed(true);
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        broadcastViewResumed(false);
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -104,4 +127,18 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    // Update (viewing) activity status to service
+    public void broadcastViewResumed(boolean resumed) {
+        if (mLocalBroadcastManager != null)
+        {
+            String key;
+            if (resumed) key = InternalBroadcasts.KEY_VIEW_RESUMED;
+            else key = InternalBroadcasts.KEY_VIEW_PAUSED;
+            Intent intent = new Intent(key);
+            mLocalBroadcastManager.sendBroadcast(intent);
+        }
+    }
+
+
 }

@@ -12,4 +12,13 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
+
+    <style name="ghostedText">
+        <item name="android:textColor">@color/colorGrayedOut</item>
+    </style>
+
+    <style name="normalText">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
 </resources>

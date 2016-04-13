@@ -19,6 +19,7 @@ import static fi.aalto.trafficsense.trafficsense.util.TSServiceState.*;
  */
 public class TrafficSenseApplication extends Application {
 
+    private static Context mContext;
     private static TrafficSenseService mTSService;
     private BroadcastReceiver mBroadcastReceiver;
     private LocalBroadcastManager mLocalBroadcastManager;
@@ -31,6 +32,7 @@ public class TrafficSenseApplication extends Application {
             Timber.plant(new Timber.DebugTree());
         }
         super.onCreate();
+        mContext = this;
 
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
         initBroadcastReceiver();
@@ -44,6 +46,10 @@ public class TrafficSenseApplication extends Application {
             bindService(serviceIntent, mServiceConnection, BIND_AUTO_CREATE);
             Timber.d("Application started - TSService already running.");
         }
+    }
+
+    public static Context getContext() {
+        return mContext;
     }
 
     /******************************
@@ -85,16 +91,6 @@ public class TrafficSenseApplication extends Application {
             mTSService = service;
         }
     };
-
-
-    /* Get Methods */
-
-    // TODO: Check if this is really needed from anywhere else - assuming not in a clean architecture
-    /*
-    private TrafficSenseService getTSService() {
-        return mTSService;
-    }
-    */
 
     /*************************
         Broadcast handler

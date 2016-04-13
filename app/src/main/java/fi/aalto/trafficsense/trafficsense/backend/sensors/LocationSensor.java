@@ -45,12 +45,9 @@ public class LocationSensor implements LocationListener {
 
     /* Public interface */
 
-    public void goToSleep() {
-        locationRequest(interval,sleep_priority);
-    }
-
-    public void wakeUp() {
-        locationRequest(interval,priority);
+    public void setSleep(boolean state) {
+        if (state) locationRequest(interval,sleep_priority);
+        else locationRequest(interval,priority);
     }
 
     /* Internal implementation */

@@ -2,15 +2,12 @@ package fi.aalto.trafficsense.trafficsense.backend.sensors;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
 import fi.aalto.trafficsense.trafficsense.util.ActivityData;
 import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
-import timber.log.Timber;
 
-import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -38,7 +35,6 @@ public class ActivityRecognitionIntentService extends IntentService {
      **/
     private void handleActivityRecognitionResult(final ActivityRecognitionResult result) {
         final int maxNumberOfActivitiesCollected = 3;
-        final Date now = new Date();
         final List<DetectedActivity> activities = result.getProbableActivities();
         // Timber.d("Activities:" + activities.toString());
 
@@ -54,7 +50,7 @@ public class ActivityRecognitionIntentService extends IntentService {
         }
 
         Collections.sort(activityList);
-        ActivityData selected = new ActivityData();
+        ActivityData selected = new ActivityData(System.currentTimeMillis());
 
         for (int i = 0; i < Math.min(activityList.size(), maxNumberOfActivitiesCollected); ++i) {
             Act entry = activityList.get(i);
@@ -67,18 +63,18 @@ public class ActivityRecognitionIntentService extends IntentService {
     }
 
     private class Act implements Comparable<Act> {
-        private Integer act_type;
-        private Integer prob;
+        private Integer type;
+        private Integer conf;
         Act(Integer l, Integer r){
-            this.act_type = l;
-            this.prob = r;
+            this.type = l;
+            this.conf = r;
         }
-        public Integer getType(){ return act_type; }
-        public Integer getConfidence(){ return prob; }
-        public void setL(Integer l){ this.act_type = l; }
-        public void setR(Integer r){ this.prob = r; }
+        public Integer getType(){ return type; }
+        public Integer getConfidence(){ return conf; }
+        public void setL(Integer l){ this.type = l; }
+        public void setR(Integer r){ this.conf = r; }
         public int compareTo(Act a2) {
-            return a2.prob-this.prob;
+            return a2.conf - this.conf;
         }
     }
 

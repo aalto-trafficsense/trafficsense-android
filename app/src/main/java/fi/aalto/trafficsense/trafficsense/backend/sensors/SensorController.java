@@ -35,6 +35,10 @@ public class SensorController {
 
     }
 
+    public void setSleep(boolean state) {
+        mLocationSensor.setSleep(state);
+    }
+
     public void disconnect() {
         mLocationSensor.disconnect();
         mActivitySensor.disconnect();

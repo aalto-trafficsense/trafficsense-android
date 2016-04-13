@@ -4,6 +4,22 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
+    <color name="colorSubtitleBackground">#20AC29</color>
+    <color name="colorSubtitleText">#FFFFFF</color>
+    <color name="grayText">#909090</color>
+    <color name="normalText">#000000</color>
+
+    <color name="colorOnBicycle">#008c58</color>
+    <color name="colorWalking">#20ac29</color>
+    <color name="colorRunning">#add500</color>
+    <color name="colorInVehicle">#dd0020</color>
+    <color name="colorTrain">#f7f700</color>
+    <color name="colorSubway">#f6bd00</color>
+    <color name="colorBus">#e66313</color>
+    <color name="colorTilting">#0000ff</color>
+    <color name="colorStill">#ffffff</color>
+    <color name="colorUnknown">#808080</color>
+
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
     <color name="red">#F44336</color>
