@@ -14,7 +14,7 @@
 
 
     <style name="ghostedText">
-        <item name="android:textColor">@color/colorGrayedOut</item>
+        <item name="android:textColor">@color/grayText</item>
     </style>
 
     <style name="normalText">
