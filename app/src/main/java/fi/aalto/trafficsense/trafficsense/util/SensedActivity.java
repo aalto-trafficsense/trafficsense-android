@@ -97,7 +97,7 @@ public class SensedActivity implements Parcelable {
 
     @Override
     public String toString() {
-        return getActivityString();
+        return getActivityString()+" "+Confidence+"%";
     }
 
     public static final Parcelable.Creator<SensedActivity> CREATOR =

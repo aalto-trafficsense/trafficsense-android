@@ -85,7 +85,7 @@ public class DebugShowFragment extends Fragment {
     {
         super.onActivityCreated(bundle);
         initFields();
-        Resources mRes = this.getResources();
+        mRes = this.getResources();
 
     }
 
@@ -186,8 +186,8 @@ public class DebugShowFragment extends Fragment {
                 setTextColors(mServiceStatusTextField, R.color.colorSubtitleText, R.color.colorTilting);
                 break;
             default:
-                setTextColors(mServiceLabelTextField, R.color.colorSubtitleText, R.color.colorRunning);
-                setTextColors(mServiceStatusTextField, R.color.colorSubtitleText, R.color.colorRunning);
+                setTextColors(mServiceLabelTextField, R.color.normalText, R.color.colorRunning);
+                setTextColors(mServiceStatusTextField, R.color.normalText, R.color.colorRunning);
             break;
         }
 
@@ -225,8 +225,8 @@ public class DebugShowFragment extends Fragment {
                     setTextColors(mTopActivityTextField, R.color.colorSubtitleText, R.color.colorOnBicycle);
                     break;
                 case DetectedActivity.RUNNING:
-                    setTextColors(mActivityLabelTextField, R.color.colorSubtitleText, R.color.colorRunning);
-                    setTextColors(mTopActivityTextField, R.color.colorSubtitleText, R.color.colorRunning);
+                    setTextColors(mActivityLabelTextField, R.color.normalText, R.color.colorRunning);
+                    setTextColors(mTopActivityTextField, R.color.normalText, R.color.colorRunning);
                     break;
                 case DetectedActivity.STILL:
                     setTextColors(mActivityLabelTextField, R.color.normalText, R.color.colorStill);

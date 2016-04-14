@@ -40,7 +40,7 @@ public class ActivityRecognitionIntentService extends IntentService {
 
         List<Act> activityList = new ArrayList<>();
 
-        // Put all into a HashMap
+        // Add all into a list
         for (int i = 0; i < activities.size(); ++i) {
             DetectedActivity act = activities.get(i);
             int type = act.getType();
@@ -50,7 +50,7 @@ public class ActivityRecognitionIntentService extends IntentService {
         }
 
         Collections.sort(activityList);
-        ActivityData selected = new ActivityData(System.currentTimeMillis());
+        ActivityData selected = new ActivityData(result.getTime(),result.getElapsedRealtimeMillis()/1000);
 
         for (int i = 0; i < Math.min(activityList.size(), maxNumberOfActivitiesCollected); ++i) {
             Act entry = activityList.get(i);

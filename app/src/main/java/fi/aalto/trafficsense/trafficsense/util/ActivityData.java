@@ -15,10 +15,12 @@ import java.util.*;
 public class ActivityData implements Parcelable {
     private ArrayList<SensedActivity> Activities;
     private long activityTime = 0;
+    private long elapsedTime = 0; // seconds
 
-    public ActivityData(long inTime) {
+    public ActivityData(long inTime, long inElapsed) {
         Activities = new ArrayList<>();
         activityTime = inTime;
+        elapsedTime = inElapsed;
     }
 
     public void add(int activityType, int confidence) {
@@ -53,7 +55,9 @@ public class ActivityData implements Parcelable {
 
     public String timeString() {
         Date actDate = new Date(activityTime);
-        return DateFormat.getTimeInstance().format(actDate);
+        String res = DateFormat.getTimeInstance().format(actDate);
+        if (elapsedTime>0) res.concat(" Elapsed: "+elapsedTime+"seconds");
+        return res;
     }
 
     @Override
@@ -110,7 +114,7 @@ public class ActivityData implements Parcelable {
             new Parcelable.Creator<ActivityData>() {
                 @Override
                 public ActivityData createFromParcel(Parcel in) {
-                    ActivityData a = new ActivityData(in.readLong());
+                    ActivityData a = new ActivityData(in.readLong(), in.readLong());
                     a.Activities = in.createTypedArrayList(SensedActivity.CREATOR);
                     return a;
                 }
@@ -129,6 +133,7 @@ public class ActivityData implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
         parcel.writeLong(activityTime);
+        parcel.writeLong(elapsedTime);
         parcel.writeTypedList(Activities);
     }
 
