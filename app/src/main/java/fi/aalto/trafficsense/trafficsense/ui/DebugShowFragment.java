@@ -40,6 +40,9 @@ public class DebugShowFragment extends Fragment {
     private LocalBroadcastManager mLocalBroadcastManager;
     private Resources mRes;
 
+    private long activityIntervalTimer;
+    private long locationIntervalTimer;
+
     /* UI Components */
     private TextView mServiceLabelTextField;
     private TextView mServiceStatusTextField;
@@ -96,6 +99,8 @@ public class DebugShowFragment extends Fragment {
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
         initBroadcastReceiver();
         simpleBroadcast(InternalBroadcasts.KEY_DEBUG_SHOW_REQ);
+        activityIntervalTimer = 0;
+        locationIntervalTimer = 0;
     }
 
     @Override
@@ -202,8 +207,15 @@ public class DebugShowFragment extends Fragment {
         if (i.hasExtra(InternalBroadcasts.KEY_LOCATION_UPDATE)) {
             Location l = i.getParcelableExtra(InternalBroadcasts.KEY_LOCATION_UPDATE);
             mLocationProviderTextField.setText(l.getProvider());
+
             Date locationDate = new Date(l.getTime());
-            mLocationTimeTextField.setText(DateFormat.getTimeInstance().format(locationDate));
+            String locTime = DateFormat.getTimeInstance().format(locationDate);
+            if (locationIntervalTimer > 0) {
+                locTime = locTime.concat(" "+mRes.getString(R.string.interval)+" "+((System.currentTimeMillis()-locationIntervalTimer)/1000)+mRes.getString(R.string.seconds));
+            }
+            locationIntervalTimer = System.currentTimeMillis();
+            mLocationTimeTextField.setText(locTime);
+
             mLocationAccuracyTextField.setText(String.format("%.0fm", l.getAccuracy()));
         }
     }
@@ -214,7 +226,14 @@ public class DebugShowFragment extends Fragment {
             mTopActivityTextField.setText(a.getFirstString());
             int topActivity=a.getFirst().Type;
             mLatestActivitiesTextField.setText(a.toString());
-            mActivityTimeTextField.setText(a.timeString());
+
+            String actTime = a.timeString();
+            if (activityIntervalTimer > 0) {
+                actTime = actTime.concat(" "+mRes.getString(R.string.interval)+" "+((System.currentTimeMillis()-activityIntervalTimer)/1000)+mRes.getString(R.string.seconds));
+            }
+            activityIntervalTimer = System.currentTimeMillis();
+            mActivityTimeTextField.setText(actTime);
+
             switch (topActivity) {
                 case DetectedActivity.IN_VEHICLE:
                     setTextColors(mActivityLabelTextField, R.color.colorSubtitleText, R.color.colorInVehicle);

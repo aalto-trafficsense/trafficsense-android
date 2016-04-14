@@ -88,19 +88,24 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.action_settings:
+            case R.id.action_about:
+                openActivity(AboutActivity.class);
                 return true;
             case R.id.action_exit:
                 finish();
                 return true;
             case R.id.action_debug:
-                Intent intent = new Intent(this, DebugActivity.class);
-                startActivity(intent);
+                openActivity(DebugActivity.class);
                 return true;
 
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openActivity(Class c) {
+        Intent intent = new Intent(this, c);
+        startActivity(intent);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

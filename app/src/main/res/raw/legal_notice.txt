@@ -1,0 +1,3 @@
+This software has been developed in Aalto University as a part of the TrafficSense project funded by the Aalto Energy Efficiency program. The source code is published as open-source under MIT license "as is" in GitHub.
+
+Activity images are designed and licensed by Freepik / flaticons. The license covers free use when proper attribution is addressed.

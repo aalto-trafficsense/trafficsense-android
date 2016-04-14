@@ -50,7 +50,7 @@ public class ActivityRecognitionIntentService extends IntentService {
         }
 
         Collections.sort(activityList);
-        ActivityData selected = new ActivityData(result.getTime(),result.getElapsedRealtimeMillis()/1000);
+        ActivityData selected = new ActivityData(result.getTime());
 
         for (int i = 0; i < Math.min(activityList.size(), maxNumberOfActivitiesCollected); ++i) {
             Act entry = activityList.get(i);
