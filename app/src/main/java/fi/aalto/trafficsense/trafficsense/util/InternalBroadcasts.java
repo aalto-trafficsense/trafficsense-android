@@ -14,15 +14,18 @@ public class InternalBroadcasts {
 
     public static final String KEY_SERVER_CONNECTION_FAILURE = "SERVER_CONNECTION_FAILURE";
     public static final String KEY_SERVER_CONNECTION_SUCCEEDED = "SERVER_CONNECTION_SUCCEEDED";
-    public static final String KEY_REGISTRATION_SUCCEEDED = "REGISTRATION_SUCCEEDED";
-    public static final String KEY_AUTHENTICATION_SUCCEEDED = "AUTHENTICATION_SUCCEEDED";
-    public static final String KEY_AUTHENTICATION_FAILED = "AUTHENTICATION_FAILED";
 
-    public static final String KEY_UPLOAD_SUCCEEDED = "UPLOAD_SUCCEEDED";
+    public static final String KEY_REGISTRATION_SUCCEEDED = "REGISTRATION_SUCCEEDED";
 
     public static final String KEY_REQUEST_AUTHENTICATION = "REQUEST_AUTHENTICATION";
     public static final String KEY_RETURNED_AUTHENTICATION_RESULT = "RETURNED_AUTHENTICATION_RESULT";
     public static final String KEY_RETURNED_AUTHENTICATION_RESULT_ERR_MSG = "RETURNED_AUTHENTICATION_RESULT_MSG";
+    public static final String KEY_AUTHENTICATION_SUCCEEDED = "AUTHENTICATION_SUCCEEDED";
+    public static final String KEY_AUTHENTICATION_FAILED = "AUTHENTICATION_FAILED";
+    public static final String KEY_SIGNED_OUT = "SIGNED_OUT";
+
+    public static final String KEY_UPLOAD_SUCCEEDED = "UPLOAD_SUCCEEDED";
+
 
     public static final String KEY_SERVICE_GOING_TO_SLEEP = "GOING_TO_SLEEP";
     public static final String KEY_SERVICE_WAKING_UP = "WAKING_UP";
