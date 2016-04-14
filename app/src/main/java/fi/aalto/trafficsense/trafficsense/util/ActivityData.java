@@ -1,18 +1,16 @@
 package fi.aalto.trafficsense.trafficsense.util;
 
-import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
-import com.google.android.gms.location.DetectedActivity;
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
-import timber.log.Timber;
+import com.google.gson.annotations.SerializedName;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class ActivityData implements Parcelable {
+    @SerializedName("activities")
     private ArrayList<SensedActivity> Activities;
     private long activityTime = 0;
 

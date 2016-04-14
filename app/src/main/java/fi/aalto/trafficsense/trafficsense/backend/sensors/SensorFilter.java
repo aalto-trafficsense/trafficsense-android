@@ -9,9 +9,7 @@ import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 import com.google.android.gms.location.DetectedActivity;
 import fi.aalto.trafficsense.trafficsense.backend.TrafficSenseService;
-import fi.aalto.trafficsense.trafficsense.util.ActivityData;
-import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
-import fi.aalto.trafficsense.trafficsense.util.TSServiceState;
+import fi.aalto.trafficsense.trafficsense.util.*;
 
 /**
  * Created by rinnem2 on 10/04/16.
@@ -45,6 +43,11 @@ public class SensorFilter {
 
         broadcastSingleSensorData(InternalBroadcasts.KEY_LOCATION_UPDATE, l);
         if (inactivityTimerRunning) checkSleep(); // Check here also
+    }
+
+    private void filterOutgoing() {
+        LocationData ld = new LocationData(lastReceivedLocation.getAccuracy(),lastReceivedLocation.getLatitude(),lastReceivedLocation.getLongitude(),lastReceivedLocation.getTime());
+        new DataPacket(ld, lastReceivedActivity);
     }
 
     private void addActivity(ActivityData a) {

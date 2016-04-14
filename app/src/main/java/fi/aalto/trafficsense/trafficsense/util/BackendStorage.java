@@ -3,8 +3,11 @@ package fi.aalto.trafficsense.trafficsense.util;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.support.v4.content.LocalBroadcastManager;
 import com.google.common.base.Optional;
+import fi.aalto.trafficsense.trafficsense.R;
+import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
 import timber.log.Timber;
 
 import java.util.UUID;
@@ -30,10 +33,14 @@ public class BackendStorage {
 
     private final SharedPreferences mPreferences;
     private final LocalBroadcastManager mLocalBroadcastManager;
+    private static Resources mRes;
 
     public BackendStorage(Context context) {
         mPreferences = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
+
+        // Temp solution to pass also config parameters through
+        mRes = TrafficSenseApplication.getContext().getResources();
     }
 
     public static BackendStorage create(Context context) {
@@ -154,4 +161,13 @@ public class BackendStorage {
             mLocalBroadcastManager.sendBroadcast(intent);
         }
     }
+
+    public static int getQueueSize() { return mRes.getInteger(R.integer.queue_size); }
+
+    public static int getFlushThreshold() { return mRes.getInteger(R.integer.flush_threshold); }
+
+    public static String getServerName() {
+        if (mRes.getBoolean(R.bool.use_test_server)) return mRes.getString(R.string.server_address_test);
+        else return mRes.getString(R.string.server_address_production); }
+
 }
