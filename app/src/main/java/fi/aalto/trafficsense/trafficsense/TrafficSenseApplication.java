@@ -21,6 +21,7 @@ public class TrafficSenseApplication extends Application {
 
     private static Context mContext;
     private static TrafficSenseService mTSService;
+    private TSServiceState mTSServiceState; // Keep track of "STOPPED" state, since the service cannot respond to that
     private BroadcastReceiver mBroadcastReceiver;
     private LocalBroadcastManager mLocalBroadcastManager;
 
@@ -68,20 +69,24 @@ public class TrafficSenseApplication extends Application {
     }
 
     public void startTSService() {
-        updateServiceState(STARTING);
+        mTSServiceState = STARTING;
+        updateServiceState();
         Intent serviceIntent = new Intent(this, TrafficSenseService.class);
         startService(serviceIntent);
         bindService(serviceIntent, mServiceConnection, BIND_AUTO_CREATE);
+        mTSServiceState = RUNNING;
     }
 
     public void stopTSService() {
-        updateServiceState(STOPPING);
+        mTSServiceState = STOPPING;
+        updateServiceState();
         Intent serviceIntent = new Intent(this, TrafficSenseService.class);
-        // MJR: Even though the order of stop and unbind looks reversed, the following results in more
+        // MJR: Even though the order of stop and unbind looks reversed, the following is said to result in more
         // stable behavior: http://stackoverflow.com/questions/3385554/do-i-need-to-call-both-unbindservice-and-stopservice-for-android-services
         stopService(serviceIntent);
         unbindService(mServiceConnection);
-        updateServiceState(STOPPED);
+        mTSServiceState = STOPPED;
+        updateServiceState();
     }
 
     /* Private Members */
@@ -108,13 +113,11 @@ public class TrafficSenseApplication extends Application {
                         startTSService();
                         break;
                     case InternalBroadcasts.KEY_SERVICE_STOP:
-                        stopTSService();
+                        if (isMyServiceRunning(TrafficSenseService.class)) stopTSService();
                         break;
                     case InternalBroadcasts.KEY_DEBUG_SETTINGS_REQ:
-                        // updateDebugSettings();
-                        break;
                     case InternalBroadcasts.KEY_DEBUG_SHOW_REQ:
-                        // updateDebugShow();
+                        if (mTSServiceState == STOPPED) updateServiceState();
                         break;
                 }
             }
@@ -132,12 +135,12 @@ public class TrafficSenseApplication extends Application {
     }
 
     // Update service state
-    private void updateServiceState(TSServiceState newState) {
+    private void updateServiceState() {
         if (mLocalBroadcastManager != null)
         {
             Intent intent = new Intent(InternalBroadcasts.KEY_SERVICE_STATE_UPDATE);
             Bundle args = new Bundle();
-            args.putInt(LABEL_SERVICE_STATE_INDEX,newState.ordinal());
+            args.putInt(LABEL_SERVICE_STATE_INDEX,mTSServiceState.ordinal());
             intent.putExtras(args);
             mLocalBroadcastManager.sendBroadcast(intent);
         }

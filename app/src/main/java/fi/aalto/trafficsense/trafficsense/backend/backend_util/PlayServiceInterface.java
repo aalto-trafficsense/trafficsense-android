@@ -13,6 +13,7 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.LocationServices;
+import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
 import fi.aalto.trafficsense.trafficsense.backend.sensors.ActivitySensor;
 import fi.aalto.trafficsense.trafficsense.backend.sensors.LocationSensor;
 import fi.aalto.trafficsense.trafficsense.backend.sensors.SensorController;
@@ -28,7 +29,7 @@ public class PlayServiceInterface implements
 
     private GoogleApiClient mGoogleApiClient;
     private SensorController mSensorController;
-    private Context mApplicationContext;
+    // private Context mApplicationContext;
     private Context mServiceContext;
 
     // Request code to use when launching the resolution activity
@@ -40,11 +41,10 @@ public class PlayServiceInterface implements
 
     public PlayServiceInterface(Context context) {
         mServiceContext = context;
-        mApplicationContext = context.getApplicationContext();
 
         // Create an instance of GoogleAPIClient.
         if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(mApplicationContext)
+            mGoogleApiClient = new GoogleApiClient.Builder(TrafficSenseApplication.getContext())
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
@@ -57,8 +57,8 @@ public class PlayServiceInterface implements
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        if (mApplicationContext == null) {
-            Timber.e("mApplicationContext null onConnected");
+        if (TrafficSenseApplication.getContext() == null) {
+            Timber.e("TrafficSenseApplication.getContext() null onConnected");
         } else {
             mSensorController = new SensorController(mGoogleApiClient, mServiceContext);
         }
@@ -85,7 +85,7 @@ public class PlayServiceInterface implements
         } else if (result.hasResolution()) {
             try {
                 mResolvingError = true;
-                result.startResolutionForResult((Activity) mApplicationContext, REQUEST_RESOLVE_ERROR);
+                result.startResolutionForResult((Activity) TrafficSenseApplication.getContext(), REQUEST_RESOLVE_ERROR);
             } catch (IntentSender.SendIntentException e) {
                 // There was an error with the resolution intent. Try again.
                 mGoogleApiClient.connect();
@@ -108,7 +108,7 @@ public class PlayServiceInterface implements
         Bundle args = new Bundle();
         args.putInt(DIALOG_ERROR, errorCode);
         dialogFragment.setArguments(args);
-        FragmentActivity fAct = (FragmentActivity)mApplicationContext;
+        FragmentActivity fAct = (FragmentActivity)TrafficSenseApplication.getContext();
         Timber.e("Play service interface failure - trying to show the error dialog");
         dialogFragment.show(fAct.getSupportFragmentManager(), "errordialog");
     }
