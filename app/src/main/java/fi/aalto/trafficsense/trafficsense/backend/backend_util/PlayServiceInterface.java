@@ -133,6 +133,7 @@ public class PlayServiceInterface implements
         @Override
         public void onDismiss(DialogInterface dialog) {
             // TODO: Figure out how to get the activity that this one likes
+            // Or does this callback come to the activity???
             // ((MyActivity) getActivity()).onDialogDismissed();
         }
     }

@@ -2,6 +2,7 @@ package fi.aalto.trafficsense.trafficsense.backend.sensors;
 
 import android.content.Context;
 import com.google.android.gms.common.api.GoogleApiClient;
+import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
 import timber.log.Timber;
 
 /**
@@ -9,7 +10,6 @@ import timber.log.Timber;
  */
 public class SensorController {
 
-    private Context mApplicationContext;
     private Context mServiceContext;
     private SensorFilter mSensorFilter;
     private LocationSensor mLocationSensor;
@@ -19,7 +19,6 @@ public class SensorController {
     */
     public SensorController (GoogleApiClient gApiClient, Context serviceCntxt) {
         mServiceContext = serviceCntxt;
-        mApplicationContext = serviceCntxt.getApplicationContext();
         if (gApiClient == null) {
             Timber.e("SensorController created with null GoogleApiClient");
             return;
@@ -29,8 +28,8 @@ public class SensorController {
             Timber.e("SensorController created with non-connected GoogleApiClient");
         } else {
             mSensorFilter = new SensorFilter(this, mServiceContext);
-            mLocationSensor = new LocationSensor(gApiClient, mApplicationContext, mSensorFilter);
-            mActivitySensor = new ActivitySensor(gApiClient, mApplicationContext, mSensorFilter);
+            mLocationSensor = new LocationSensor(gApiClient, TrafficSenseApplication.getContext(), mSensorFilter);
+            mActivitySensor = new ActivitySensor(gApiClient, TrafficSenseApplication.getContext(), mSensorFilter);
         }
 
     }
