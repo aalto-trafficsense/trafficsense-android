@@ -76,11 +76,6 @@ public class DebugActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         if (id == R.id.action_exit) {
             Timber.d("Exit pressed.");
             // TODO MJR: Think of something more meaningful, finish doesn't really finish: http://stackoverflow.com/questions/3226495/how-to-exit-from-the-application-and-show-the-home-screen

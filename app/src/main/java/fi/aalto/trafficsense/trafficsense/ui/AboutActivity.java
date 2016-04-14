@@ -1,12 +1,10 @@
 package fi.aalto.trafficsense.trafficsense.ui;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -36,7 +34,7 @@ public class AboutActivity extends AppCompatActivity {
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
-        okButton.setOnTouchListener(mDelayHideTouchListener);
+        okButton.setOnTouchListener(mTouchListener);
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,7 +87,7 @@ public class AboutActivity extends AppCompatActivity {
      * system UI. This is to prevent the jarring behavior of controls going away
      * while interacting with activity UI.
      */
-    View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
+    View.OnTouchListener mTouchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             Timber.d("About onTouchListener touched.");

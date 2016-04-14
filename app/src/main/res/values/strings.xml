@@ -46,6 +46,11 @@
 
     <string name="interval">Interval:</string>
     <string name="seconds">s.</string>
+    <string name="menu_title_activity_about">About TrafficSense Client</string>
+    <string name="str_clientVersionPrefix">Version:</string>
+    <string name="str_legalNotice">Legal notice:</string>
+    <string name="str_contributions">Contributions:</string>
+    <string name="str_ok">Ok</string>
 
 
 </resources>
