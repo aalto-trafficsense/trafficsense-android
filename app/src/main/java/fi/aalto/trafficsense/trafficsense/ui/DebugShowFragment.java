@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.google.android.gms.location.DetectedActivity;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.util.ActivityData;
+import fi.aalto.trafficsense.trafficsense.util.ActivityType;
 import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
 import fi.aalto.trafficsense.trafficsense.util.TSServiceState;
 import timber.log.Timber;
@@ -224,7 +225,7 @@ public class DebugShowFragment extends Fragment {
         if (i.hasExtra(InternalBroadcasts.KEY_ACTIVITY_UPDATE)) {
             ActivityData a = i.getParcelableExtra(InternalBroadcasts.KEY_ACTIVITY_UPDATE);
             mTopActivityTextField.setText(a.getFirstString());
-            int topActivity=a.getFirst().Type;
+            ActivityType topActivity=a.getFirst().Type;
             mLatestActivitiesTextField.setText(a.toString());
 
             String actTime = a.timeString();
@@ -235,31 +236,31 @@ public class DebugShowFragment extends Fragment {
             mActivityTimeTextField.setText(actTime);
 
             switch (topActivity) {
-                case DetectedActivity.IN_VEHICLE:
+                case IN_VEHICLE:
                     setTextColors(mActivityLabelTextField, R.color.colorSubtitleText, R.color.colorInVehicle);
                     setTextColors(mTopActivityTextField, R.color.colorSubtitleText, R.color.colorInVehicle);
                     break;
-                case DetectedActivity.ON_BICYCLE:
+                case ON_BICYCLE:
                     setTextColors(mActivityLabelTextField, R.color.colorSubtitleText, R.color.colorOnBicycle);
                     setTextColors(mTopActivityTextField, R.color.colorSubtitleText, R.color.colorOnBicycle);
                     break;
-                case DetectedActivity.RUNNING:
+                case RUNNING:
                     setTextColors(mActivityLabelTextField, R.color.normalText, R.color.colorRunning);
                     setTextColors(mTopActivityTextField, R.color.normalText, R.color.colorRunning);
                     break;
-                case DetectedActivity.STILL:
+                case STILL:
                     setTextColors(mActivityLabelTextField, R.color.normalText, R.color.colorStill);
                     setTextColors(mTopActivityTextField, R.color.normalText, R.color.colorStill);
                     break;
-                case DetectedActivity.TILTING:
+                case TILTING:
                     setTextColors(mActivityLabelTextField, R.color.colorSubtitleText, R.color.colorTilting);
                     setTextColors(mTopActivityTextField, R.color.colorSubtitleText, R.color.colorTilting);
                     break;
-                case DetectedActivity.UNKNOWN:
+                case UNKNOWN:
                     setTextColors(mActivityLabelTextField, R.color.colorSubtitleText, R.color.colorUnknown);
                     setTextColors(mTopActivityTextField, R.color.colorSubtitleText, R.color.colorUnknown);
                     break;
-                case DetectedActivity.WALKING:
+                case WALKING:
                     setTextColors(mActivityLabelTextField, R.color.colorSubtitleText, R.color.colorWalking);
                     setTextColors(mTopActivityTextField, R.color.colorSubtitleText, R.color.colorWalking);
                     break;

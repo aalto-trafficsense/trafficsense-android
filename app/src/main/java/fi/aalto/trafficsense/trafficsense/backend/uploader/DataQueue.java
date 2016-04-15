@@ -43,9 +43,10 @@ public class DataQueue {
 
     // MJR: Auxiliary procedure to help cope with mysterious "500 INTERNAL SERVER ERROR"s during upload.
     // TODO: Remove method, when root cause for errors has been cleared
+    // In TrafficSense Client threw an exception - maybe the upload was completed and the queue was empty.
     public void removeOne() {
-        Iterator<DataPoint> iter = this.mDeque.iterator();
-        if (iter.hasNext()) iter.remove();
+//        Iterator<DataPoint> iter = this.mDeque.iterator();
+//        if (iter.hasNext()) iter.remove();
     }
 
     public ImmutableList<DataPoint> getSnapshot() {

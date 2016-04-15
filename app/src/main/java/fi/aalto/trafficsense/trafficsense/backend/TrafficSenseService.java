@@ -14,6 +14,8 @@ import fi.aalto.trafficsense.trafficsense.backend.uploader.RegularRoutesPipeline
 import fi.aalto.trafficsense.trafficsense.util.*;
 import timber.log.Timber;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import static android.app.Activity.RESULT_OK;
 import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_SERVICE_STATE_INDEX;
 import static fi.aalto.trafficsense.trafficsense.util.TSServiceState.RUNNING;
@@ -34,6 +36,8 @@ public class TrafficSenseService extends Service {
     private static LocalBroadcastManager mLocalBroadcastManager;
     private BroadcastReceiver mBroadcastReceiver;
     private BackendStorage mStorage;
+    private AtomicReference<Boolean> mClientNumberFetchOngoing = new AtomicReference<>(false);
+
 
     private static boolean viewActive = false;
 
@@ -63,16 +67,51 @@ public class TrafficSenseService extends Service {
         viewActive = true; // If someone binds, there is likely an active view
 
         // Request sign-in if user-id is not available
-        if (!mStorage.isClientNumberAvailable()) {
+        if (!mStorage.isUserIdAvailable()) {
+            RegularRoutesPipeline.setUploadEnabledState(false);
             if (mLocalBroadcastManager!=null)
             {
                 Intent i = new Intent(InternalBroadcasts.KEY_REQUEST_SIGN_IN);
                 mLocalBroadcastManager.sendBroadcast(i);
             }
 
+        }  else {
+            obtainClientNumber();
         }
+
+        testUploadEnabled();
         return mBinder;
     }
+
+    private void testUploadEnabled() {
+        if (mStorage.isUserIdAvailable() && mStorage.isClientNumberAvailable()) {
+            RegularRoutesPipeline.setUploadEnabledState(true);
+        } else {
+            RegularRoutesPipeline.setUploadEnabledState(false);
+        }
+    }
+
+    private void obtainClientNumber() {
+        if (mClientNumberFetchOngoing.get()) {
+            return;
+        }
+
+        // The following value is cleared based on local broadcast message
+        mClientNumberFetchOngoing.set(true);
+
+        fetchClientNumber(new Callback<Optional<Integer>>() {
+            @Override
+            public void run(Optional<Integer> result, RuntimeException error) {
+                if (result.isPresent()) mStorage.writeClientNumber(result.get());
+            }
+        });
+
+    }
+
+    private void fetchClientNumber(Callback<Optional<Integer>> callback) {
+        RegularRoutesPipeline.fetchClientNumber(callback);
+    }
+
 
     @Override
     public void onDestroy() {
@@ -122,6 +161,19 @@ public class TrafficSenseService extends Service {
                     case InternalBroadcasts.KEY_VIEW_PAUSED:
                         viewActive = false;
                         break;
+                    case InternalBroadcasts.KEY_CLIENT_NUMBER_FETCH_COMPLETED:
+                        mClientNumberFetchOngoing.set(false);
+                        testUploadEnabled();
+                        break;
+                    case InternalBroadcasts.KEY_REGISTRATION_SUCCEEDED:
+                    case InternalBroadcasts.KEY_AUTHENTICATION_SUCCEEDED:
+                        if (!mStorage.isClientNumberAvailable()) obtainClientNumber();
+                        else testUploadEnabled();
+                        break;
+                    case InternalBroadcasts.KEY_AUTHENTICATION_FAILED:
+                    case InternalBroadcasts.KEY_USER_ID_CLEARED:
+                        testUploadEnabled();
+                        break;
 
                 }
             }
@@ -132,6 +184,11 @@ public class TrafficSenseService extends Service {
         intentFilter.addAction(InternalBroadcasts.KEY_DEBUG_SHOW_REQ);
         intentFilter.addAction(InternalBroadcasts.KEY_VIEW_RESUMED);
         intentFilter.addAction(InternalBroadcasts.KEY_VIEW_PAUSED);
+        intentFilter.addAction(InternalBroadcasts.KEY_CLIENT_NUMBER_FETCH_COMPLETED);
+        intentFilter.addAction(InternalBroadcasts.KEY_REGISTRATION_SUCCEEDED);
+        intentFilter.addAction(InternalBroadcasts.KEY_AUTHENTICATION_SUCCEEDED);
+        intentFilter.addAction(InternalBroadcasts.KEY_AUTHENTICATION_FAILED);
+        intentFilter.addAction(InternalBroadcasts.KEY_USER_ID_CLEARED);
 
         if (mLocalBroadcastManager != null) {
             mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, intentFilter);

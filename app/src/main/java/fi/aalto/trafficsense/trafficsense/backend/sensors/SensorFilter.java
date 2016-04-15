@@ -26,8 +26,9 @@ public class SensorFilter {
     private SensorController mSensorController;
 
     private Location lastReceivedLocation;
-    private ActivityData lastReceivedActivity;
-    private int lastReceivedActType;
+    private ActivityData lastReceivedActivity = null;
+    private ActivityData dummyActivity;
+    private ActivityType lastReceivedActType;
     private long inactivityTimer;
     private boolean inactivityTimerRunning = false;
 
@@ -43,6 +44,9 @@ public class SensorFilter {
 
         mPipelineThread = TrafficSenseService.getPipeline().getPipelineThread();
         if (mPipelineThread == null) Timber.e("PipelineThread null in SensorFilter init!");
+
+        dummyActivity = new ActivityData(System.currentTimeMillis());
+        dummyActivity.add(DetectedActivity.UNKNOWN,0);
     }
 
     public void addLocation(Location l) {
@@ -54,20 +58,25 @@ public class SensorFilter {
     }
 
     private void filterOutgoing() {
+        // Don't send if accuracy is > x m.
+        // Don't send if activity is the same as previous and distance to previously queued < y m.
+        // Send anyway, if time after last queued is > z hours.
+        ActivityData ad;
+        if (lastReceivedActivity == null) ad = dummyActivity; else ad = lastReceivedActivity;
         LocationData ld = new LocationData(lastReceivedLocation.getAccuracy(),lastReceivedLocation.getLatitude(),lastReceivedLocation.getLongitude(),lastReceivedLocation.getTime());
-        mPipelineThread.sendData(new DataPacket(ld, lastReceivedActivity));
+        mPipelineThread.sendData(new DataPacket(ld, ad));
     }
 
     private void addActivity(ActivityData a) {
         lastReceivedActivity = a;
         lastReceivedActType = a.getFirst().Type;
         if (TrafficSenseService.getServiceState() == TSServiceState.SLEEPING) {
-            if (lastReceivedActType != DetectedActivity.STILL) {
+            if (lastReceivedActType != ActivityType.STILL) {
                 mSensorController.setSleep(false);
                 TrafficSenseService.setServiceState(TSServiceState.RUNNING);
             }
         } else { // Not SLEEPING
-            if (lastReceivedActType == DetectedActivity.STILL) {
+            if (lastReceivedActType == ActivityType.STILL) {
                 if (inactivityTimerRunning) {
                     checkSleep();
                 } else { // inActivityTimer not yet on

@@ -4,6 +4,7 @@ import android.content.res.Resources;
 import android.os.Parcel;
 import android.os.Parcelable;
 import com.google.android.gms.location.DetectedActivity;
+import com.google.gson.annotations.SerializedName;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
 
@@ -13,7 +14,9 @@ import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
 
 public class SensedActivity implements Parcelable {
     /* Public Members */
-    public int Type;
+    @SerializedName("activityType")
+    public ActivityType Type;
+    @SerializedName("confidence")
     public int Confidence;
 
     /* Constructor(s) */
@@ -22,7 +25,7 @@ public class SensedActivity implements Parcelable {
     }
     public SensedActivity(int activityType, int confidence) {
 
-        this.Type = activityType;
+        this.Type = ActivityType.getActivityTypeByReference(activityType);
         this.Confidence = confidence;
     }
 
@@ -66,7 +69,7 @@ public class SensedActivity implements Parcelable {
     @Override
     public int hashCode() {
         int result;
-        long temp = (long) Type;
+        long temp = (long) ActivityType.getActivityTypeAsInteger(Type);
         result = (int) (temp ^ (temp >>> 32));
         temp = (long) Confidence;
         result = 31 * result + (int) (temp ^ (temp >>> 32));
@@ -76,19 +79,19 @@ public class SensedActivity implements Parcelable {
     public String getActivityString() {
         Resources res = TrafficSenseApplication.getContext().getResources();
         switch(Type) {
-            case DetectedActivity.IN_VEHICLE:
+            case IN_VEHICLE:
                 return res.getString(R.string.in_vehicle);
-            case DetectedActivity.ON_BICYCLE:
+            case ON_BICYCLE:
                 return res.getString(R.string.on_bicycle);
-            case DetectedActivity.RUNNING:
+            case RUNNING:
                 return res.getString(R.string.running);
-            case DetectedActivity.STILL:
+            case STILL:
                 return res.getString(R.string.still);
-            case DetectedActivity.TILTING:
+            case TILTING:
                 return res.getString(R.string.tilting);
-            case DetectedActivity.UNKNOWN:
+            case UNKNOWN:
                 return res.getString(R.string.unknown);
-            case DetectedActivity.WALKING:
+            case WALKING:
                 return res.getString(R.string.walking);
             default:
                 return res.getString(R.string.unidentifiable_activity, Type);
@@ -121,7 +124,7 @@ public class SensedActivity implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
-        parcel.writeInt(Type);
+        parcel.writeInt(ActivityType.getActivityTypeAsInteger(Type));
         parcel.writeInt(Confidence);
     }
 

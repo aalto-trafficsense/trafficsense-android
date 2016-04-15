@@ -21,6 +21,7 @@ import org.json.JSONObject;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import retrofit.mime.TypedByteArray;
 import timber.log.Timber;
 
 import java.text.SimpleDateFormat;
@@ -385,6 +386,17 @@ public class RestClient {
                         } else { // msg==null
                             // MJR: Not sure if this is the right way to handle, but it was the approach earlier
                             //      When null-result was not avoided
+                            if (error == null) {
+                                Timber.d("RestApi-authentication-failure with null error");
+                            } else {
+                                String mStackTrace = Log.getStackTraceString(error);
+                                if(mStackTrace.contains("java.io.EOFException")) {
+                                    Timber.i("RestApi-authentication-failure caught an EOFException - trying again");
+                                    mAuthenticating.set(false);
+                                    authenticate(request, callback);
+                                    return;
+                                }
+                            }
                             mStorage.clearSessionToken();
                             mAuthenticating.set(false);
                             notifyRestClientResults(InternalBroadcasts.KEY_SERVER_CONNECTION_SUCCEEDED);
@@ -550,6 +562,9 @@ public class RestClient {
 
         final Optional<String> installationId = mStorage.readInstallationId();
         AuthenticateRequest request = new AuthenticateRequest(userId.get(), mAndroidDeviceId, installationId.get());
+        Timber.d("User id: " + userId.get());
+        Timber.d("mAndroidDeviceId " + mAndroidDeviceId);
+        Timber.d("installationId: " + installationId.get());
         authenticate(request,new Callback<Void>() {
             @Override
             public void run(Void result, RuntimeException error) {
