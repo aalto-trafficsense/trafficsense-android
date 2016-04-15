@@ -3,6 +3,7 @@ package fi.aalto.trafficsense.trafficsense.backend.sensors;
 import android.content.Context;
 import com.google.android.gms.common.api.GoogleApiClient;
 import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
+import fi.aalto.trafficsense.trafficsense.backend.uploader.RegularRoutesPipeline;
 import timber.log.Timber;
 
 /**
@@ -10,15 +11,13 @@ import timber.log.Timber;
  */
 public class SensorController {
 
-    private Context mServiceContext;
     private SensorFilter mSensorFilter;
     private LocationSensor mLocationSensor;
     private ActivitySensor mActivitySensor;
     /*
         Constructor initialises all sensors and the filter
     */
-    public SensorController (GoogleApiClient gApiClient, Context serviceCntxt) {
-        mServiceContext = serviceCntxt;
+    public SensorController (GoogleApiClient gApiClient) {
         if (gApiClient == null) {
             Timber.e("SensorController created with null GoogleApiClient");
             return;
@@ -27,9 +26,9 @@ public class SensorController {
         if(!gApiClient.isConnected()) {
             Timber.e("SensorController created with non-connected GoogleApiClient");
         } else {
-            mSensorFilter = new SensorFilter(this, mServiceContext);
-            mLocationSensor = new LocationSensor(gApiClient, TrafficSenseApplication.getContext(), mSensorFilter);
-            mActivitySensor = new ActivitySensor(gApiClient, TrafficSenseApplication.getContext(), mSensorFilter);
+            mSensorFilter = new SensorFilter(this);
+            mLocationSensor = new LocationSensor(gApiClient, mSensorFilter);
+            mActivitySensor = new ActivitySensor(gApiClient);
         }
 
     }
@@ -41,6 +40,7 @@ public class SensorController {
     public void disconnect() {
         mLocationSensor.disconnect();
         mActivitySensor.disconnect();
+        mSensorFilter.disconnect();
     }
 
 }

@@ -17,6 +17,8 @@ public class InternalBroadcasts {
 
     public static final String KEY_REGISTRATION_SUCCEEDED = "REGISTRATION_SUCCEEDED";
 
+    public static final String KEY_REQUEST_SIGN_IN = "REQUEST_SIGN_IN";
+
     public static final String KEY_REQUEST_AUTHENTICATION = "REQUEST_AUTHENTICATION";
     public static final String KEY_RETURNED_AUTHENTICATION_RESULT = "RETURNED_AUTHENTICATION_RESULT";
     public static final String KEY_RETURNED_AUTHENTICATION_RESULT_ERR_MSG = "RETURNED_AUTHENTICATION_RESULT_MSG";

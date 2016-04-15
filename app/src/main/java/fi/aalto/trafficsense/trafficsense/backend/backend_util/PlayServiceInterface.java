@@ -18,6 +18,7 @@ import fi.aalto.trafficsense.trafficsense.backend.sensors.ActivitySensor;
 import fi.aalto.trafficsense.trafficsense.backend.sensors.LocationSensor;
 import fi.aalto.trafficsense.trafficsense.backend.sensors.SensorController;
 import fi.aalto.trafficsense.trafficsense.backend.sensors.SensorFilter;
+import fi.aalto.trafficsense.trafficsense.backend.uploader.RegularRoutesPipeline;
 import timber.log.Timber;
 
 /**
@@ -30,7 +31,6 @@ public class PlayServiceInterface implements
     private GoogleApiClient mGoogleApiClient;
     private SensorController mSensorController;
     // private Context mApplicationContext;
-    private Context mServiceContext;
 
     // Request code to use when launching the resolution activity
     private static final int REQUEST_RESOLVE_ERROR = 1001;
@@ -39,9 +39,7 @@ public class PlayServiceInterface implements
     // Bool to track whether the app is already resolving an error
     private boolean mResolvingError = false;
 
-    public PlayServiceInterface(Context context) {
-        mServiceContext = context;
-
+    public PlayServiceInterface() {
         // Create an instance of GoogleAPIClient.
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(TrafficSenseApplication.getContext())
@@ -60,7 +58,7 @@ public class PlayServiceInterface implements
         if (TrafficSenseApplication.getContext() == null) {
             Timber.e("TrafficSenseApplication.getContext() null onConnected");
         } else {
-            mSensorController = new SensorController(mGoogleApiClient, mServiceContext);
+            mSensorController = new SensorController(mGoogleApiClient);
         }
     }
 

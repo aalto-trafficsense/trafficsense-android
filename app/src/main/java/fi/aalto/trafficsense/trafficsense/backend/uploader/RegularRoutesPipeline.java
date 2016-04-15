@@ -5,14 +5,16 @@ import com.google.common.base.Optional;
 import com.google.common.base.Throwables;
 import com.google.common.util.concurrent.Atomics;
 import fi.aalto.trafficsense.trafficsense.util.Callback;
+import fi.aalto.trafficsense.trafficsense.util.DataPacket;
 import timber.log.Timber;
 
 import java.util.concurrent.atomic.AtomicReference;
 
 public class RegularRoutesPipeline {
     private final AtomicReference<PipelineThread> mThread = Atomics.newReference();
+    private static final AtomicReference<PipelineThread> sPipeline = Atomics.newReference();
 
-    RegularRoutesPipeline () {
+    public RegularRoutesPipeline () {
         Timber.d("RegularRoutesPipeline constructor called");
 
         if (mThread.get() == null) {
@@ -31,7 +33,7 @@ public class RegularRoutesPipeline {
 
     }
 
-    public void onDestroy() {
+    public void disconnect() {
         PipelineThread thread = mThread.getAndSet(null);
         if (thread != null) {
             try {
@@ -48,9 +50,11 @@ public class RegularRoutesPipeline {
         return mThread.get() != null;
     }
 
-    private static final AtomicReference<PipelineThread> sPipeline = Atomics.newReference();
+    public PipelineThread getPipelineThread() {
+        return sPipeline.get();
+    }
 
-    public static boolean flushDataQueueToServer() {
+    public boolean flushDataQueueToServer() {
         PipelineThread pipeline = sPipeline.get();
         if (pipeline == null)
             return false;

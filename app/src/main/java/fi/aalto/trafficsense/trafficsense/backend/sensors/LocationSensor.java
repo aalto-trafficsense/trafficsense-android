@@ -10,6 +10,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
 import timber.log.Timber;
 
 /**
@@ -27,16 +28,16 @@ public class LocationSensor implements LocationListener {
     private SensorFilter mSensorFilter;
 
     /* Constructor */
-    public LocationSensor(GoogleApiClient apiClient, Context sContext, SensorFilter controller) {
+    public LocationSensor(GoogleApiClient apiClient, SensorFilter controller) {
         mGoogleApiClient = apiClient;
         mSensorFilter = controller;
 
         // subscribe for location updates
-        if (ContextCompat.checkSelfPermission(sContext, Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ContextCompat.checkSelfPermission(TrafficSenseApplication.getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             // Permission to access the location is missing.
             // TODO: Implement requester, test with Marshmallow
-            Toast.makeText(sContext, "Something wrong - no permission to access fine location.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(TrafficSenseApplication.getContext(), "Something wrong - no permission to access fine location.", Toast.LENGTH_SHORT).show();
         } else {
             // Access to the location has been granted to the app.
             locationRequest(interval,priority);

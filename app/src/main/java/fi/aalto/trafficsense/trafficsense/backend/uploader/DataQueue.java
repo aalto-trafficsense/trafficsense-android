@@ -11,12 +11,16 @@ import java.util.Queue;
 public class DataQueue {
     private final Queue<DataPoint> mDeque;
     private final int flushThreshold;
+    private final int mMaxSize;
+    private int activeThreshold;
 
     private long mNextSequence;
 
     public DataQueue(int maxSize, int flushThreshold) {
-        this.mDeque = EvictingQueue.create(maxSize);
+        mMaxSize = maxSize;
+        this.mDeque = EvictingQueue.create(mMaxSize);
         this.flushThreshold = flushThreshold;
+        activeThreshold = this.flushThreshold;
         Timber.d("DataQueue: constructor called with maxSize: "+maxSize+" flushThreshold: "+flushThreshold);
     }
 
@@ -56,8 +60,17 @@ public class DataQueue {
         return mDeque.size();
     }
 
+    public boolean increaseThreshold() {
+        if (activeThreshold + flushThreshold < mMaxSize) {
+            activeThreshold += flushThreshold;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public boolean shouldBeFlushed() {
         Timber.d("DataQueue:shouldBeFlushed (test) called with size:"+mDeque.size()+" threshold "+flushThreshold);
-        return mDeque.size() >= flushThreshold;
+        return mDeque.size() >= activeThreshold;
     }
 }

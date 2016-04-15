@@ -8,10 +8,10 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
+import com.google.common.base.Optional;
 import fi.aalto.trafficsense.trafficsense.backend.backend_util.PlayServiceInterface;
-import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
-import fi.aalto.trafficsense.trafficsense.util.LocalBinder;
-import fi.aalto.trafficsense.trafficsense.util.TSServiceState;
+import fi.aalto.trafficsense.trafficsense.backend.uploader.RegularRoutesPipeline;
+import fi.aalto.trafficsense.trafficsense.util.*;
 import timber.log.Timber;
 
 import static android.app.Activity.RESULT_OK;
@@ -19,14 +19,22 @@ import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_S
 import static fi.aalto.trafficsense.trafficsense.util.TSServiceState.RUNNING;
 import static fi.aalto.trafficsense.trafficsense.util.TSServiceState.SLEEPING;
 
+/**
+ * Created by mikko.rinne@aalto.fi on 06/04/16.
+ */
+
 public class TrafficSenseService extends Service {
 
     /* Private Members */
+    private static Context mContext;
     private final IBinder mBinder = new LocalBinder<TrafficSenseService>(this);
     private PlayServiceInterface mPlayServiceInterface;
+    private static RegularRoutesPipeline mPipeline;
     private static TSServiceState mServiceState;
     private static LocalBroadcastManager mLocalBroadcastManager;
     private BroadcastReceiver mBroadcastReceiver;
+    private BackendStorage mStorage;
+
     private static boolean viewActive = false;
 
 
@@ -34,9 +42,14 @@ public class TrafficSenseService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        mPlayServiceInterface = new PlayServiceInterface(this);
+        mContext = this;
+        mPipeline = new RegularRoutesPipeline();
+        // PlayServiceInterface -> SensorController -> SensorFilter requires pipeline to be set up.
+        mPlayServiceInterface = new PlayServiceInterface();
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
         initBroadcastReceiver();
+        mStorage = BackendStorage.create(mContext);
+
     }
 
     @Override
@@ -48,15 +61,36 @@ public class TrafficSenseService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         viewActive = true; // If someone binds, there is likely an active view
+
+        // Request sign-in if user-id is not available
+        if (!mStorage.isClientNumberAvailable()) {
+            if (mLocalBroadcastManager!=null)
+            {
+                Intent i = new Intent(InternalBroadcasts.KEY_REQUEST_SIGN_IN);
+                mLocalBroadcastManager.sendBroadcast(i);
+            }
+
+        }
         return mBinder;
     }
 
     @Override
     public void onDestroy() {
+        mPipeline.flushDataQueueToServer();
         mLocalBroadcastManager.unregisterReceiver(mBroadcastReceiver);
         mPlayServiceInterface.disconnect();
+        mPipeline.disconnect();
         super.onDestroy();
     }
+
+    public static Context getContext() {
+        return mContext;
+    }
+
+    public static RegularRoutesPipeline getPipeline() {
+        return mPipeline;
+    }
+
 
     public static boolean isViewActive() { return viewActive; }
 

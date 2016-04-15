@@ -1,6 +1,9 @@
 package fi.aalto.trafficsense.trafficsense.ui;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.LocalBroadcastManager;
@@ -17,6 +20,8 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private LocalBroadcastManager mLocalBroadcastManager;
+    private BroadcastReceiver mBroadcastReceiver;
+
 
 
     @Override
@@ -45,6 +50,7 @@ public class MainActivity extends AppCompatActivity
 //        navigationView.setNavigationItemSelectedListener(this);
 
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
+        initBroadcastReceiver();
 
     }
 
@@ -132,6 +138,34 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    /*************************
+     Broadcast handler
+     *************************/
+
+    /* Local broadcast receiver */
+    private void initBroadcastReceiver() {
+        mBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                final String action = intent.getAction();
+
+                switch (action) {
+                    case InternalBroadcasts.KEY_REQUEST_SIGN_IN:
+                        openActivity(LoginActivity.class);
+                        break;
+                }
+            }
+        };
+
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(InternalBroadcasts.KEY_REQUEST_SIGN_IN);
+
+        if (mLocalBroadcastManager != null) {
+            mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, intentFilter);
+        }
+    }
+
 
     // Update (viewing) activity status to service
     public void broadcastViewResumed(boolean resumed) {

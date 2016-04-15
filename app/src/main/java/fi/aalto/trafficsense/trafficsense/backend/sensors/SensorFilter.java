@@ -9,7 +9,10 @@ import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 import com.google.android.gms.location.DetectedActivity;
 import fi.aalto.trafficsense.trafficsense.backend.TrafficSenseService;
+import fi.aalto.trafficsense.trafficsense.backend.uploader.PipelineThread;
+import fi.aalto.trafficsense.trafficsense.backend.uploader.RegularRoutesPipeline;
 import fi.aalto.trafficsense.trafficsense.util.*;
+import timber.log.Timber;
 
 /**
  * Created by rinnem2 on 10/04/16.
@@ -18,6 +21,7 @@ public class SensorFilter {
 
     private LocalBroadcastManager mLocalBroadcastManager;
     private BroadcastReceiver mBroadcastReceiver;
+    private PipelineThread mPipelineThread;
 
     private SensorController mSensorController;
 
@@ -30,12 +34,15 @@ public class SensorFilter {
     private long stillLimitSeconds=40;
 
     /* Constructor */
-    public SensorFilter(SensorController sCntrl, Context serviceContext) {
+    public SensorFilter(SensorController sCntrl) {
         // Pointer to instruct SensorController
         mSensorController = sCntrl;
 
-        mLocalBroadcastManager = LocalBroadcastManager.getInstance(serviceContext);
+        mLocalBroadcastManager = LocalBroadcastManager.getInstance(TrafficSenseService.getContext());
         initBroadcastReceiver();
+
+        mPipelineThread = TrafficSenseService.getPipeline().getPipelineThread();
+        if (mPipelineThread == null) Timber.e("PipelineThread null in SensorFilter init!");
     }
 
     public void addLocation(Location l) {
@@ -43,11 +50,12 @@ public class SensorFilter {
 
         broadcastSingleSensorData(InternalBroadcasts.KEY_LOCATION_UPDATE, l);
         if (inactivityTimerRunning) checkSleep(); // Check here also
+        filterOutgoing();
     }
 
     private void filterOutgoing() {
         LocationData ld = new LocationData(lastReceivedLocation.getAccuracy(),lastReceivedLocation.getLatitude(),lastReceivedLocation.getLongitude(),lastReceivedLocation.getTime());
-        new DataPacket(ld, lastReceivedActivity);
+        mPipelineThread.sendData(new DataPacket(ld, lastReceivedActivity));
     }
 
     private void addActivity(ActivityData a) {

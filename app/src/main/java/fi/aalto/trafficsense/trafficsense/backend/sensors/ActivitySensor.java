@@ -7,6 +7,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.ActivityRecognition;
+import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
 import timber.log.Timber;
 
 /**
@@ -18,15 +19,12 @@ public class ActivitySensor implements ResultCallback<Status> {
 
     private PendingIntent mCallbackIntent;
     private GoogleApiClient mGoogleApiClient;
-    private SensorFilter mSensorFilter;
 
-    public ActivitySensor(GoogleApiClient apiClient, Context sContext, SensorFilter filter) {
+    public ActivitySensor(GoogleApiClient apiClient) {
         mGoogleApiClient = apiClient;
-        mSensorFilter = filter;
 
-        Intent intent = new Intent(sContext,ActivityRecognitionIntentService.class);
-
-        mCallbackIntent = PendingIntent.getService(sContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent intent = new Intent(TrafficSenseApplication.getContext(),ActivityRecognitionIntentService.class);
+        mCallbackIntent = PendingIntent.getService(TrafficSenseApplication.getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         // subscribe for activity recognition updates
         final long intervalInMilliseconds = interval * 1000L;
