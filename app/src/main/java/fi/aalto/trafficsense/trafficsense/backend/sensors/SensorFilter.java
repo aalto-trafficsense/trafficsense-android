@@ -25,14 +25,22 @@ public class SensorFilter {
 
     private SensorController mSensorController;
 
+    private long stillLimitSeconds=40;
+    private long queuePingThresholdMinutes=60;
+    private double queueAccuracyThreshold=50.0; // meters
+    private double queueDistanceThreshold=10.0; // meters
+
     private Location lastReceivedLocation;
     private ActivityData lastReceivedActivity = null;
-    private ActivityData dummyActivity;
     private ActivityType lastReceivedActType;
     private long inactivityTimer;
     private boolean inactivityTimerRunning = false;
 
-    private long stillLimitSeconds=40;
+    private Location lastQueuedLocation = null;
+    private ActivityType lastQueuedActType = ActivityType.STILL;
+    private long lastQueuedTime = 0;
+
+    private ActivityData dummyActivity;
 
     /* Constructor */
     public SensorFilter(SensorController sCntrl) {
@@ -58,13 +66,42 @@ public class SensorFilter {
     }
 
     private void filterOutgoing() {
-        // Don't send if accuracy is > x m.
-        // Don't send if activity is the same as previous and distance to previously queued < y m.
-        // Send anyway, if time after last queued is > z hours.
+        // Queue whatever, if time after last queued is > queuePingThresholdMinutes
+        if (lastQueuedTime > 0) {
+            if (System.currentTimeMillis() - lastQueuedTime > queuePingThresholdMinutes*60000) {
+                queueOutgoing();
+                return;
+            }
+        }
+        // Proceed if accuracy is < queueAccuracyThreshold m.
+        if (lastReceivedLocation.getAccuracy() <= queueAccuracyThreshold) {
+            // Queue if activity is different
+            if (lastReceivedActType != lastQueuedActType) {
+                queueOutgoing();
+                return;
+            }
+            // Queue when distance to previously queued > queueDistanceThreshold m.
+            if (lastQueuedLocation == null) {
+                queueOutgoing();
+                return;
+            } else {
+                if (lastQueuedLocation.distanceTo(lastReceivedLocation) >= queueDistanceThreshold) {
+                    queueOutgoing();
+                    return;
+                }
+            }
+        }
+    }
+
+    private void queueOutgoing() {
         ActivityData ad;
         if (lastReceivedActivity == null) ad = dummyActivity; else ad = lastReceivedActivity;
         LocationData ld = new LocationData(lastReceivedLocation.getAccuracy(),lastReceivedLocation.getLatitude(),lastReceivedLocation.getLongitude(),lastReceivedLocation.getTime());
         mPipelineThread.sendData(new DataPacket(ld, ad));
+
+        lastQueuedTime = System.currentTimeMillis();
+        lastQueuedLocation = lastReceivedLocation;
+        lastQueuedActType = lastReceivedActType;
     }
 
     private void addActivity(ActivityData a) {
