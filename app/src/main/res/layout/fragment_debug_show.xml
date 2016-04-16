@@ -24,7 +24,7 @@
                           android:layout_height="wrap_content"
                           android:layout_weight="1"
                           style="@android:style/TextAppearance.Large"
-                          android:text="@string/debug_show_service_label" />
+                          android:text="@string/service_state_label" />
                 <TextView android:id="@+id/debug_show_service_state"
                           style="@android:style/TextAppearance.Large"
                           android:textColor="@color/colorSubtitleText"

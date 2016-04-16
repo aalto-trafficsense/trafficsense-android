@@ -28,7 +28,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/debug_settings_ServiceStateLabel"/>
+                    android:text="@string/service_state_label"/>
 
                 <TextView android:id="@+id/debug_setting_ServiceStateIndicator"
                           style="@android:style/TextAppearance.Medium"

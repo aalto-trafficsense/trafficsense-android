@@ -1,6 +1,9 @@
 package fi.aalto.trafficsense.trafficsense.util;
 
+import android.content.res.Resources;
 import com.google.android.gms.location.DetectedActivity;
+import fi.aalto.trafficsense.trafficsense.R;
+import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
 
 public enum ActivityType {
     /* The following order is same as defined in DetectedActivity's constants, values: 0..9 */
@@ -55,5 +58,28 @@ public enum ActivityType {
     public static String getActivityTypeStringByReference(final int activityTypeReference) {
         return getActivityTypeByReference(activityTypeReference).name();
     }
+
+    public static String getActivityString(ActivityType type) {
+        Resources res = TrafficSenseApplication.getContext().getResources();
+        switch(type) {
+            case IN_VEHICLE:
+                return res.getString(R.string.in_vehicle);
+            case ON_BICYCLE:
+                return res.getString(R.string.on_bicycle);
+            case RUNNING:
+                return res.getString(R.string.running);
+            case STILL:
+                return res.getString(R.string.still);
+            case TILTING:
+                return res.getString(R.string.tilting);
+            case UNKNOWN:
+                return res.getString(R.string.unknown);
+            case WALKING:
+                return res.getString(R.string.walking);
+            default:
+                return res.getString(R.string.unidentifiable_activity, getActivityTypeAsInteger(type));
+        }
+    }
+
 
 }

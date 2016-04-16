@@ -13,13 +13,11 @@
     <string name="action_exit">Exit</string>
     <string name="action_debug">Debug</string>
 
+    <string name="service_state_label">Service State:</string>
+
     <string name="debug_settings_page_title">Settings</string>
     <string name="debug_settings_initialServiceStatus">Off</string>
     <string name="debug_settings_ToggleService">TrafficSense Service</string>
-    <string name="debug_settings_ServiceStateLabel">Service State:</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="debug_show_page_title">Trace</string>
     <string name="debug_show_activity_label">Activity:</string>
@@ -33,7 +31,10 @@
     <string name="debug_show_upload_label">Upload:</string>
     <string name="debug_show_upload_queue_length_label">Queue length:</string>
     <string name="debug_show_upload_latest_upload_label">Latest:</string>
-    <string name="debug_show_service_label">Service state:</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 
     <string name="in_vehicle">Vehicle</string>
     <string name="on_bicycle">Bicycle</string>
@@ -43,6 +44,13 @@
     <string name="unknown">Unknown</string>
     <string name="walking">Walking</string>
     <string name="unidentifiable_activity">Unidentified: %1$d</string>
+
+    <string name="service_state_starting">Starting</string>
+    <string name="service_state_running">Running</string>
+    <string name="service_state_sleeping">Sleeping</string>
+    <string name="service_state_stopping">Stopping</string>
+    <string name="service_state_stopped">Stopped</string>
+    <string name="service_state_unknown">Unknown</string>
 
     <string name="interval">Interval:</string>
     <string name="seconds">s.</string>

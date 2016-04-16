@@ -77,25 +77,7 @@ public class SensedActivity implements Parcelable {
     }
 
     public String getActivityString() {
-        Resources res = TrafficSenseApplication.getContext().getResources();
-        switch(Type) {
-            case IN_VEHICLE:
-                return res.getString(R.string.in_vehicle);
-            case ON_BICYCLE:
-                return res.getString(R.string.on_bicycle);
-            case RUNNING:
-                return res.getString(R.string.running);
-            case STILL:
-                return res.getString(R.string.still);
-            case TILTING:
-                return res.getString(R.string.tilting);
-            case UNKNOWN:
-                return res.getString(R.string.unknown);
-            case WALKING:
-                return res.getString(R.string.walking);
-            default:
-                return res.getString(R.string.unidentifiable_activity, Type);
-        }
+        return ActivityType.getActivityString(Type);
     }
 
     @Override
