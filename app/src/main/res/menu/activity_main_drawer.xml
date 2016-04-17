@@ -3,33 +3,37 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import"/>
+            android:id="@+id/nav_about"
+            android:icon="@drawable/ic_info_outline_24dp"
+            android:title="@string/navigation_about"/>
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery"/>
-        <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow"/>
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools"/>
+            android:id="@+id/nav_energy"
+            android:icon="@drawable/ic_directions_bike_24dp"
+            android:title="@string/navigation_energy_certificate"/>
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="@string/navigation_group2_title">
         <menu>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share"/>
+                android:id="@+id/nav_login"
+                android:icon="@drawable/ic_google_24dp"
+                android:title="@string/navigation_login"/>
             <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send"/>
+                android:id="@+id/nav_settings"
+                android:icon="@drawable/ic_settings_24dp"
+                android:title="@string/navigation_settings"/>
+            <item
+                android:id="@+id/nav_startup"
+                android:icon="@drawable/ic_cloud_queue_24dp"
+                android:title="@string/navigation_startservice"/>
+            <item
+                android:id="@+id/nav_shutdown"
+                android:icon="@drawable/ic_cloud_off_24dp"
+                android:title="@string/navigation_shutdown"/>
+            <item
+                android:id="@+id/nav_debug"
+                android:icon="@drawable/ic_bug_report_24dp"
+                android:title="@string/navigation_debug"/>
         </menu>
     </item>
 

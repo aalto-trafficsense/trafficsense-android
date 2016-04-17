@@ -22,7 +22,6 @@ import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_S
 public class DebugActivity extends AppCompatActivity {
     static final int NUM_TABS = 2;
 
-
     DebugPager mAdapter;
     ViewPager mViewPager;
 
@@ -61,30 +60,6 @@ public class DebugActivity extends AppCompatActivity {
         broadcastViewResumed(false);
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        if (id == R.id.action_exit) {
-            Timber.d("Exit pressed.");
-            // TODO MJR: Think of something more meaningful, finish doesn't really finish: http://stackoverflow.com/questions/3226495/how-to-exit-from-the-application-and-show-the-home-screen
-            finish();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     public class DebugPager extends FragmentPagerAdapter {
         public DebugPager(FragmentManager fm) {
