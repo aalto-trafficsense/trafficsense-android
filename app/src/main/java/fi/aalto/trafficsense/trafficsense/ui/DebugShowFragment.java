@@ -155,6 +155,9 @@ public class DebugShowFragment extends Fragment {
                     case InternalBroadcasts.KEY_SERVICE_STATE_UPDATE:
                         updateServiceState (intent);
                         break;
+                    case InternalBroadcasts.KEY_UPLOAD_STATE_UPDATE:
+                        updateUploadState(intent);
+                        break;
                     case InternalBroadcasts.KEY_LOCATION_UPDATE:
                         updateLocation(intent);
                         break;
@@ -164,9 +167,6 @@ public class DebugShowFragment extends Fragment {
                     case InternalBroadcasts.KEY_SENSORS_UPDATE:
                         updateLocation(intent);
                         updateActivity(intent);
-                        break;
-                    case InternalBroadcasts.KEY_UPLOAD_STATE_UPDATE:
-                        updateUploadState(intent);
                         break;
                 }
             }

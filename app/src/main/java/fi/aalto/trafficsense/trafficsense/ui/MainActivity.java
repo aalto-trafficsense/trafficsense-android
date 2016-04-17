@@ -7,8 +7,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.location.Location;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -19,14 +23,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.*;
 import fi.aalto.trafficsense.trafficsense.R;
+import fi.aalto.trafficsense.trafficsense.util.ActivityData;
+import fi.aalto.trafficsense.trafficsense.util.ActivityType;
 import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
 
 public class MainActivity extends AppCompatActivity
@@ -36,6 +42,13 @@ public class MainActivity extends AppCompatActivity
     private BroadcastReceiver mBroadcastReceiver;
     private ActionBarDrawerToggle mDrawerToggle;
     private GoogleMap mMap;
+    private LatLngBounds mBounds;
+    private Marker mMarker=null;
+    private ActivityType latestActivityType=ActivityType.STILL;
+    private boolean showTraffic=false;
+
+    private LatLng initPosition=(new LatLng(60.1841396, 24.8300838));
+    private float initZoom=12;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,19 +56,23 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Toggle traffic display
+                if (mMap!=null) {
+                    showTraffic = !showTraffic;
+                    mMap.setTrafficEnabled(showTraffic);
+                }
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
-//            }
-//        });
+            }
+        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerToggle = new ActionBarDrawerToggle(
                 this, drawer, myToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        // drawer.setDrawerListener(toggle);
         drawer.addDrawerListener(mDrawerToggle);
 
         setSupportActionBar(myToolbar);
@@ -71,33 +88,16 @@ public class MainActivity extends AppCompatActivity
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         if (mapFragment != null) {
-            mapFragment.getMapAsync(new OnMapReadyCallback() {
-                @Override
-                public void onMapReady(GoogleMap map) {
-                    loadMap(map);
-                }
-            });
+            mapFragment.getMapAsync(this);
         } else {
             Toast.makeText(this, "Error - Map Fragment was null!!", Toast.LENGTH_SHORT).show();
         }
-
-        // mapFragment.getMapAsync(this);
-
 
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
         initBroadcastReceiver();
 
     }
 
-    protected void loadMap(GoogleMap googleMap) {
-        mMap = googleMap;
-        if (mMap != null) {
-            // Map is ready
-            Toast.makeText(this, "Map Fragment was loaded properly!", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "Error - Map was null!!", Toast.LENGTH_SHORT).show();
-        }
-    }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -215,10 +215,8 @@ public class MainActivity extends AppCompatActivity
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-         LatLng sydney = new LatLng(-34, 151);
-         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+//         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initPosition, initZoom));
     }
 
 
@@ -237,15 +235,87 @@ public class MainActivity extends AppCompatActivity
                     case InternalBroadcasts.KEY_REQUEST_SIGN_IN:
                         openActivity(LoginActivity.class);
                         break;
+                    case InternalBroadcasts.KEY_LOCATION_UPDATE:
+                        updateLocation(intent);
+                        break;
+                    case InternalBroadcasts.KEY_ACTIVITY_UPDATE:
+                        updateActivity(intent);
+                        break;
+                    case InternalBroadcasts.KEY_SENSORS_UPDATE:
+                        updateLocation(intent);
+                        updateActivity(intent);
+                        break;
                 }
             }
         };
 
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(InternalBroadcasts.KEY_REQUEST_SIGN_IN);
+        intentFilter.addAction(InternalBroadcasts.KEY_LOCATION_UPDATE);
+        intentFilter.addAction(InternalBroadcasts.KEY_ACTIVITY_UPDATE);
+        intentFilter.addAction(InternalBroadcasts.KEY_SENSORS_UPDATE);
 
         if (mLocalBroadcastManager != null) {
             mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, intentFilter);
+        }
+    }
+
+    private void updateLocation (Intent i) {
+        if (i.hasExtra(InternalBroadcasts.KEY_LOCATION_UPDATE) & mMap != null) {
+            Location l = i.getParcelableExtra(InternalBroadcasts.KEY_LOCATION_UPDATE);
+            LatLng myPos = new LatLng(l.getLatitude(), l.getLongitude());
+            if (mMarker == null) {
+                mMarker = mMap.addMarker(new MarkerOptions().position(myPos).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_activity_still)));
+            } else {
+                mMarker.setPosition(myPos);
+            }
+
+            if (mBounds == null) {
+                //This is the current user-viewable region of the map
+                mBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
+            }
+            if (!mBounds.contains(myPos)) {
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(myPos));
+                mBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
+            }
+
+        }
+    }
+
+    private void updateActivity (Intent i) {
+        if (i.hasExtra(InternalBroadcasts.KEY_ACTIVITY_UPDATE)) {
+            ActivityData a = i.getParcelableExtra(InternalBroadcasts.KEY_ACTIVITY_UPDATE);
+            ActivityType topActivity=a.getFirst().Type;
+
+            if ((mMarker != null) && (topActivity != latestActivityType)) {
+                switch (topActivity) {
+                    case IN_VEHICLE:
+                        mMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_activity_in_vehicle));
+                        break;
+                    case ON_BICYCLE:
+                        mMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_activity_on_bicycle));
+                        break;
+                    case RUNNING:
+                        mMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_activity_running));
+                        break;
+                    case STILL:
+                        mMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_activity_still));
+                        break;
+                    case TILTING:
+                        mMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_activity_tilting));
+                        break;
+                    case UNKNOWN:
+                        mMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_activity_unknown));
+                        break;
+                    case WALKING:
+                        mMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_activity_walking));
+                        break;
+                    default:
+                        mMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_activity_unknown));
+                        break;
+                }
+                latestActivityType = topActivity;
+            }
         }
     }
 

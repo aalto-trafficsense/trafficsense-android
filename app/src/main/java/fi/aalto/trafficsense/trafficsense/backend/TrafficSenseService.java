@@ -155,10 +155,10 @@ public class TrafficSenseService extends Service {
                 final String action = intent.getAction();
 
                 switch (action) {
-                    case InternalBroadcasts.KEY_DEBUG_SETTINGS_REQ:
                     case InternalBroadcasts.KEY_DEBUG_SHOW_REQ:
-                        updateServiceState(mServiceState);
                         updateUploadState(mUploadState);
+                    case InternalBroadcasts.KEY_DEBUG_SETTINGS_REQ:
+                        updateServiceState(mServiceState);
                         break;
                     case InternalBroadcasts.KEY_VIEW_RESUMED:
                         viewActive = true;
