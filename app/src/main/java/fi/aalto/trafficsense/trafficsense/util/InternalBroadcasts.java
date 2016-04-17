@@ -32,7 +32,8 @@ public class InternalBroadcasts {
     public static final String KEY_SERVICE_GOING_TO_SLEEP = "GOING_TO_SLEEP";
     public static final String KEY_SERVICE_WAKING_UP = "WAKING_UP";
     public static final String KEY_SERVICE_STATE_UPDATE = "SERVICE_STATE_UPDATE";
-    public static final String LABEL_SERVICE_STATE_INDEX = "STATE_IDX";
+    public static final String KEY_UPLOAD_STATE_UPDATE = "UPLOAD_STATE_UPDATE";
+    public static final String LABEL_STATE_INDEX = "STATE_IDX";
 
     public static final String KEY_SERVICE_START = "SERVICE_START";
     public static final String KEY_SERVICE_STOP = "SERVICE_STOP";

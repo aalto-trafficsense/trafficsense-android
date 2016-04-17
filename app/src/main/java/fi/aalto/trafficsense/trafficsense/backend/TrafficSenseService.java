@@ -12,14 +12,12 @@ import com.google.common.base.Optional;
 import fi.aalto.trafficsense.trafficsense.backend.backend_util.PlayServiceInterface;
 import fi.aalto.trafficsense.trafficsense.backend.uploader.RegularRoutesPipeline;
 import fi.aalto.trafficsense.trafficsense.util.*;
-import timber.log.Timber;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-import static android.app.Activity.RESULT_OK;
-import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_SERVICE_STATE_INDEX;
+import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_STATE_INDEX;
 import static fi.aalto.trafficsense.trafficsense.util.TSServiceState.RUNNING;
-import static fi.aalto.trafficsense.trafficsense.util.TSServiceState.SLEEPING;
+import static fi.aalto.trafficsense.trafficsense.util.TSUploadState.*;
 
 /**
  * Created by mikko.rinne@aalto.fi on 06/04/16.
@@ -33,6 +31,7 @@ public class TrafficSenseService extends Service {
     private PlayServiceInterface mPlayServiceInterface;
     private static RegularRoutesPipeline mPipeline;
     private static TSServiceState mServiceState;
+    private static TSUploadState mUploadState;
     private static LocalBroadcastManager mLocalBroadcastManager;
     private BroadcastReceiver mBroadcastReceiver;
     private BackendStorage mStorage;
@@ -86,8 +85,13 @@ public class TrafficSenseService extends Service {
     private void testUploadEnabled() {
         if (mStorage.isUserIdAvailable() && mStorage.isClientNumberAvailable()) {
             RegularRoutesPipeline.setUploadEnabledState(true);
+            updateUploadState(READY);
         } else {
             RegularRoutesPipeline.setUploadEnabledState(false);
+            TSUploadState testState = SWITCHEDOFF;
+            if (!mStorage.isUserIdAvailable()) testState=SIGNEDOUT;
+            if (!mStorage.isClientNumberAvailable()) testState=NOCLIENTNUMBER;
+            updateUploadState(testState);
         }
     }
 
@@ -154,6 +158,7 @@ public class TrafficSenseService extends Service {
                     case InternalBroadcasts.KEY_DEBUG_SETTINGS_REQ:
                     case InternalBroadcasts.KEY_DEBUG_SHOW_REQ:
                         updateServiceState(mServiceState);
+                        updateUploadState(mUploadState);
                         break;
                     case InternalBroadcasts.KEY_VIEW_RESUMED:
                         viewActive = true;
@@ -200,12 +205,29 @@ public class TrafficSenseService extends Service {
         mServiceState = newState;
         if (mLocalBroadcastManager!=null && isViewActive())
         {
-            Intent intent = new Intent(InternalBroadcasts.KEY_SERVICE_STATE_UPDATE);
             Bundle args = new Bundle();
-            args.putInt(LABEL_SERVICE_STATE_INDEX,newState.ordinal());
+            args.putInt(LABEL_STATE_INDEX,newState.ordinal());
+            broadcastNewState(InternalBroadcasts.KEY_SERVICE_STATE_UPDATE, args);
+        }
+    }
+
+    // Update upload state
+    private static void updateUploadState(TSUploadState newState) {
+        mUploadState = newState;
+        if (mLocalBroadcastManager!=null && isViewActive())
+        {
+            Bundle args = new Bundle();
+            args.putInt(LABEL_STATE_INDEX,newState.ordinal());
+            broadcastNewState(InternalBroadcasts.KEY_UPLOAD_STATE_UPDATE, args);
+
+        }
+    }
+
+    // Broadcast new state
+    private static void broadcastNewState(String msg, Bundle args) {
+            Intent intent = new Intent(msg);
             intent.putExtras(args);
             mLocalBroadcastManager.sendBroadcast(intent);
-        }
     }
 
 }

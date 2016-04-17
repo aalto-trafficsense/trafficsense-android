@@ -11,7 +11,7 @@ import fi.aalto.trafficsense.trafficsense.util.LocalBinderServiceConnection;
 import fi.aalto.trafficsense.trafficsense.util.TSServiceState;
 import timber.log.Timber;
 
-import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_SERVICE_STATE_INDEX;
+import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_STATE_INDEX;
 import static fi.aalto.trafficsense.trafficsense.util.TSServiceState.*;
 
 /**
@@ -140,7 +140,7 @@ public class TrafficSenseApplication extends Application {
         {
             Intent intent = new Intent(InternalBroadcasts.KEY_SERVICE_STATE_UPDATE);
             Bundle args = new Bundle();
-            args.putInt(LABEL_SERVICE_STATE_INDEX,mTSServiceState.ordinal());
+            args.putInt(LABEL_STATE_INDEX,mTSServiceState.ordinal());
             intent.putExtras(args);
             mLocalBroadcastManager.sendBroadcast(intent);
         }
@@ -152,7 +152,7 @@ public class TrafficSenseApplication extends Application {
 //        {
 //            Intent intent = new Intent(InternalBroadcasts.KEY_DEBUG_SETTINGS);
 //            Bundle args = new Bundle();
-//            args.putInt(LABEL_SERVICE_STATE_INDEX,mServiceState.ordinal());
+//            args.putInt(LABEL_STATE_INDEX,mServiceState.ordinal());
 //            intent.putExtras(args);
 //            mLocalBroadcastManager.sendBroadcast(intent);
 //        }
@@ -164,7 +164,7 @@ public class TrafficSenseApplication extends Application {
 //        {
 //            Intent intent = new Intent(InternalBroadcasts.KEY_DEBUG_SHOW);
 //            Bundle args = new Bundle();
-//            args.putInt(LABEL_SERVICE_STATE_INDEX,mServiceState.ordinal());
+//            args.putInt(LABEL_STATE_INDEX,mServiceState.ordinal());
 //            intent.putExtras(args);
 //            mLocalBroadcastManager.sendBroadcast(intent);
 //        }

@@ -4,8 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
@@ -21,12 +19,8 @@ import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
 import fi.aalto.trafficsense.trafficsense.util.TSServiceState;
 import timber.log.Timber;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.KEY_DEBUG_SETTINGS_REQ;
-import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_SERVICE_STATE_INDEX;
+import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_STATE_INDEX;
 
 /**
  * Fragment to host debug setting switches
@@ -166,7 +160,7 @@ public class DebugSettingsFragment extends Fragment {
                         // Add other stuff here later
                         break;
                     case InternalBroadcasts.KEY_SERVICE_STATE_UPDATE:
-                        TSServiceState newState = TSServiceState.values()[intent.getIntExtra(LABEL_SERVICE_STATE_INDEX,0)];
+                        TSServiceState newState = TSServiceState.values()[intent.getIntExtra(LABEL_STATE_INDEX,0)];
                         mServiceStatusTextField.setText(TSServiceState.getServiceStateString(newState));
                         updateServiceSwitchState(newState);
                         break;

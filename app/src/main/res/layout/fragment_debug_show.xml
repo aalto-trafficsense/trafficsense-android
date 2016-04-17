@@ -132,32 +132,39 @@
         android:padding="3dp"
         android:background="@drawable/border">
 
-        <TextView android:id="@+id/debug_show_upload_label"
-                  android:textColor="@color/colorSubtitleText"
-                  android:layout_width="fill_parent"
-                  android:layout_height="wrap_content"
-                  style="@android:style/TextAppearance.Large"
-                  android:background="@color/colorSubtitleBackground"
-                  android:text="@string/debug_show_upload_label" />
-
         <TableLayout android:id="@+id/debug_show_upload"
                      android:layout_width="fill_parent"
-                     android:layout_height="wrap_content"
-                     android:layout_below="@+id/debug_show_upload_label">
+                     android:layout_height="wrap_content">
 
-        <TableRow>
-            <TextView style="@android:style/TextAppearance.Medium"
-                android:text="@string/debug_show_upload_queue_length_label"
-                android:id="@+id/debug_show_queue_length_label"/>
-            <TextView
-                android:id="@+id/debug_show_queue_length"
-                android:layout_weight="2"
-                android:gravity="end"/>
-        </TableRow>
+            <TableRow>
+                <TextView android:id="@+id/debug_show_upload_label"
+                          android:textColor="@color/colorSubtitleText"
+                          android:background="@color/colorSubtitleBackground"
+                          android:layout_width="fill_parent"
+                          android:layout_height="wrap_content"
+                          android:layout_weight="1"
+                          style="@android:style/TextAppearance.Large"
+                          android:text="@string/debug_show_upload_label" />
+                <TextView android:id="@+id/debug_show_upload_state"
+                          style="@android:style/TextAppearance.Large"
+                          android:textColor="@color/colorSubtitleText"
+                          android:background="@color/colorSubtitleBackground"
+                          android:layout_weight="2"
+                          android:gravity="end"/>
+            </TableRow>
             <TableRow>
                 <TextView style="@android:style/TextAppearance.Medium"
-                    android:text="@string/debug_show_upload_latest_upload_label"
-                    android:id="@+id/debug_show_latest_upload_label"/>
+                          android:text="@string/debug_show_upload_queue_length_label"
+                          android:id="@+id/debug_show_queue_length_label"/>
+                <TextView
+                    android:id="@+id/debug_show_queue_length"
+                    android:layout_weight="2"
+                    android:gravity="end"/>
+            </TableRow>
+            <TableRow>
+                <TextView style="@android:style/TextAppearance.Medium"
+                          android:text="@string/debug_show_upload_latest_upload_label"
+                          android:id="@+id/debug_show_latest_upload_label"/>
                 <TextView
                     android:id="@+id/debug_show_latest_upload"
                     android:layout_weight="2"

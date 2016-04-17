@@ -154,6 +154,12 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+    <string name="upload_state_switchedoff">Switched off</string>
+    <string name="upload_state_signedout">Signed out</string>
+    <string name="upload_state_noclientnumber">No client number obtained</string>
+    <string name="upload_state_ready">Ready</string>
+    <string name="upload_state_inprogress">In progress</string>
+    <string name="upload_state_unknown">Unknown state</string>
 
 
 </resources>

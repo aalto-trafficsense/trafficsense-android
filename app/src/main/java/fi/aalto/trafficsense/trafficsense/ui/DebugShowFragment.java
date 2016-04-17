@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
@@ -14,22 +13,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.widget.Switch;
 import android.widget.TextView;
-import com.google.android.gms.location.DetectedActivity;
 import fi.aalto.trafficsense.trafficsense.R;
-import fi.aalto.trafficsense.trafficsense.util.ActivityData;
-import fi.aalto.trafficsense.trafficsense.util.ActivityType;
-import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
-import fi.aalto.trafficsense.trafficsense.util.TSServiceState;
-import timber.log.Timber;
+import fi.aalto.trafficsense.trafficsense.util.*;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.KEY_DEBUG_SETTINGS_REQ;
-import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_SERVICE_STATE_INDEX;
+import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_STATE_INDEX;
+import static fi.aalto.trafficsense.trafficsense.util.TSServiceState.SLEEPING;
 import static java.text.DateFormat.getTimeInstance;
 
 /**
@@ -59,6 +51,10 @@ public class DebugShowFragment extends Fragment {
     private TextView mLocationAccuracyLabelTextField;
     private TextView mLocationAccuracyTextField;
     private TextView mLocationTimeTextField;
+
+    private TextView mUploadLabelTextField;
+    private TextView mUploadStatusTextField;
+
 
     /* Display values */
     private TSServiceState DS_ServiceState;
@@ -130,6 +126,10 @@ public class DebugShowFragment extends Fragment {
         mLocationTimeTextField = (TextView) getActivity().findViewById(R.id.debug_show_location_time);
         mLocationAccuracyLabelTextField = (TextView) getActivity().findViewById(R.id.debug_show_location_accuracy_label);
         mLocationAccuracyTextField = (TextView) getActivity().findViewById(R.id.debug_show_location_accuracy);
+
+        mUploadLabelTextField = (TextView) getActivity().findViewById(R.id.debug_show_upload_label);
+        mUploadStatusTextField = (TextView) getActivity().findViewById(R.id.debug_show_upload_state);
+
     }
 
     // Broadcaster
@@ -165,12 +165,16 @@ public class DebugShowFragment extends Fragment {
                         updateLocation(intent);
                         updateActivity(intent);
                         break;
+                    case InternalBroadcasts.KEY_UPLOAD_STATE_UPDATE:
+                        updateUploadState(intent);
+                        break;
                 }
             }
         };
 
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(InternalBroadcasts.KEY_SERVICE_STATE_UPDATE);
+        intentFilter.addAction(InternalBroadcasts.KEY_UPLOAD_STATE_UPDATE);
         intentFilter.addAction(InternalBroadcasts.KEY_LOCATION_UPDATE);
         intentFilter.addAction(InternalBroadcasts.KEY_ACTIVITY_UPDATE);
         intentFilter.addAction(InternalBroadcasts.KEY_SENSORS_UPDATE);
@@ -180,7 +184,7 @@ public class DebugShowFragment extends Fragment {
     }
 
     private void updateServiceState (Intent i) {
-        TSServiceState newState = TSServiceState.values()[i.getIntExtra(LABEL_SERVICE_STATE_INDEX,0)];
+        TSServiceState newState = TSServiceState.values()[i.getIntExtra(LABEL_STATE_INDEX,0)];
         mServiceStatusTextField.setText(TSServiceState.getServiceStateString(newState));
         switch (newState) {
             case STOPPED:
@@ -198,6 +202,35 @@ public class DebugShowFragment extends Fragment {
         }
 
     }
+
+    private void updateUploadState (Intent i) {
+        TSUploadState newState = TSUploadState.values()[i.getIntExtra(LABEL_STATE_INDEX,0)];
+        mUploadStatusTextField.setText(TSUploadState.getUploadStateString(newState));
+        switch (newState) {
+            case SWITCHEDOFF:
+                setTextColors(mServiceLabelTextField, R.color.grayText, R.color.white);
+                setTextColors(mServiceStatusTextField, R.color.grayText, R.color.white);
+                break;
+            case SIGNEDOUT:
+                setTextColors(mServiceLabelTextField, R.color.normalText, R.color.colorBus);
+                setTextColors(mServiceStatusTextField, R.color.normalText, R.color.colorBus);
+                break;
+            case NOCLIENTNUMBER:
+                setTextColors(mServiceLabelTextField, R.color.colorSubtitleText, R.color.colorInVehicle);
+                setTextColors(mServiceStatusTextField, R.color.colorSubtitleText, R.color.colorInVehicle);
+                break;
+            case INPROGRESS:
+                setTextColors(mServiceLabelTextField, R.color.normalText, R.color.colorRunning);
+                setTextColors(mServiceStatusTextField, R.color.normalText, R.color.colorRunning);
+                break;
+            default:
+                setTextColors(mServiceLabelTextField, R.color.colorSubtitleText, R.color.colorWalking);
+                setTextColors(mServiceStatusTextField, R.color.colorSubtitleText, R.color.colorWalking);
+                break;
+        }
+
+    }
+
 
     private void setTextColors(TextView view, int text, int background) {
         view.setTextColor(mRes.getColor(text));
