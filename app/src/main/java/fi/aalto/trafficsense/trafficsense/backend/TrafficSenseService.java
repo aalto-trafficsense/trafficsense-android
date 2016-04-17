@@ -158,6 +158,7 @@ public class TrafficSenseService extends Service {
                     case InternalBroadcasts.KEY_DEBUG_SHOW_REQ:
                         updateUploadState(mUploadState);
                     case InternalBroadcasts.KEY_DEBUG_SETTINGS_REQ:
+                    case InternalBroadcasts.KEY_MAIN_ACTIVITY_REQ:
                         updateServiceState(mServiceState);
                         break;
                     case InternalBroadcasts.KEY_VIEW_RESUMED:
@@ -187,6 +188,7 @@ public class TrafficSenseService extends Service {
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(InternalBroadcasts.KEY_DEBUG_SETTINGS_REQ);
         intentFilter.addAction(InternalBroadcasts.KEY_DEBUG_SHOW_REQ);
+        intentFilter.addAction(InternalBroadcasts.KEY_MAIN_ACTIVITY_REQ);
         intentFilter.addAction(InternalBroadcasts.KEY_VIEW_RESUMED);
         intentFilter.addAction(InternalBroadcasts.KEY_VIEW_PAUSED);
         intentFilter.addAction(InternalBroadcasts.KEY_CLIENT_NUMBER_FETCH_COMPLETED);

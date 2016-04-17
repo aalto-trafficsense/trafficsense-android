@@ -117,6 +117,7 @@ public class TrafficSenseApplication extends Application {
                         break;
                     case InternalBroadcasts.KEY_DEBUG_SETTINGS_REQ:
                     case InternalBroadcasts.KEY_DEBUG_SHOW_REQ:
+                    case InternalBroadcasts.KEY_MAIN_ACTIVITY_REQ:
                         if (mTSServiceState == STOPPED) updateServiceState();
                         break;
                 }
@@ -128,6 +129,7 @@ public class TrafficSenseApplication extends Application {
         intentFilter.addAction(InternalBroadcasts.KEY_SERVICE_STOP);
         intentFilter.addAction(InternalBroadcasts.KEY_DEBUG_SETTINGS_REQ);
         intentFilter.addAction(InternalBroadcasts.KEY_DEBUG_SHOW_REQ);
+        intentFilter.addAction(InternalBroadcasts.KEY_MAIN_ACTIVITY_REQ);
 
         if (mLocalBroadcastManager != null) {
             mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, intentFilter);

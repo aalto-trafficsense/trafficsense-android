@@ -32,9 +32,11 @@ import android.widget.Toast;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 import fi.aalto.trafficsense.trafficsense.R;
-import fi.aalto.trafficsense.trafficsense.util.ActivityData;
-import fi.aalto.trafficsense.trafficsense.util.ActivityType;
-import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
+import fi.aalto.trafficsense.trafficsense.util.*;
+import timber.log.Timber;
+
+import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.KEY_DEBUG_SETTINGS_REQ;
+import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_STATE_INDEX;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,OnMapReadyCallback {
@@ -43,7 +45,8 @@ public class MainActivity extends AppCompatActivity
     private BroadcastReceiver mBroadcastReceiver;
     private ActionBarDrawerToggle mDrawerToggle;
     private Context mContext;
-    private Drawable mFabDrw;
+    private MenuItem mStartupItem;
+    private MenuItem mShutdownItem;
     private FloatingActionButton mFab;
     private GoogleMap mMap;
     private LatLngBounds mBounds;
@@ -88,9 +91,10 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // Hide some items:
-        Menu nav_Menu = navigationView.getMenu();
-        nav_Menu.findItem(R.id.nav_startup).setVisible(false);
+        // Fetch active menu items:
+        Menu navMenu = navigationView.getMenu();
+        mStartupItem = navMenu.findItem(R.id.nav_startup);
+        mShutdownItem = navMenu.findItem(R.id.nav_shutdown);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -118,6 +122,8 @@ public class MainActivity extends AppCompatActivity
     {
         super.onResume();
         broadcastViewResumed(true);
+        BroadcastHelper.simpleBroadcast(mLocalBroadcastManager, InternalBroadcasts.KEY_MAIN_ACTIVITY_REQ);
+
     }
 
     @Override
@@ -199,6 +205,12 @@ public class MainActivity extends AppCompatActivity
                 openActivity(SettingsActivity.class);
                 break;
             case R.id.nav_shutdown:
+                BroadcastHelper.simpleBroadcast(mLocalBroadcastManager, InternalBroadcasts.KEY_SERVICE_STOP);
+                fixServiceStateToMenu(false);
+                break;
+            case R.id.nav_startup:
+                BroadcastHelper.simpleBroadcast(mLocalBroadcastManager, InternalBroadcasts.KEY_SERVICE_START);
+                fixServiceStateToMenu(true);
                 break;
             case R.id.nav_debug:
             case R.id.action_debug:
@@ -210,6 +222,19 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    private void fixServiceStateToMenu(boolean running) {
+        if (running) {
+            mShutdownItem.setVisible(true);
+            mStartupItem.setVisible(false);
+            if (mMarker != null) mMarker.setVisible(true);
+        } else {
+            mStartupItem.setVisible(true);
+            mShutdownItem.setVisible(false);
+            if (mMarker != null) mMarker.setVisible(false);
+        }
+    }
+
 
     /**
      * Manipulates the map once available.
@@ -254,6 +279,9 @@ public class MainActivity extends AppCompatActivity
                         updateLocation(intent);
                         updateActivity(intent);
                         break;
+                    case InternalBroadcasts.KEY_SERVICE_STATE_UPDATE:
+                        updateServiceState (intent);
+                        break;
                 }
             }
         };
@@ -263,6 +291,7 @@ public class MainActivity extends AppCompatActivity
         intentFilter.addAction(InternalBroadcasts.KEY_LOCATION_UPDATE);
         intentFilter.addAction(InternalBroadcasts.KEY_ACTIVITY_UPDATE);
         intentFilter.addAction(InternalBroadcasts.KEY_SENSORS_UPDATE);
+        intentFilter.addAction(InternalBroadcasts.KEY_SERVICE_STATE_UPDATE);
 
         if (mLocalBroadcastManager != null) {
             mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, intentFilter);
@@ -332,6 +361,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void updateServiceState (Intent i) {
+        TSServiceState newState = TSServiceState.values()[i.getIntExtra(LABEL_STATE_INDEX,0)];
+        if (newState == TSServiceState.STOPPED) fixServiceStateToMenu(false);
+        else fixServiceStateToMenu(true);
+    }
 
     // Update (viewing) activity status to service
     public void broadcastViewResumed(boolean resumed) {

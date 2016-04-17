@@ -15,6 +15,7 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import fi.aalto.trafficsense.trafficsense.R;
+import fi.aalto.trafficsense.trafficsense.util.BroadcastHelper;
 import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
 import fi.aalto.trafficsense.trafficsense.util.TSServiceState;
 import timber.log.Timber;
@@ -74,7 +75,7 @@ public class DebugSettingsFragment extends Fragment {
         super.onResume();
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
         initBroadcastReceiver();
-        simpleBroadcast(KEY_DEBUG_SETTINGS_REQ);
+        BroadcastHelper.simpleBroadcast(mLocalBroadcastManager, KEY_DEBUG_SETTINGS_REQ);
     }
 
     @Override
@@ -111,10 +112,10 @@ public class DebugSettingsFragment extends Fragment {
     private void toggleServiceState(boolean start) {
         if (start) {
             Timber.d("Service start switch on.");
-            simpleBroadcast(InternalBroadcasts.KEY_SERVICE_START);
+            BroadcastHelper.simpleBroadcast(mLocalBroadcastManager, InternalBroadcasts.KEY_SERVICE_START);
         } else {
             Timber.d("Service start switch off.");
-            simpleBroadcast(InternalBroadcasts.KEY_SERVICE_STOP);
+            BroadcastHelper.simpleBroadcast(mLocalBroadcastManager, InternalBroadcasts.KEY_SERVICE_STOP);
         }
 
     }
@@ -139,14 +140,14 @@ public class DebugSettingsFragment extends Fragment {
 
     }
 
-    // Broadcaster
-    private void simpleBroadcast(String messageType) {
-        if (mLocalBroadcastManager != null)
-        {
-            Intent intent = new Intent(messageType);
-            mLocalBroadcastManager.sendBroadcast(intent);
-        }
-    }
+//    // Broadcaster
+//    private void simpleBroadcast(String messageType) {
+//        if (mLocalBroadcastManager != null)
+//        {
+//            Intent intent = new Intent(messageType);
+//            mLocalBroadcastManager.sendBroadcast(intent);
+//        }
+//    }
 
     /* Local broadcast receiver */
     private void initBroadcastReceiver() {

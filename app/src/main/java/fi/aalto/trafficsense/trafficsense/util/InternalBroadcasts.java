@@ -46,6 +46,7 @@ public class InternalBroadcasts {
     public static final String KEY_DEBUG_SETTINGS = "DEBUG_SETTINGS";
     public static final String KEY_DEBUG_SHOW_REQ = "DEBUG_SHOW_REQ";
     public static final String KEY_DEBUG_SHOW = "DEBUG_SHOW";
+    public static final String KEY_MAIN_ACTIVITY_REQ = "MAIN_ACTIVITY_REQ";
 
     public static final String KEY_VIEW_PAUSED = "VIEW_PAUSED";
     public static final String KEY_VIEW_RESUMED = "VIEW_RESUMED";
