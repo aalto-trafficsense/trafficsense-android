@@ -7,7 +7,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -16,6 +19,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -25,10 +29,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.util.ActivityData;
@@ -41,13 +42,15 @@ public class MainActivity extends AppCompatActivity
     private LocalBroadcastManager mLocalBroadcastManager;
     private BroadcastReceiver mBroadcastReceiver;
     private ActionBarDrawerToggle mDrawerToggle;
-    private Resources mRes;
+    private Context mContext;
+    private Drawable mFabDrw;
     private FloatingActionButton mFab;
     private GoogleMap mMap;
     private LatLngBounds mBounds;
     private Marker mMarker=null;
     private ActivityType latestActivityType=ActivityType.STILL;
     private boolean showTraffic=false;
+    private boolean mapToolbarEnabled=false;
 
     private LatLng initPosition=(new LatLng(60.1841396, 24.8300838));
     private float initZoom=12;
@@ -55,13 +58,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = this;
         setContentView(R.layout.activity_main);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
 
-        mRes = this.getResources();
-
         mFab = (FloatingActionButton) findViewById(R.id.fab);
-        mFab.setRippleColor(mRes.getColor(R.color.white));
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -69,8 +70,8 @@ public class MainActivity extends AppCompatActivity
                 if (mMap!=null) {
                     showTraffic = !showTraffic;
                     mMap.setTrafficEnabled(showTraffic);
-                    if (showTraffic) mFab.setRippleColor(mRes.getColor(R.color.black));
-                    else mFab.setRippleColor(mRes.getColor(R.color.white));
+                    if (showTraffic) mFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(mContext, R.color.colorInVehicle)));
+                    else mFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(mContext, R.color.white)));
                 }
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
@@ -285,6 +286,10 @@ public class MainActivity extends AppCompatActivity
             if (!mBounds.contains(myPos)) {
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(myPos));
                 mBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
+                if (!mapToolbarEnabled) { // do this only once
+                    mMap.getUiSettings().setMapToolbarEnabled(true);
+                    mapToolbarEnabled = true;
+                }
             }
 
         }
