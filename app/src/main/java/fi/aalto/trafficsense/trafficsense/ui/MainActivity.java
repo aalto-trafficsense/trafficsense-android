@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity
     private LocalBroadcastManager mLocalBroadcastManager;
     private BroadcastReceiver mBroadcastReceiver;
     private ActionBarDrawerToggle mDrawerToggle;
+    private Resources mRes;
+    private FloatingActionButton mFab;
     private GoogleMap mMap;
     private LatLngBounds mBounds;
     private Marker mMarker=null;
@@ -56,14 +58,19 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mRes = this.getResources();
+
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mFab.setRippleColor(mRes.getColor(R.color.white));
+        mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Toggle traffic display
                 if (mMap!=null) {
                     showTraffic = !showTraffic;
                     mMap.setTrafficEnabled(showTraffic);
+                    if (showTraffic) mFab.setRippleColor(mRes.getColor(R.color.black));
+                    else mFab.setRippleColor(mRes.getColor(R.color.white));
                 }
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
@@ -130,12 +137,13 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
+    // MJR: Removing the options menu for now - everything in the drawer
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.main, menu);
+//        return true;
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -148,20 +156,20 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
-        int id = item.getItemId();
-
-        switch (id) {
-            case R.id.action_about:
-                openActivity(AboutActivity.class);
-                return true;
-            case R.id.action_exit:
-                finish();
-                return true;
-            case R.id.action_debug:
-                openActivity(DebugActivity.class);
-                return true;
-
-        }
+//        int id = item.getItemId();
+//
+//        switch (id) {
+//            case R.id.action_about:
+//                openActivity(AboutActivity.class);
+//                return true;
+//            case R.id.action_exit:
+//                finish();
+//                return true;
+//            case R.id.action_debug:
+//                openActivity(DebugActivity.class);
+//                return true;
+//
+//        }
 
         return super.onOptionsItemSelected(item);
     }

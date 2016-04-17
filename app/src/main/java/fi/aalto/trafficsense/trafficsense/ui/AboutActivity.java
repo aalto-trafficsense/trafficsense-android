@@ -25,7 +25,7 @@ public class AboutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_about);
-        setupActionBar();
+        // setupActionBar();
 
         final View controlsView = findViewById(R.id.abt_Buttons);
         final View titleView = findViewById(R.id.abt_pageTitleField);
