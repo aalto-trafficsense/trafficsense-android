@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity
     private GoogleMap mMap;
     private LatLngBounds mBounds;
     private Marker mMarker=null;
+    private Circle mCircle=null;
     private ActivityType latestActivityType=ActivityType.STILL;
     private boolean showTraffic=false;
     private boolean mapToolbarEnabled=false;
@@ -297,8 +298,25 @@ public class MainActivity extends AppCompatActivity
             LatLng myPos = new LatLng(l.getLatitude(), l.getLongitude());
             if (mMarker == null) {
                 mMarker = mMap.addMarker(new MarkerOptions().position(myPos).icon(BitmapDescriptorFactory.fromResource(ActivityType.getActivityIcon(latestActivityType))));
+
             } else {
                 mMarker.setPosition(myPos);
+            }
+            if (l.getAccuracy() > 50.0) {
+                if (mCircle == null) {
+                    CircleOptions circleOptions = new CircleOptions()
+                            .center(myPos)
+                            .radius(l.getAccuracy()).strokeColor(R.color.lightBlue);
+                    mCircle = mMap.addCircle(circleOptions);
+                } else {
+                    mCircle.setRadius(l.getAccuracy());
+                    mCircle.setCenter(myPos);
+                }
+            } else { // Accuracy <= 50.0 - no circle
+                if (mCircle != null) {
+                    mCircle.remove();
+                    mCircle = null;
+                }
             }
 
             if (mBounds == null) {
@@ -308,10 +326,6 @@ public class MainActivity extends AppCompatActivity
             if (!mBounds.contains(myPos)) {
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(myPos));
                 mBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
-                if (!mapToolbarEnabled) { // do this only once
-                    mMap.getUiSettings().setMapToolbarEnabled(true);
-                    mapToolbarEnabled = true;
-                }
             }
 
         }
