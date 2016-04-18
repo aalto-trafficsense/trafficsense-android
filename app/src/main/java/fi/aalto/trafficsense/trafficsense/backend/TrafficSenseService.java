@@ -37,8 +37,8 @@ public class TrafficSenseService extends Service {
     private BackendStorage mStorage;
     private AtomicReference<Boolean> mClientNumberFetchOngoing = new AtomicReference<>(false);
 
-
     private static boolean viewActive = false;
+    private boolean uploadInProgress = false;
 
 
     /* Overridden Methods */
@@ -180,7 +180,14 @@ public class TrafficSenseService extends Service {
                     case InternalBroadcasts.KEY_USER_ID_CLEARED:
                         testUploadEnabled();
                         break;
-
+                    case InternalBroadcasts.KEY_UPLOAD_STARTED:
+                        uploadInProgress = true;
+                        updateUploadState(TSUploadState.INPROGRESS);
+                        break;
+                    case InternalBroadcasts.KEY_UPLOAD_SUCCEEDED:
+                        uploadInProgress = false;
+                        testUploadEnabled();
+                        break;
                 }
             }
         };
@@ -196,6 +203,9 @@ public class TrafficSenseService extends Service {
         intentFilter.addAction(InternalBroadcasts.KEY_AUTHENTICATION_SUCCEEDED);
         intentFilter.addAction(InternalBroadcasts.KEY_AUTHENTICATION_FAILED);
         intentFilter.addAction(InternalBroadcasts.KEY_USER_ID_CLEARED);
+        intentFilter.addAction(InternalBroadcasts.KEY_UPLOAD_STARTED);
+        intentFilter.addAction(InternalBroadcasts.KEY_UPLOAD_SUCCEEDED);
+
 
         if (mLocalBroadcastManager != null) {
             mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, intentFilter);

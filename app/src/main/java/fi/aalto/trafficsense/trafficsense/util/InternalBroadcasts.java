@@ -26,14 +26,19 @@ public class InternalBroadcasts {
     public static final String KEY_AUTHENTICATION_FAILED = "AUTHENTICATION_FAILED";
     public static final String KEY_SIGNED_OUT = "SIGNED_OUT";
 
+    public static final String KEY_UPLOAD_STARTED = "UPLOAD_STARTED";
     public static final String KEY_UPLOAD_SUCCEEDED = "UPLOAD_SUCCEEDED";
-
+    public static final String KEY_UPLOAD_TIME = "UPLOAD_TIME";
 
     public static final String KEY_SERVICE_GOING_TO_SLEEP = "GOING_TO_SLEEP";
     public static final String KEY_SERVICE_WAKING_UP = "WAKING_UP";
     public static final String KEY_SERVICE_STATE_UPDATE = "SERVICE_STATE_UPDATE";
     public static final String KEY_UPLOAD_STATE_UPDATE = "UPLOAD_STATE_UPDATE";
     public static final String LABEL_STATE_INDEX = "STATE_IDX";
+
+    public static final String KEY_QUEUE_LENGTH_UPDATE = "QUEUE_LENGTH_UPDATE";
+    public static final String LABEL_QUEUE_LENGTH = "QUEUE_LENGTH";
+    public static final String LABEL_QUEUE_THRESHOLD = "QUEUE_THRESHOLD";
 
     public static final String KEY_SERVICE_START = "SERVICE_START";
     public static final String KEY_SERVICE_STOP = "SERVICE_STOP";

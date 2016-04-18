@@ -14,6 +14,7 @@ import android.util.Log;
 import android.util.Pair;
 import com.google.common.base.Optional;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import fi.aalto.trafficsense.trafficsense.backend.TrafficSenseService;
 import fi.aalto.trafficsense.trafficsense.backend.rest.types.*;
 import fi.aalto.trafficsense.trafficsense.backend.uploader.DataQueue;
 import fi.aalto.trafficsense.trafficsense.util.*;
@@ -30,6 +31,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.KEY_UPLOAD_SUCCEEDED;
 
 public class RestClient {
     private static final String THREAD_NAME_FORMAT = "rest-client";
@@ -52,7 +55,7 @@ public class RestClient {
     private AtomicReference<Optional<String>> mSessionTokenCache = new AtomicReference<>(Optional.<String>absent());
     private AtomicReference<Optional<Integer>> mClientNumberCache = new AtomicReference<>(Optional.<Integer>absent());
 
-    static private AtomicReference<Optional<String>> mLatestUploadTime = new AtomicReference<>(Optional.<String>absent());
+    private long mLatestUploadTime=0;
 
 
     /* Constructor(s) */
@@ -83,6 +86,9 @@ public class RestClient {
                             Timber.d("Authentication request received");
                             requestAuthentication();
                             break;
+                        case InternalBroadcasts.KEY_DEBUG_SHOW_REQ:
+                            broadcastUploadTime();
+                            break;
                     }
                 }
             };
@@ -90,6 +96,7 @@ public class RestClient {
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(InternalBroadcasts.KEY_SESSION_TOKEN_CLEARED);
             intentFilter.addAction(InternalBroadcasts.KEY_REQUEST_AUTHENTICATION);
+            intentFilter.addAction(InternalBroadcasts.KEY_DEBUG_SHOW_REQ);
 
             mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, intentFilter);
             mAndroidDeviceId =  Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -165,8 +172,9 @@ public class RestClient {
                 } else {
                     queue.removeUntilSequence(body.mSequence);
                     Timber.d("Uploaded data up to sequence #%d", body.mSequence);
-                    setLatestUploadTime();
-                    notifyRestClientResults(InternalBroadcasts.KEY_UPLOAD_SUCCEEDED);
+                    mLatestUploadTime = System.currentTimeMillis();
+                    broadcastUploadTime();
+                    notifyRestClientResults(KEY_UPLOAD_SUCCEEDED);
                 }
             }
         });
@@ -476,8 +484,6 @@ public class RestClient {
         });
     }
 
-    // MJR: Queue parameter added here 9.11.2015 to be able to drop 1 in case of 500 INTERNAL SERVER ERROR
-    // Parameter can be removed once the SERVER ERROR is solved.
     private void uploadDataInternal(final DataQueue queue, final DataBody body, final Callback<Void> callback) {
         Optional<String> sessionToken = mSessionTokenCache.get();
         if (!sessionToken.isPresent()) {
@@ -486,6 +492,7 @@ public class RestClient {
                 public void run(Void result, RuntimeException error) {
                     if (error != null) {
                         Timber.e(error.getMessage());
+                        queue.increaseThreshold();
                         callback.run(null, error);
                     } else {
                         uploadDataInternal(queue, body, callback);
@@ -503,6 +510,7 @@ public class RestClient {
             @Override
             public void success(JSONObject s, Response response) {
                 Timber.d("Data upload succeeded");
+                queue.initThreshold(); // Reset queue threshold to configured level
                 callback.run(null, null);
             }
 
@@ -534,6 +542,7 @@ public class RestClient {
 
                 }
                 // Some other upload error
+                queue.increaseThreshold();
                 callback.run(null, new RuntimeException("Data upload failed", error));
             }
         });
@@ -649,6 +658,15 @@ public class RestClient {
         }
     }
 
+    private void broadcastUploadTime() {
+        if (mLocalBroadcastManager != null && TrafficSenseService.isViewActive())
+        {
+            Intent intent = new Intent(InternalBroadcasts.KEY_UPLOAD_TIME);
+            intent.putExtra(InternalBroadcasts.KEY_UPLOAD_TIME,mLatestUploadTime);
+            mLocalBroadcastManager.sendBroadcast(intent);
+        }
+    }
+
     private void notifyRestClientResults(String messageType) {
         notifyRestClientResults(messageType, null);
     }
@@ -660,18 +678,8 @@ public class RestClient {
             if (args != null) {
                 intent.putExtras(args);
             }
-
             mLocalBroadcastManager.sendBroadcast(intent);
         }
-    }
-
-    private void setLatestUploadTime() {
-        mLatestUploadTime.set(Optional.fromNullable(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date())));
-    }
-
-    static public String getLatestUploadTime() {
-        if (mLatestUploadTime.get().isPresent()) return mLatestUploadTime.get().get();
-        else return "";
     }
 
 }

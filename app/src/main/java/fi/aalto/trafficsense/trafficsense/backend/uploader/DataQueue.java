@@ -1,8 +1,15 @@
 package fi.aalto.trafficsense.trafficsense.backend.uploader;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import com.google.common.collect.EvictingQueue;
 import com.google.common.collect.ImmutableList;
+import fi.aalto.trafficsense.trafficsense.backend.TrafficSenseService;
 import fi.aalto.trafficsense.trafficsense.util.DataPacket;
+import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
 import timber.log.Timber;
 
 import java.util.Iterator;
@@ -14,13 +21,18 @@ public class DataQueue {
     private final int mMaxSize;
     private int activeThreshold;
 
+    private LocalBroadcastManager mLocalBroadcastManager;
+    private BroadcastReceiver mBroadcastReceiver;
+
     private long mNextSequence;
 
     public DataQueue(int maxSize, int flushThreshold) {
         mMaxSize = maxSize;
         this.mDeque = EvictingQueue.create(mMaxSize);
         this.flushThreshold = flushThreshold;
-        activeThreshold = this.flushThreshold;
+        initThreshold();
+        mLocalBroadcastManager = LocalBroadcastManager.getInstance(TrafficSenseService.getContext());
+        initBroadcastReceiver();
         Timber.d("DataQueue: constructor called with maxSize: "+maxSize+" flushThreshold: "+flushThreshold);
     }
 
@@ -28,6 +40,7 @@ public class DataQueue {
 
         DataPoint dataPoint = new DataPoint(System.currentTimeMillis(), mNextSequence++, data.getLocationData(), data.getActivityData());
         this.mDeque.add(dataPoint);
+        broadcastQueueStatus();
     }
 
     public void removeUntilSequence(long sequence) {
@@ -39,6 +52,7 @@ public class DataQueue {
             }
             iter.remove();
         }
+        broadcastQueueStatus();
     }
 
     // MJR: Auxiliary procedure to help cope with mysterious "500 INTERNAL SERVER ERROR"s during upload.
@@ -62,16 +76,52 @@ public class DataQueue {
     }
 
     public boolean increaseThreshold() {
-        if (activeThreshold + flushThreshold < mMaxSize) {
-            activeThreshold += flushThreshold;
+        if (activeThreshold * 2 < mMaxSize) {
+            activeThreshold *= 2;
             return true;
         } else {
             return false;
         }
     }
 
+    public void initThreshold() {
+        activeThreshold = this.flushThreshold;
+    }
+
     public boolean shouldBeFlushed() {
         Timber.d("DataQueue:shouldBeFlushed (test) called with size:"+mDeque.size()+" threshold "+flushThreshold);
         return mDeque.size() >= activeThreshold;
+    }
+
+    // Give Broadcast capability for updating queue status
+    private void initBroadcastReceiver() {
+        mBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                final String action = intent.getAction();
+
+                switch (action) {
+                    case InternalBroadcasts.KEY_DEBUG_SHOW_REQ:
+                        broadcastQueueStatus();
+                        break;
+                }
+            }
+        };
+
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(InternalBroadcasts.KEY_DEBUG_SHOW_REQ);
+
+        if (mLocalBroadcastManager != null) {
+            mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, intentFilter);
+        }
+    }
+
+    private void broadcastQueueStatus() {
+        if (TrafficSenseService.isViewActive()) {
+            Intent i = new Intent(InternalBroadcasts.KEY_QUEUE_LENGTH_UPDATE);
+            i.putExtra(InternalBroadcasts.LABEL_QUEUE_LENGTH, size());
+            i.putExtra(InternalBroadcasts.LABEL_QUEUE_THRESHOLD, activeThreshold);
+            mLocalBroadcastManager.sendBroadcast(i);
+        }
     }
 }

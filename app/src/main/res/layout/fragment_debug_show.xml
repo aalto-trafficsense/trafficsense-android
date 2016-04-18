@@ -155,18 +155,22 @@
             <TableRow>
                 <TextView style="@android:style/TextAppearance.Medium"
                           android:text="@string/debug_show_upload_queue_length_label"
+                          android:textColor="@color/black"
                           android:id="@+id/debug_show_queue_length_label"/>
                 <TextView
                     android:id="@+id/debug_show_queue_length"
+                    android:textColor="@color/black"
                     android:layout_weight="2"
                     android:gravity="end"/>
             </TableRow>
             <TableRow>
                 <TextView style="@android:style/TextAppearance.Medium"
                           android:text="@string/debug_show_upload_latest_upload_label"
+                          android:textColor="@color/black"
                           android:id="@+id/debug_show_latest_upload_label"/>
                 <TextView
                     android:id="@+id/debug_show_latest_upload"
+                    android:textColor="@color/black"
                     android:layout_weight="2"
                     android:gravity="end"/>
             </TableRow>

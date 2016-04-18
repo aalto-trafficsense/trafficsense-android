@@ -1,11 +1,13 @@
 package fi.aalto.trafficsense.trafficsense.backend.uploader;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.support.v4.content.LocalBroadcastManager;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
@@ -13,11 +15,9 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
+import fi.aalto.trafficsense.trafficsense.backend.TrafficSenseService;
 import fi.aalto.trafficsense.trafficsense.backend.rest.RestClient;
-import fi.aalto.trafficsense.trafficsense.util.BackendStorage;
-import fi.aalto.trafficsense.trafficsense.util.Callback;
-import fi.aalto.trafficsense.trafficsense.util.DataPacket;
-import fi.aalto.trafficsense.trafficsense.util.ThreadGlue;
+import fi.aalto.trafficsense.trafficsense.util.*;
 import timber.log.Timber;
 
 import java.util.concurrent.CountDownLatch;
@@ -35,6 +35,9 @@ public class PipelineThread {
     private final DataQueue mDataQueue;
     private final RestClient mRestClient;
     private final ThreadGlue mThreadGlue = new ThreadGlue();
+
+    private static LocalBroadcastManager mLocalBroadcastManager;
+
 
     /**
      * This factory method creates the PipelineThread by using the handler which will be used
@@ -64,7 +67,7 @@ public class PipelineThread {
         BackendStorage bs=BackendStorage.create(TrafficSenseApplication.getContext());
         this.mDataQueue = new DataQueue(bs.getQueueSize(), bs.getFlushThreshold());
         this.mRestClient = new RestClient(TrafficSenseApplication.getContext(), Uri.parse(bs.getServerName()), bs, handler);
-
+        mLocalBroadcastManager = LocalBroadcastManager.getInstance(TrafficSenseService.getContext());
     }
 
     public void sendData (final DataPacket p) {
@@ -76,10 +79,16 @@ public class PipelineThread {
                 // Timber.d("PipelineThread: onDataReceived called");
                 mDataQueue.onDataReady(p);
                 // MJR: Copying here from onDataCompleted, put somewhere reasonable
-                if (mDataQueue.shouldBeFlushed()
-                        && mRestClient.isUploadEnabled()
-                        && !mRestClient.isUploading()) {
-                    mRestClient.uploadData(mDataQueue);
+                if (mDataQueue.shouldBeFlushed()) {
+                    if (!mRestClient.isUploadEnabled()) {
+                        mDataQueue.increaseThreshold();
+                    } else { // Upload is enabled
+                        if (!mRestClient.isUploading()) {
+                            Intent intent = new Intent(InternalBroadcasts.KEY_UPLOAD_STARTED);
+                            mLocalBroadcastManager.sendBroadcast(intent);
+                            mRestClient.uploadData(mDataQueue);
+                        }
+                    }
                 }
             }
         });

@@ -54,7 +54,8 @@ public class DebugShowFragment extends Fragment {
 
     private TextView mUploadLabelTextField;
     private TextView mUploadStatusTextField;
-
+    private TextView mUploadQueueLengthTextField;
+    private TextView mUploadTimeTextField;
 
     /* Display values */
     private TSServiceState DS_ServiceState;
@@ -129,6 +130,8 @@ public class DebugShowFragment extends Fragment {
 
         mUploadLabelTextField = (TextView) getActivity().findViewById(R.id.debug_show_upload_label);
         mUploadStatusTextField = (TextView) getActivity().findViewById(R.id.debug_show_upload_state);
+        mUploadQueueLengthTextField = (TextView) getActivity().findViewById(R.id.debug_show_queue_length);
+        mUploadTimeTextField = (TextView) getActivity().findViewById(R.id.debug_show_latest_upload);
 
     }
 
@@ -168,6 +171,12 @@ public class DebugShowFragment extends Fragment {
                         updateLocation(intent);
                         updateActivity(intent);
                         break;
+                    case InternalBroadcasts.KEY_QUEUE_LENGTH_UPDATE:
+                        updateQueueLength(intent);
+                        break;
+                    case InternalBroadcasts.KEY_UPLOAD_TIME:
+                        updateLatestUpload(intent);
+                        break;
                 }
             }
         };
@@ -178,6 +187,8 @@ public class DebugShowFragment extends Fragment {
         intentFilter.addAction(InternalBroadcasts.KEY_LOCATION_UPDATE);
         intentFilter.addAction(InternalBroadcasts.KEY_ACTIVITY_UPDATE);
         intentFilter.addAction(InternalBroadcasts.KEY_SENSORS_UPDATE);
+        intentFilter.addAction(InternalBroadcasts.KEY_QUEUE_LENGTH_UPDATE);
+        intentFilter.addAction(InternalBroadcasts.KEY_UPLOAD_TIME);
         intentFilter.addAction(InternalBroadcasts.KEY_DEBUG_SHOW);
 
         mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, intentFilter);
@@ -305,4 +316,22 @@ public class DebugShowFragment extends Fragment {
 
         }
     }
+
+    private void updateQueueLength (Intent i) {
+        int queueLength = i.getIntExtra(InternalBroadcasts.LABEL_QUEUE_LENGTH,0);
+        int activeThreshold = i.getIntExtra(InternalBroadcasts.LABEL_QUEUE_THRESHOLD,0);
+        mUploadQueueLengthTextField.setText(queueLength + " / " + activeThreshold);
+    }
+
+    private void updateLatestUpload (Intent i) {
+        long latestUploadMillis = i.getIntExtra(InternalBroadcasts.KEY_UPLOAD_TIME,0);
+        if (latestUploadMillis == 0) {
+            mUploadTimeTextField.setText(mRes.getString(R.string.not_available));
+        } else {
+            Date uploadDate = new Date(latestUploadMillis);
+            String uploadFormatted = DateFormat.getDateTimeInstance().format(uploadDate);
+            mUploadTimeTextField.setText(uploadFormatted);
+        }
+    }
+
 }

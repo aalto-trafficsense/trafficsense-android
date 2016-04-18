@@ -5,6 +5,7 @@
     <string name="title_activity_debugview">TrafficSense Debug</string>
     <string name="title_activity_login">Sign in</string>
     <string name="title_activity_about">About TrafficSense</string>
+    <string name="title_activity_energy_certificate">Energy Certificate</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -162,6 +163,7 @@
     <string name="upload_state_ready">Ready</string>
     <string name="upload_state_inprogress">In progress</string>
     <string name="upload_state_unknown">Unknown state</string>
+    <string name="not_available">Not available</string>
 
 
 </resources>
