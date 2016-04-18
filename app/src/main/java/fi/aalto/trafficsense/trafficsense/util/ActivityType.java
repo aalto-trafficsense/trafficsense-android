@@ -1,6 +1,7 @@
 package fi.aalto.trafficsense.trafficsense.util;
 
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import com.google.android.gms.location.DetectedActivity;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
@@ -81,5 +82,26 @@ public enum ActivityType {
         }
     }
 
+    public static int getActivityIcon(ActivityType type) {
+        Resources res = TrafficSenseApplication.getContext().getResources();
+        switch(type) {
+            case IN_VEHICLE:
+                return R.drawable.md_activity_vehicle_24dp;
+            case ON_BICYCLE:
+                return R.drawable.md_activity_bicycle_24dp1;
+            case RUNNING:
+                return R.drawable.md_activity_running_24dp;
+            case STILL:
+                return R.drawable.md_activity_still;
+            case TILTING:
+                return R.drawable.md_activity_tilting_24dp;
+            case UNKNOWN:
+                return R.drawable.md_activity_unknown_24dp;
+            case WALKING:
+                return R.drawable.md_activity_walking_24dp;
+            default:
+                return R.drawable.md_activity_unknown_24dp;
+        }
+    }
 
 }

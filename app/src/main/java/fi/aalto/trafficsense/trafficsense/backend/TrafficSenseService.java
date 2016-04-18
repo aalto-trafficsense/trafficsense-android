@@ -1,6 +1,7 @@
 package fi.aalto.trafficsense.trafficsense.backend;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import com.google.common.base.Optional;
 import fi.aalto.trafficsense.trafficsense.R;
@@ -22,6 +24,8 @@ import fi.aalto.trafficsense.trafficsense.util.*;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+import static fi.aalto.trafficsense.trafficsense.util.ActivityType.STILL;
+import static fi.aalto.trafficsense.trafficsense.util.ActivityType.getActivityIcon;
 import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_STATE_INDEX;
 import static fi.aalto.trafficsense.trafficsense.util.TSServiceState.RUNNING;
 import static fi.aalto.trafficsense.trafficsense.util.TSUploadState.*;
@@ -43,16 +47,19 @@ public class TrafficSenseService extends Service {
     private static TSUploadState mUploadState;
     private static LocalBroadcastManager mLocalBroadcastManager;
     private BroadcastReceiver mBroadcastReceiver;
+    private NotificationManager mNotificationManager;
     private Resources mRes;
     private Handler mHandler = new Handler();
     private BackendStorage mStorage;
     private AtomicReference<Boolean> mClientNumberFetchOngoing = new AtomicReference<>(false);
 
     private static boolean viewActive = false;
-    private boolean isForeground = false;
+    private static boolean isForeground = false;
     private boolean uploadInProgress = false;
 
-    private final int ONGOING_NOTIFICATION_ID = 1212;
+    private ActivityType mPreviousActivity = STILL;
+
+    private final int ONGOING_NOTIFICATION_ID = 1212; // Not zero, pulled from sleeve
 
     // Delayed check for going foreground:
     private final Runnable mDelayedForegroundCheck = new Runnable() {
@@ -75,7 +82,7 @@ public class TrafficSenseService extends Service {
         initBroadcastReceiver();
         mStorage = BackendStorage.create(mContext);
         mRes = this.getResources();
-
+        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     }
 
     @Override
@@ -169,18 +176,22 @@ public class TrafficSenseService extends Service {
     private void checkForeground() {
         // If nobody is still watching, go foreground
         if (!isViewActive()) {
-            Intent notificationIntent = new Intent(this, MainActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-            Notification notification = builder.setContentIntent(pendingIntent)
-                    .setSmallIcon(R.drawable.md_activity_still)
-                    .setTicker("ticker text here")
-                    .setWhen(System.currentTimeMillis())
-                    .setContentTitle(getText(R.string.app_name))
-                    .setContentText("content text shows here.").build();
-            startForeground(ONGOING_NOTIFICATION_ID, notification);
+            startForeground(ONGOING_NOTIFICATION_ID, buildNotification(mPreviousActivity));
             isForeground=true;
         }
+    }
+
+    private Notification buildNotification(ActivityType act) {
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        Notification notification = builder.setContentIntent(pendingIntent)
+                .setSmallIcon(ActivityType.getActivityIcon(act))
+                .setTicker(ActivityType.getActivityString(act))
+                .setWhen(System.currentTimeMillis())
+                .setContentTitle(getText(R.string.app_name))
+                .setContentText(ActivityType.getActivityString(act)).build();
+        return notification;
     }
 
     /*************************
@@ -233,6 +244,9 @@ public class TrafficSenseService extends Service {
                         uploadInProgress = false;
                         testUploadEnabled();
                         break;
+                    case InternalBroadcasts.KEY_ACTIVITY_UPDATE:
+                        if (isForeground) updateActivity(intent);
+                        break;
                 }
             }
         };
@@ -250,7 +264,7 @@ public class TrafficSenseService extends Service {
         intentFilter.addAction(InternalBroadcasts.KEY_USER_ID_CLEARED);
         intentFilter.addAction(InternalBroadcasts.KEY_UPLOAD_STARTED);
         intentFilter.addAction(InternalBroadcasts.KEY_UPLOAD_SUCCEEDED);
-
+        intentFilter.addAction(InternalBroadcasts.KEY_ACTIVITY_UPDATE);
 
         if (mLocalBroadcastManager != null) {
             mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, intentFilter);
@@ -287,5 +301,15 @@ public class TrafficSenseService extends Service {
             mLocalBroadcastManager.sendBroadcast(intent);
     }
 
+    private void updateActivity (Intent i) {
+        if (i.hasExtra(InternalBroadcasts.KEY_ACTIVITY_UPDATE)) {
+            ActivityData a = i.getParcelableExtra(InternalBroadcasts.KEY_ACTIVITY_UPDATE);
+            ActivityType topActivity=a.getFirst().Type;
+            if (mPreviousActivity != topActivity) {
+                mNotificationManager.notify(ONGOING_NOTIFICATION_ID, buildNotification(topActivity));
+                mPreviousActivity = topActivity;
+            }
+        }
+    }
 }
 

@@ -296,7 +296,7 @@ public class MainActivity extends AppCompatActivity
             Location l = i.getParcelableExtra(InternalBroadcasts.KEY_LOCATION_UPDATE);
             LatLng myPos = new LatLng(l.getLatitude(), l.getLongitude());
             if (mMarker == null) {
-                mMarker = mMap.addMarker(new MarkerOptions().position(myPos).icon(BitmapDescriptorFactory.fromResource(R.drawable.md_activity_still)));
+                mMarker = mMap.addMarker(new MarkerOptions().position(myPos).icon(BitmapDescriptorFactory.fromResource(ActivityType.getActivityIcon(latestActivityType))));
             } else {
                 mMarker.setPosition(myPos);
             }
@@ -323,32 +323,7 @@ public class MainActivity extends AppCompatActivity
             ActivityType topActivity=a.getFirst().Type;
 
             if ((mMarker != null) && (topActivity != latestActivityType)) {
-                switch (topActivity) {
-                    case IN_VEHICLE:
-                        mMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_activity_in_vehicle));
-                        break;
-                    case ON_BICYCLE:
-                        mMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_activity_on_bicycle));
-                        break;
-                    case RUNNING:
-                        mMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_activity_running));
-                        break;
-                    case STILL:
-                        mMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.md_activity_still));
-                        break;
-                    case TILTING:
-                        mMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_activity_tilting));
-                        break;
-                    case UNKNOWN:
-                        mMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_activity_unknown));
-                        break;
-                    case WALKING:
-                        mMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_activity_walking));
-                        break;
-                    default:
-                        mMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_activity_unknown));
-                        break;
-                }
+                mMarker.setIcon(BitmapDescriptorFactory.fromResource(ActivityType.getActivityIcon(topActivity)));
                 latestActivityType = topActivity;
             }
         }

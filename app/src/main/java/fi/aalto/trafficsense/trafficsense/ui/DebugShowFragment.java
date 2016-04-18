@@ -324,7 +324,7 @@ public class DebugShowFragment extends Fragment {
     }
 
     private void updateLatestUpload (Intent i) {
-        long latestUploadMillis = i.getIntExtra(InternalBroadcasts.KEY_UPLOAD_TIME,0);
+        long latestUploadMillis = i.getLongExtra(InternalBroadcasts.KEY_UPLOAD_TIME,0);
         if (latestUploadMillis == 0) {
             mUploadTimeTextField.setText(mRes.getString(R.string.not_available));
         } else {

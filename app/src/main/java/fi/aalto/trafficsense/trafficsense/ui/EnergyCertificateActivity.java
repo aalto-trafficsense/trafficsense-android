@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import com.caverock.androidsvg.SVG;
@@ -20,7 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class EnergyCertificateActivity extends Activity {
+public class EnergyCertificateActivity extends AppCompatActivity {
 
     private RelativeLayout container;
     private SVGImageView svgImageView;
@@ -32,7 +33,7 @@ public class EnergyCertificateActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_energy_certificate);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        // getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         container = (RelativeLayout) findViewById(R.id.energy_certificate);
         svgImageView = new SVGImageView(this);
