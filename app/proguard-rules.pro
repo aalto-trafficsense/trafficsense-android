@@ -9,6 +9,26 @@
 
 # Add any project specific keep options here:
 
+-keep class org.apache.http.** { *; }
+-dontwarn org.apache.http.**
+
+-keep class android.net.http.** { *; }
+-dontwarn android.net.http.**
+
+-keep class retrofit.** { *; }
+-dontwarn retrofit.**
+
+-keep class com.google.common.** { *; }
+-dontwarn com.google.common.**
+
+-keep class com.caverock.androidsvg.** { *; }
+-dontwarn com.caverock.androidsvg.**
+
+-keep class android.support.v7.** { *; }
+-keep class android.support.v4.** { *; }
+
+-keep class fi.aalto.trafficsense.** { *; }
+
 # If your project uses WebView with JS, uncomment the following
 # and specify the fully qualified class name to the JavaScript interface
 # class:

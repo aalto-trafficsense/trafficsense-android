@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import com.google.common.base.Optional;
 import fi.aalto.trafficsense.trafficsense.R;
@@ -25,9 +24,9 @@ import fi.aalto.trafficsense.trafficsense.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static fi.aalto.trafficsense.trafficsense.util.ActivityType.STILL;
-import static fi.aalto.trafficsense.trafficsense.util.ActivityType.getActivityIcon;
 import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_STATE_INDEX;
 import static fi.aalto.trafficsense.trafficsense.util.TSServiceState.RUNNING;
+import static fi.aalto.trafficsense.trafficsense.util.TSServiceState.SLEEPING;
 import static fi.aalto.trafficsense.trafficsense.util.TSUploadState.*;
 
 /**
@@ -61,6 +60,7 @@ public class TrafficSenseService extends Service {
     private ActivityType mPreviousActivity = STILL;
 
     private final int ONGOING_NOTIFICATION_ID = 1212; // Not zero, pulled from sleeve
+    private static final int STATIC_NOTIFICATION_ID = 1212; // Need to be the same...
 
     // Delayed check for going foreground:
     private final Runnable mDelayedForegroundCheck = new Runnable() {
@@ -169,7 +169,21 @@ public class TrafficSenseService extends Service {
     public static boolean isViewActive() { return viewActive; }
 
     public static void setServiceState(TSServiceState newState) {
-        if (newState != mServiceState) updateServiceState(newState);
+        if (newState != mServiceState) {
+            updateServiceState(newState);
+            if (newState==SLEEPING && isForeground) {
+                Intent notificationIntent = new Intent(TrafficSenseService.getContext(), MainActivity.class);
+                PendingIntent pendingIntent = PendingIntent.getActivity(TrafficSenseService.getContext(), 0, notificationIntent, 0);
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(TrafficSenseService.getContext());
+                Notification notification = builder.setContentIntent(pendingIntent)
+                        .setSmallIcon(R.drawable.md_sleep)
+                        .setWhen(System.currentTimeMillis())
+                        .setContentTitle(TrafficSenseService.getContext().getText(R.string.app_name))
+                        .setContentText(TrafficSenseService.getContext().getText(R.string.sleeping)).build();
+                NotificationManager nM = (NotificationManager) TrafficSenseService.getContext().getSystemService(NOTIFICATION_SERVICE);
+                nM.notify(STATIC_NOTIFICATION_ID, notification);
+            }
+        }
     }
 
     public static TSServiceState getServiceState() { return mServiceState; }
@@ -188,7 +202,6 @@ public class TrafficSenseService extends Service {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         Notification notification = builder.setContentIntent(pendingIntent)
                 .setSmallIcon(ActivityType.getActivityIcon(act))
-                .setTicker(ActivityType.getActivityString(act))
                 .setWhen(System.currentTimeMillis())
                 .setContentTitle(getText(R.string.app_name))
                 .setContentText(ActivityType.getActivityString(act)).build();

@@ -1,4 +1,5 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools"
+           tools:ignore="MissingTranslation">
     <string name="app_name">TrafficSense</string>
     <string name="title_activity_main">TrafficSense</string>
     <string name="title_activity_maps">Map</string>
@@ -164,6 +165,7 @@
     <string name="upload_state_inprogress">In progress</string>
     <string name="upload_state_unknown">Unknown state</string>
     <string name="not_available">Not available</string>
+    <string name="sleeping">Sleeping</string>
 
 
 </resources>
