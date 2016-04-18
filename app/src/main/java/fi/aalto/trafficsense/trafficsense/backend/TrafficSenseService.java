@@ -1,16 +1,23 @@
 package fi.aalto.trafficsense.trafficsense.backend;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import com.google.common.base.Optional;
+import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.backend.backend_util.PlayServiceInterface;
 import fi.aalto.trafficsense.trafficsense.backend.uploader.RegularRoutesPipeline;
+import fi.aalto.trafficsense.trafficsense.ui.MainActivity;
 import fi.aalto.trafficsense.trafficsense.util.*;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -25,6 +32,8 @@ import static fi.aalto.trafficsense.trafficsense.util.TSUploadState.*;
 
 public class TrafficSenseService extends Service {
 
+    private final int foregroundCheckDelay = 5000; // milliseconds, delay after view inactive until checking, whether to go foreground
+
     /* Private Members */
     private static Context mContext;
     private final IBinder mBinder = new LocalBinder<TrafficSenseService>(this);
@@ -34,11 +43,24 @@ public class TrafficSenseService extends Service {
     private static TSUploadState mUploadState;
     private static LocalBroadcastManager mLocalBroadcastManager;
     private BroadcastReceiver mBroadcastReceiver;
+    private Resources mRes;
+    private Handler mHandler = new Handler();
     private BackendStorage mStorage;
     private AtomicReference<Boolean> mClientNumberFetchOngoing = new AtomicReference<>(false);
 
     private static boolean viewActive = false;
+    private boolean isForeground = false;
     private boolean uploadInProgress = false;
+
+    private final int ONGOING_NOTIFICATION_ID = 1212;
+
+    // Delayed check for going foreground:
+    private final Runnable mDelayedForegroundCheck = new Runnable() {
+        @Override
+        public void run() {
+            checkForeground();
+        }
+    };
 
 
     /* Overridden Methods */
@@ -52,6 +74,7 @@ public class TrafficSenseService extends Service {
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
         initBroadcastReceiver();
         mStorage = BackendStorage.create(mContext);
+        mRes = this.getResources();
 
     }
 
@@ -143,6 +166,23 @@ public class TrafficSenseService extends Service {
 
     public static TSServiceState getServiceState() { return mServiceState; }
 
+    private void checkForeground() {
+        // If nobody is still watching, go foreground
+        if (!isViewActive()) {
+            Intent notificationIntent = new Intent(this, MainActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+            Notification notification = builder.setContentIntent(pendingIntent)
+                    .setSmallIcon(R.drawable.md_activity_still)
+                    .setTicker("ticker text here")
+                    .setWhen(System.currentTimeMillis())
+                    .setContentTitle(getText(R.string.app_name))
+                    .setContentText("content text shows here.").build();
+            startForeground(ONGOING_NOTIFICATION_ID, notification);
+            isForeground=true;
+        }
+    }
+
     /*************************
      Broadcast handler
      *************************/
@@ -163,9 +203,14 @@ public class TrafficSenseService extends Service {
                         break;
                     case InternalBroadcasts.KEY_VIEW_RESUMED:
                         viewActive = true;
+                        if (isForeground) {
+                            stopForeground(true);
+                            isForeground = false;
+                        }
                         break;
                     case InternalBroadcasts.KEY_VIEW_PAUSED:
                         viewActive = false;
+                        mHandler.postDelayed(mDelayedForegroundCheck, foregroundCheckDelay);
                         break;
                     case InternalBroadcasts.KEY_CLIENT_NUMBER_FETCH_COMPLETED:
                         mClientNumberFetchOngoing.set(false);

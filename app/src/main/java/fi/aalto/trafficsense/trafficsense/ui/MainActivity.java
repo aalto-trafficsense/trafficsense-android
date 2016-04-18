@@ -1,25 +1,16 @@
 package fi.aalto.trafficsense.trafficsense.ui;
 
-import android.Manifest;
-import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
-import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -33,9 +24,7 @@ import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.util.*;
-import timber.log.Timber;
 
-import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.KEY_DEBUG_SETTINGS_REQ;
 import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_STATE_INDEX;
 
 public class MainActivity extends AppCompatActivity
@@ -307,7 +296,7 @@ public class MainActivity extends AppCompatActivity
             Location l = i.getParcelableExtra(InternalBroadcasts.KEY_LOCATION_UPDATE);
             LatLng myPos = new LatLng(l.getLatitude(), l.getLongitude());
             if (mMarker == null) {
-                mMarker = mMap.addMarker(new MarkerOptions().position(myPos).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_activity_still)));
+                mMarker = mMap.addMarker(new MarkerOptions().position(myPos).icon(BitmapDescriptorFactory.fromResource(R.drawable.md_activity_still)));
             } else {
                 mMarker.setPosition(myPos);
             }
@@ -345,7 +334,7 @@ public class MainActivity extends AppCompatActivity
                         mMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_activity_running));
                         break;
                     case STILL:
-                        mMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_activity_still));
+                        mMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.md_activity_still));
                         break;
                     case TILTING:
                         mMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_activity_tilting));
