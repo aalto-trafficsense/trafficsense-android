@@ -37,7 +37,8 @@ import static fi.aalto.trafficsense.trafficsense.util.TSUploadState.*;
 public class TrafficSenseService extends Service {
 
     private final int foregroundCheckDelay = 5000; // milliseconds, delay after view inactive until checking, whether to go foreground
-
+    private final int foregroundBootCheckDelay = 15000; // milliseconds, delay after servicestart until checking, whether to go foreground
+                                                        // Activates the notification, if service is starting after a reboot
     /* Private Members */
     private static Context mContext;
     private final IBinder mBinder = new LocalBinder<TrafficSenseService>(this);
@@ -94,6 +95,7 @@ public class TrafficSenseService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         // viewActive = true; // If someone binds, there is likely an active view
+        mHandler.postDelayed(mDelayedForegroundCheck, foregroundBootCheckDelay);
 
         // Request sign-in if user-id is not available
         if (!mStorage.isUserIdAvailable()) {
@@ -173,7 +175,7 @@ public class TrafficSenseService extends Service {
     public static TSServiceState getServiceState() { return mServiceState; }
 
     private void checkForeground() {
-        // If nobody is still watching, go foreground
+        // If nobody is watching after the delay, go foreground
         if (!isViewActive()) {
             startForeground(ONGOING_NOTIFICATION_ID, buildNotification(mPreviousActivity));
             isForeground=true;
@@ -210,7 +212,6 @@ public class TrafficSenseService extends Service {
                     case InternalBroadcasts.KEY_DEBUG_SETTINGS_REQ:
                     case InternalBroadcasts.KEY_MAIN_ACTIVITY_REQ:
                         updateServiceState(mServiceState);
-                        viewActive = true;
                         break;
                     case InternalBroadcasts.KEY_VIEW_RESUMED:
                         viewActive = true;

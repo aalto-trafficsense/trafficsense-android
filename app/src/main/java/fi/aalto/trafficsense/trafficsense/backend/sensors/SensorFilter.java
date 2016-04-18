@@ -28,7 +28,6 @@ public class SensorFilter {
     private long stillLimitSeconds=40;
     private long queuePingThresholdMinutes=60;
     private double queueAccuracyThreshold=50.0; // meters
-    private double queueDistanceThreshold=10.0; // meters
 
     private Location lastReceivedLocation;
     private ActivityData lastReceivedActivity = null;
@@ -80,12 +79,12 @@ public class SensorFilter {
                 queueOutgoing();
                 return;
             }
-            // Queue when distance to previously queued > queueDistanceThreshold m.
+            // Queue when distance to previously queued > lastAccuracy m.
             if (lastQueuedLocation == null) {
                 queueOutgoing();
                 return;
             } else {
-                if (lastQueuedLocation.distanceTo(lastReceivedLocation) >= queueDistanceThreshold) {
+                if (lastQueuedLocation.distanceTo(lastReceivedLocation) >= lastReceivedLocation.getAccuracy()) {
                     queueOutgoing();
                     return;
                 }

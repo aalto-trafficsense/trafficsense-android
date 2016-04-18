@@ -93,7 +93,6 @@ public enum ActivityType {
     }
 
     public static int getActivityIcon(ActivityType type) {
-        Resources res = TrafficSenseApplication.getContext().getResources();
         switch(type) {
             case IN_VEHICLE:
                 return R.drawable.md_activity_vehicle_24dp;
