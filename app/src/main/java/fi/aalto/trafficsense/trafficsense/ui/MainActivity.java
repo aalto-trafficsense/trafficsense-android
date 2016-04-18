@@ -96,6 +96,9 @@ public class MainActivity extends AppCompatActivity
         mStartupItem = navMenu.findItem(R.id.nav_startup);
         mShutdownItem = navMenu.findItem(R.id.nav_shutdown);
 
+        // Hide items not implemented yet:
+        navMenu.findItem(R.id.nav_settings).setVisible(false);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -197,6 +200,7 @@ public class MainActivity extends AppCompatActivity
                 openActivity(AboutActivity.class);
                 break;
             case R.id.nav_energy:
+                openActivity(EnergyCertificateActivity.class);
                 break;
             case R.id.nav_login:
                 openActivity(LoginActivity.class);

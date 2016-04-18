@@ -63,7 +63,7 @@ public class PipelineThread {
         // TODO: This bs is completely weird at the moment - redo parameter storage ASAP
         BackendStorage bs=BackendStorage.create(TrafficSenseApplication.getContext());
         this.mDataQueue = new DataQueue(bs.getQueueSize(), bs.getFlushThreshold());
-        this.mRestClient = new RestClient(TrafficSenseApplication.getContext(), Uri.parse(BackendStorage.getServerName()), bs, handler);
+        this.mRestClient = new RestClient(TrafficSenseApplication.getContext(), Uri.parse(bs.getServerName()), bs, handler);
 
     }
 
