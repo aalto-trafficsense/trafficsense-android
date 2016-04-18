@@ -120,6 +120,9 @@ public class TrafficSenseApplication extends Application {
                     case InternalBroadcasts.KEY_MAIN_ACTIVITY_REQ:
                         if (mTSServiceState == STOPPED) updateServiceState();
                         break;
+                    case Intent.ACTION_BOOT_COMPLETED:
+                        Timber.d("TrafficSenseApplication received boot completed");
+                        break;
                 }
             }
         };

@@ -6,9 +6,19 @@ import com.google.android.gms.location.DetectedActivity;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
 
+import java.util.EnumSet;
+
 public enum ActivityType {
     /* The following order is same as defined in DetectedActivity's constants, values: 0..9 */
     IN_VEHICLE, ON_BICYCLE, ON_FOOT, RUNNING, STILL, TILTING, UNKNOWN, WALKING;
+
+    public static EnumSet<ActivityType> notGood() {
+        return EnumSet.of(TILTING, UNKNOWN);
+    }
+
+    public static EnumSet<ActivityType> getGood() {
+        return EnumSet.complementOf(notGood());
+    }
 
     public static ActivityType getActivityTypeByReference(final int activityTypeReference) {
         switch (activityTypeReference) {

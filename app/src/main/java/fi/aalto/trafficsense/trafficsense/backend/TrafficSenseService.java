@@ -93,7 +93,7 @@ public class TrafficSenseService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        viewActive = true; // If someone binds, there is likely an active view
+        // viewActive = true; // If someone binds, there is likely an active view
 
         // Request sign-in if user-id is not available
         if (!mStorage.isUserIdAvailable()) {
@@ -139,7 +139,6 @@ public class TrafficSenseService extends Service {
                 if (result.isPresent()) mStorage.writeClientNumber(result.get());
             }
         });
-
     }
 
     private void fetchClientNumber(Callback<Optional<Integer>> callback) {
@@ -211,6 +210,7 @@ public class TrafficSenseService extends Service {
                     case InternalBroadcasts.KEY_DEBUG_SETTINGS_REQ:
                     case InternalBroadcasts.KEY_MAIN_ACTIVITY_REQ:
                         updateServiceState(mServiceState);
+                        viewActive = true;
                         break;
                     case InternalBroadcasts.KEY_VIEW_RESUMED:
                         viewActive = true;
@@ -305,9 +305,11 @@ public class TrafficSenseService extends Service {
         if (i.hasExtra(InternalBroadcasts.KEY_ACTIVITY_UPDATE)) {
             ActivityData a = i.getParcelableExtra(InternalBroadcasts.KEY_ACTIVITY_UPDATE);
             ActivityType topActivity=a.getFirst().Type;
-            if (mPreviousActivity != topActivity) {
-                mNotificationManager.notify(ONGOING_NOTIFICATION_ID, buildNotification(topActivity));
-                mPreviousActivity = topActivity;
+            if (ActivityType.getGood().contains(topActivity)) { // a good activity?
+                if (mPreviousActivity != topActivity) { // different from previous notification?
+                    mNotificationManager.notify(ONGOING_NOTIFICATION_ID, buildNotification(topActivity));
+                    mPreviousActivity = topActivity;
+                }
             }
         }
     }

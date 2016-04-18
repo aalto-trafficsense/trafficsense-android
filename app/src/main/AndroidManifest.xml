@@ -94,6 +94,13 @@
             android:exported="false">
         </service>
 
+        <receiver android:name=".util.TSBootReceiver">
+            <intent-filter >
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+
+
         <activity
             android:name=".ui.SettingsActivity"
             android:label="@string/title_activity_settings"
