@@ -5,7 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -34,6 +37,7 @@ public class MainActivity extends AppCompatActivity
     private BroadcastReceiver mBroadcastReceiver;
     private ActionBarDrawerToggle mDrawerToggle;
     private Context mContext;
+    private Resources mRes;
     private MenuItem mStartupItem;
     private MenuItem mShutdownItem;
     private FloatingActionButton mFab;
@@ -52,6 +56,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = this;
+        mRes = this.getResources();
         setContentView(R.layout.activity_main);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
 
@@ -192,6 +197,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_energy:
                 openActivity(EnergyCertificateActivity.class);
                 break;
+            case R.id.nav_feedback:
+                openFeedbackForm();
+                break;
             case R.id.nav_login:
                 openActivity(LoginActivity.class);
                 break;
@@ -227,6 +235,11 @@ public class MainActivity extends AppCompatActivity
             mShutdownItem.setVisible(false);
             if (mMarker != null) mMarker.setVisible(false);
         }
+    }
+
+    private void openFeedbackForm() {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mRes.getString(R.string.feedback_form_address)));
+        startActivity(browserIntent);
     }
 
 
@@ -306,7 +319,8 @@ public class MainActivity extends AppCompatActivity
                 if (mCircle == null) {
                     CircleOptions circleOptions = new CircleOptions()
                             .center(myPos)
-                            .radius(l.getAccuracy()).strokeColor(R.color.lightBlue);
+                            .radius(l.getAccuracy()).strokeColor(Color.BLUE)
+                            .strokeWidth(1.0f);
                     mCircle = mMap.addCircle(circleOptions);
                 } else {
                     mCircle.setRadius(l.getAccuracy());

@@ -167,6 +167,7 @@
     <string name="not_available">Not available</string>
     <string name="sleeping">Sleeping</string>
     <string name="debug_show_client_number_label">Client number:</string>
+    <string name="navigation_feedback">Send feedback</string>
 
 
 </resources>

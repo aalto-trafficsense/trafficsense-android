@@ -212,7 +212,7 @@ public class TrafficSenseService extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(ctx, 0, notificationIntent, 0);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(ctx);
         Notification notification = builder.setContentIntent(pendingIntent)
-                .setSmallIcon(R.drawable.md_sleep)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setWhen(System.currentTimeMillis())
                 .setContentTitle(ctx.getText(R.string.app_name))
                 .setContentText(ctx.getText(R.string.sleeping)).build();

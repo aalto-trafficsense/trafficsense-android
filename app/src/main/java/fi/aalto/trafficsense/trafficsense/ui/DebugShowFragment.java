@@ -203,7 +203,7 @@ public class DebugShowFragment extends Fragment {
         mServiceStatusTextField.setText(TSServiceState.getServiceStateString(newState));
         int clientNumber = i.getIntExtra(LABEL_CLIENT_NUMBER,-1);
         if (clientNumber == -1) mClientNumberTextField.setText(mRes.getString(R.string.not_available));
-        else mClientNumberTextField.setText(clientNumber);
+        else mClientNumberTextField.setText(String.format("%d", clientNumber));
         switch (newState) {
             case STOPPED:
                 setTextColors(mServiceLabelTextField, R.color.grayText, R.color.white);
