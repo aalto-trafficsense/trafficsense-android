@@ -16,6 +16,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import com.google.common.base.Optional;
 import fi.aalto.trafficsense.trafficsense.R;
+import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
 import fi.aalto.trafficsense.trafficsense.backend.backend_util.PlayServiceInterface;
 import fi.aalto.trafficsense.trafficsense.backend.uploader.RegularRoutesPipeline;
 import fi.aalto.trafficsense.trafficsense.ui.MainActivity;
@@ -50,7 +51,7 @@ public class TrafficSenseService extends Service {
     private NotificationManager mNotificationManager;
     private Resources mRes;
     private Handler mHandler = new Handler();
-    private BackendStorage mStorage;
+    private static BackendStorage mStorage;
     private AtomicReference<Boolean> mClientNumberFetchOngoing = new AtomicReference<>(false);
 
     private static boolean viewActive = false;
@@ -59,7 +60,7 @@ public class TrafficSenseService extends Service {
 
     private ActivityType mPreviousActivity = STILL;
 
-    private final int ONGOING_NOTIFICATION_ID = 1212; // Not zero, pulled from sleeve
+    private static final int ONGOING_NOTIFICATION_ID = 1212; // Not zero, pulled from sleeve
     private static final int STATIC_NOTIFICATION_ID = 1212; // Need to be the same...
 
     // Delayed check for going foreground:
@@ -172,16 +173,8 @@ public class TrafficSenseService extends Service {
         if (newState != mServiceState) {
             updateServiceState(newState);
             if (newState==SLEEPING && isForeground) {
-                Intent notificationIntent = new Intent(TrafficSenseService.getContext(), MainActivity.class);
-                PendingIntent pendingIntent = PendingIntent.getActivity(TrafficSenseService.getContext(), 0, notificationIntent, 0);
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(TrafficSenseService.getContext());
-                Notification notification = builder.setContentIntent(pendingIntent)
-                        .setSmallIcon(R.drawable.md_sleep)
-                        .setWhen(System.currentTimeMillis())
-                        .setContentTitle(TrafficSenseService.getContext().getText(R.string.app_name))
-                        .setContentText(TrafficSenseService.getContext().getText(R.string.sleeping)).build();
                 NotificationManager nM = (NotificationManager) TrafficSenseService.getContext().getSystemService(NOTIFICATION_SERVICE);
-                nM.notify(STATIC_NOTIFICATION_ID, notification);
+                nM.notify(ONGOING_NOTIFICATION_ID, buildSleepNotification());
             }
         }
     }
@@ -191,7 +184,12 @@ public class TrafficSenseService extends Service {
     private void checkForeground() {
         // If nobody is watching after the delay, go foreground
         if (!isViewActive()) {
-            startForeground(ONGOING_NOTIFICATION_ID, buildNotification(mPreviousActivity));
+            if (TrafficSenseService.getServiceState() == SLEEPING) {
+                startForeground(ONGOING_NOTIFICATION_ID, buildSleepNotification());
+                mPreviousActivity = STILL; // Prevent replacing sleep notification with still
+            } else {
+                startForeground(ONGOING_NOTIFICATION_ID, buildNotification(mPreviousActivity));
+            }
             isForeground=true;
         }
     }
@@ -208,8 +206,21 @@ public class TrafficSenseService extends Service {
         return notification;
     }
 
+    private static Notification buildSleepNotification() {
+        Context ctx = TrafficSenseService.getContext();
+        Intent notificationIntent = new Intent(ctx, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(ctx, 0, notificationIntent, 0);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(ctx);
+        Notification notification = builder.setContentIntent(pendingIntent)
+                .setSmallIcon(R.drawable.md_sleep)
+                .setWhen(System.currentTimeMillis())
+                .setContentTitle(ctx.getText(R.string.app_name))
+                .setContentText(ctx.getText(R.string.sleeping)).build();
+        return notification;
+    }
+
     /*************************
-     Broadcast handler
+     Broadcast handlers
      *************************/
 
     /* Local broadcast receiver */
@@ -291,7 +302,12 @@ public class TrafficSenseService extends Service {
         if (mLocalBroadcastManager!=null && isViewActive())
         {
             Bundle args = new Bundle();
-            args.putInt(LABEL_STATE_INDEX,newState.ordinal());
+            args.putInt(InternalBroadcasts.LABEL_STATE_INDEX,newState.ordinal());
+            if (mStorage.isClientNumberAvailable()) {
+                args.putInt(InternalBroadcasts.LABEL_CLIENT_NUMBER,mStorage.readClientNumber().get());
+            } else {
+                args.putInt(InternalBroadcasts.LABEL_CLIENT_NUMBER,-1);
+            }
             broadcastNewState(InternalBroadcasts.KEY_SERVICE_STATE_UPDATE, args);
         }
     }

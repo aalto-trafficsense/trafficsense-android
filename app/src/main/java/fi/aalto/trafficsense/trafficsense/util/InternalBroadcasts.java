@@ -35,6 +35,7 @@ public class InternalBroadcasts {
     public static final String KEY_SERVICE_STATE_UPDATE = "SERVICE_STATE_UPDATE";
     public static final String KEY_UPLOAD_STATE_UPDATE = "UPLOAD_STATE_UPDATE";
     public static final String LABEL_STATE_INDEX = "STATE_IDX";
+    public static final String LABEL_CLIENT_NUMBER = "CLIENT_NUMBER";
 
     public static final String KEY_QUEUE_LENGTH_UPDATE = "QUEUE_LENGTH_UPDATE";
     public static final String LABEL_QUEUE_LENGTH = "QUEUE_LENGTH";

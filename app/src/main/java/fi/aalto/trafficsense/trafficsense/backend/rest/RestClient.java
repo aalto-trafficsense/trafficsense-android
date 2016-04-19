@@ -150,6 +150,21 @@ public class RestClient {
     public boolean uploadData(final DataQueue queue) {
         mThreadGlue.verify();
         // Timber.d("uploadData called with mAuthenticated: "+mAuthenticated.get());
+        if (!isUploadEnabled()) { // Try to resolve for next time
+            if (!mStorage.isUserIdAvailable()) {
+                Intent i = new Intent(InternalBroadcasts.KEY_REQUEST_SIGN_IN);
+                mLocalBroadcastManager.sendBroadcast(i);
+            } else { // User ID *is* available (= signed in)
+                if (!mStorage.isClientNumberAvailable()) {
+                    fetchClientNumber(new Callback<Optional<Integer>>() {
+                        @Override
+                        public void run(Optional<Integer> result, RuntimeException error) {
+                            if (result.isPresent()) mStorage.writeClientNumber(result.get());
+                        }
+                    });
+                }
+            }
+        }
         if (!isUploadEnabled() || isUploading()) // || !mAuthenticated.get())
             return false;
 
