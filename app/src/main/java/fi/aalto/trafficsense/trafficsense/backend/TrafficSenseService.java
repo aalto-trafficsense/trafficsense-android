@@ -305,8 +305,6 @@ public class TrafficSenseService extends Service {
             args.putInt(InternalBroadcasts.LABEL_STATE_INDEX,newState.ordinal());
             if (mStorage.isClientNumberAvailable()) {
                 args.putInt(InternalBroadcasts.LABEL_CLIENT_NUMBER,mStorage.readClientNumber().get());
-            } else {
-                args.putInt(InternalBroadcasts.LABEL_CLIENT_NUMBER,-1);
             }
             broadcastNewState(InternalBroadcasts.KEY_SERVICE_STATE_UPDATE, args);
         }

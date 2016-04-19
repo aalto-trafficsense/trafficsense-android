@@ -8,6 +8,7 @@ import android.content.res.Resources;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import fi.aalto.trafficsense.trafficsense.util.*;
 import java.text.DateFormat;
 import java.util.Date;
 
+import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_CLIENT_NUMBER;
 import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_STATE_INDEX;
 import static fi.aalto.trafficsense.trafficsense.util.TSServiceState.SLEEPING;
 import static java.text.DateFormat.getTimeInstance;
@@ -39,6 +41,7 @@ public class DebugShowFragment extends Fragment {
     /* UI Components */
     private TextView mServiceLabelTextField;
     private TextView mServiceStatusTextField;
+    private TextView mClientNumberTextField;
 
     private TextView mActivityLabelTextField;
     private TextView mTopActivityTextField;
@@ -115,6 +118,7 @@ public class DebugShowFragment extends Fragment {
     private void initFields() {
         mServiceLabelTextField = (TextView) getActivity().findViewById(R.id.debug_show_service_label);
         mServiceStatusTextField = (TextView) getActivity().findViewById(R.id.debug_show_service_state);
+        mClientNumberTextField = (TextView) getActivity().findViewById(R.id.debug_show_client_number);
 
         mActivityLabelTextField = (TextView) getActivity().findViewById(R.id.debug_show_activity_label);
         mTopActivityTextField = (TextView) getActivity().findViewById(R.id.debug_show_activity_top);
@@ -197,6 +201,9 @@ public class DebugShowFragment extends Fragment {
     private void updateServiceState (Intent i) {
         TSServiceState newState = TSServiceState.values()[i.getIntExtra(LABEL_STATE_INDEX,0)];
         mServiceStatusTextField.setText(TSServiceState.getServiceStateString(newState));
+        int clientNumber = i.getIntExtra(LABEL_CLIENT_NUMBER,-1);
+        if (clientNumber == -1) mClientNumberTextField.setText(mRes.getString(R.string.not_available));
+        else mClientNumberTextField.setText(clientNumber);
         switch (newState) {
             case STOPPED:
                 setTextColors(mServiceLabelTextField, R.color.grayText, R.color.white);
@@ -244,7 +251,8 @@ public class DebugShowFragment extends Fragment {
 
 
     private void setTextColors(TextView view, int text, int background) {
-        view.setTextColor(mRes.getColor(text));
+        // view.setTextColor(mRes.getColor(text));
+        view.setTextColor(ContextCompat.getColor(this.getContext(), text));
         view.setBackgroundResource(background);
     }
 

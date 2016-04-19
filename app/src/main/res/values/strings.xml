@@ -166,6 +166,7 @@
     <string name="upload_state_unknown">Unknown state</string>
     <string name="not_available">Not available</string>
     <string name="sleeping">Sleeping</string>
+    <string name="debug_show_client_number_label">Client number:</string>
 
 
 </resources>
