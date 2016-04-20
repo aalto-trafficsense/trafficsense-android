@@ -27,6 +27,7 @@ import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.util.*;
+import timber.log.Timber;
 
 import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_STATE_INDEX;
 
@@ -308,38 +309,47 @@ public class MainActivity extends AppCompatActivity
     private void updateLocation (Intent i) {
         if (i.hasExtra(InternalBroadcasts.KEY_LOCATION_UPDATE) & mMap != null) {
             Location l = i.getParcelableExtra(InternalBroadcasts.KEY_LOCATION_UPDATE);
-            LatLng myPos = new LatLng(l.getLatitude(), l.getLongitude());
-            if (mMarker == null) {
-                mMarker = mMap.addMarker(new MarkerOptions().position(myPos).icon(BitmapDescriptorFactory.fromResource(ActivityType.getActivityIcon(latestActivityType))));
-
-            } else {
-                mMarker.setPosition(myPos);
-            }
-            if (l.getAccuracy() > 50.0) {
-                if (mCircle == null) {
-                    CircleOptions circleOptions = new CircleOptions()
-                            .center(myPos)
-                            .radius(l.getAccuracy()).strokeColor(Color.BLUE)
-                            .strokeWidth(1.0f);
-                    mCircle = mMap.addCircle(circleOptions);
+            Timber.d("Location came back as:" + l.toString());
+            if (l != null) {
+                LatLng myPos = new LatLng(l.getLatitude(), l.getLongitude());
+                if (mMarker == null) {
+                    BitmapDescriptor bd = BitmapDescriptorFactory.fromResource(ActivityType.getActivityIcon(latestActivityType));
+                    Timber.d("BitmapDescriptor:" + bd.toString());
+                    if (bd == null) {
+                        mMarker = mMap.addMarker(new MarkerOptions().position(myPos));
+                    } else {
+                        // mMarker = mMap.addMarker(new MarkerOptions().position(myPos).icon(bd));
+                        mMarker = mMap.addMarker(new MarkerOptions().position(myPos));
+                    }
                 } else {
-                    mCircle.setRadius(l.getAccuracy());
-                    mCircle.setCenter(myPos);
+                    mMarker.setPosition(myPos);
                 }
-            } else { // Accuracy <= 50.0 - no circle
-                if (mCircle != null) {
-                    mCircle.remove();
-                    mCircle = null;
+                if (l.getAccuracy() > 50.0) {
+                    if (mCircle == null) {
+                        CircleOptions circleOptions = new CircleOptions()
+                                .center(myPos)
+                                .radius(l.getAccuracy()).strokeColor(Color.BLUE)
+                                .strokeWidth(1.0f);
+                        mCircle = mMap.addCircle(circleOptions);
+                    } else {
+                        mCircle.setRadius(l.getAccuracy());
+                        mCircle.setCenter(myPos);
+                    }
+                } else { // Accuracy <= 50.0 - no circle
+                    if (mCircle != null) {
+                        mCircle.remove();
+                        mCircle = null;
+                    }
                 }
-            }
+                if (mBounds == null) {
+                    //This is the current user-viewable region of the map
+                    mBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
+                }
+                if (!mBounds.contains(myPos)) {
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(myPos));
+                    mBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
+                }
 
-            if (mBounds == null) {
-                //This is the current user-viewable region of the map
-                mBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
-            }
-            if (!mBounds.contains(myPos)) {
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(myPos));
-                mBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
             }
 
         }
@@ -351,7 +361,7 @@ public class MainActivity extends AppCompatActivity
             ActivityType topActivity=a.getFirst().Type;
 
             if ((mMarker != null) && (topActivity != latestActivityType)) {
-                mMarker.setIcon(BitmapDescriptorFactory.fromResource(ActivityType.getActivityIcon(topActivity)));
+                // mMarker.setIcon(BitmapDescriptorFactory.fromResource(ActivityType.getActivityIcon(topActivity)));
                 latestActivityType = topActivity;
             }
         }
