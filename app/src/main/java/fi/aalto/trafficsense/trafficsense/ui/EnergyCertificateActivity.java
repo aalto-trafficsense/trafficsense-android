@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.caverock.androidsvg.SVG;
 import com.caverock.androidsvg.SVGImageView;
 import com.caverock.androidsvg.SVGParseException;
+import com.google.common.base.Optional;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.util.BackendStorage;
 
@@ -56,16 +57,22 @@ public class EnergyCertificateActivity extends AppCompatActivity {
     }
 
     private void fetchCertificate() {
-        try {
-            String sessionToken = mStorage.readSessionToken().get();
-            URL url = new URL(mStorage.getServerName().toString() + "/svg/" + sessionToken);
-            DownloadDataTask downloader = new DownloadDataTask();
-            downloader.execute(url);
-        } catch (MalformedURLException e) {
-            Context context = getApplicationContext();
-            Toast toast = Toast.makeText(context, "URL was broken", Toast.LENGTH_SHORT);
+        Optional<String> token = mStorage.readSessionToken();
+        if (token == null) {
+            Toast toast = Toast.makeText(this, "Not signed in?", Toast.LENGTH_SHORT);
             toast.show();
-            return;
+        } else {
+            try {
+                String sessionToken = mStorage.readSessionToken().get();
+                URL url = new URL(mStorage.getServerName().toString() + "/svg/" + sessionToken);
+                DownloadDataTask downloader = new DownloadDataTask();
+                downloader.execute(url);
+            } catch (MalformedURLException e) {
+                Context context = getApplicationContext();
+                Toast toast = Toast.makeText(context, "URL was broken", Toast.LENGTH_SHORT);
+                toast.show();
+                return;
+            }
         }
     }
 
