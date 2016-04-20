@@ -1,9 +1,14 @@
 package fi.aalto.trafficsense.trafficsense.ui;
 
+import android.Manifest;
 import android.content.*;
+import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -137,11 +142,11 @@ public class LoginActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_login);
         initMembers(savedInstanceState);
 
         initBroadcastReceiver();
-
     }
 
     @Override

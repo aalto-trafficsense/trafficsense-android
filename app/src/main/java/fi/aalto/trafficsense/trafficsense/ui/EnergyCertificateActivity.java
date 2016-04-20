@@ -58,20 +58,18 @@ public class EnergyCertificateActivity extends AppCompatActivity {
 
     private void fetchCertificate() {
         Optional<String> token = mStorage.readSessionToken();
-        if (token == null) {
+        if (!token.isPresent()) {
             Toast toast = Toast.makeText(this, "Not signed in?", Toast.LENGTH_SHORT);
             toast.show();
         } else {
             try {
-                String sessionToken = mStorage.readSessionToken().get();
-                URL url = new URL(mStorage.getServerName().toString() + "/svg/" + sessionToken);
+                URL url = new URL(mStorage.getServerName().toString() + "/svg/" + token.get());
                 DownloadDataTask downloader = new DownloadDataTask();
                 downloader.execute(url);
             } catch (MalformedURLException e) {
                 Context context = getApplicationContext();
                 Toast toast = Toast.makeText(context, "URL was broken", Toast.LENGTH_SHORT);
                 toast.show();
-                return;
             }
         }
     }

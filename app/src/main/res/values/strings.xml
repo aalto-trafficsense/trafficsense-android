@@ -168,6 +168,9 @@
     <string name="sleeping">Sleeping</string>
     <string name="debug_show_client_number_label">Client number:</string>
     <string name="navigation_feedback">Send feedback</string>
+    <string name="location_permission_persistently_refused">TrafficSense is based on location information. The background service will close now.</string>
+    <string name="location_permission_refused">TrafficSense does not work meaningfully without location permissions.</string>
+    <string name="no_location_permission">No location permission.</string>
 
 
 </resources>

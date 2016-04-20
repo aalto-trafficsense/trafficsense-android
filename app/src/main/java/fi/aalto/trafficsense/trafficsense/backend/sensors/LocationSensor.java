@@ -4,13 +4,17 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
+import fi.aalto.trafficsense.trafficsense.backend.TrafficSenseService;
+import fi.aalto.trafficsense.trafficsense.ui.MainActivity;
 import timber.log.Timber;
 
 /**
@@ -32,16 +36,7 @@ public class LocationSensor implements LocationListener {
         mGoogleApiClient = apiClient;
         mSensorFilter = controller;
 
-        // subscribe for location updates
-        if (ContextCompat.checkSelfPermission(TrafficSenseApplication.getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission to access the location is missing.
-            // TODO: Implement requester, test with Marshmallow
-            Toast.makeText(TrafficSenseApplication.getContext(), "Something wrong - no permission to access fine location.", Toast.LENGTH_SHORT).show();
-        } else {
-            // Access to the location has been granted to the app.
-            locationRequest(interval,priority);
-        }
+        locationRequest(interval,priority);
     }
 
     /* Public interface */
@@ -54,14 +49,23 @@ public class LocationSensor implements LocationListener {
     /* Internal implementation */
 
     private void locationRequest(int interval, int priority) {
-        // Set location request settings
-        LocationRequest mLocationRequest = LocationRequest.create();
-        mLocationRequest.setInterval(interval);
-        mLocationRequest.setFastestInterval(fastestInterval);
-        mLocationRequest.setPriority(priority);
+        // Check whether we still have location permission!
+        if (ContextCompat.checkSelfPermission(TrafficSenseApplication.getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission to access the location is missing.
+            Context ctx = TrafficSenseApplication.getContext();
+            Toast.makeText(ctx, ctx.getString(R.string.no_location_permission), Toast.LENGTH_SHORT).show();
+        } else {
+            // Set location request settings
+            LocationRequest mLocationRequest = LocationRequest.create();
+            mLocationRequest.setInterval(interval);
+            mLocationRequest.setFastestInterval(fastestInterval);
+            mLocationRequest.setPriority(priority);
 
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-        Timber.i("Requested location updates with interval: " + interval);
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+            // Timber.i("Requested location updates with interval: " + interval);
+        }
+
     }
 
 
