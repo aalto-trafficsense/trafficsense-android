@@ -1,14 +1,22 @@
 package fi.aalto.trafficsense.trafficsense.ui;
 
+import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -306,21 +314,41 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    // MJR: The following two methods circumvent a bug in Lollipop, which is causing the
+    // Application to crash when drawing vector icons.
+    // Original marker add was: mMarker = mMap.addMarker(new MarkerOptions().position(myPos).icon(BitmapDescriptorFactory.fromResource(ActivityType.getActivityIcon(topActivity)));
+    // Same issue found in activity change.
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private static Bitmap getBitmap(VectorDrawable vectorDrawable) {
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
+                vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        vectorDrawable.draw(canvas);
+        return bitmap;
+    }
+
+    private static Bitmap getBitmap(Context context, int drawableId) {
+        Drawable drawable = ContextCompat.getDrawable(context, drawableId);
+        if (drawable instanceof BitmapDrawable) {
+            return BitmapFactory.decodeResource(context.getResources(), drawableId);
+        } else if (drawable instanceof VectorDrawable) {
+            return getBitmap((VectorDrawable) drawable);
+        } else {
+            throw new IllegalArgumentException("unsupported drawable type");
+        }
+    }
+
     private void updateLocation (Intent i) {
         if (i.hasExtra(InternalBroadcasts.KEY_LOCATION_UPDATE) & mMap != null) {
             Location l = i.getParcelableExtra(InternalBroadcasts.KEY_LOCATION_UPDATE);
-            Timber.d("Location came back as:" + l.toString());
+            // Timber.d("Location came back as:" + l.toString());
             if (l != null) {
                 LatLng myPos = new LatLng(l.getLatitude(), l.getLongitude());
                 if (mMarker == null) {
-                    BitmapDescriptor bd = BitmapDescriptorFactory.fromResource(ActivityType.getActivityIcon(latestActivityType));
-                    Timber.d("BitmapDescriptor:" + bd.toString());
-                    if (bd == null) {
-                        mMarker = mMap.addMarker(new MarkerOptions().position(myPos));
-                    } else {
-                        // mMarker = mMap.addMarker(new MarkerOptions().position(myPos).icon(bd));
-                        mMarker = mMap.addMarker(new MarkerOptions().position(myPos));
-                    }
+                    Bitmap bitmap = getBitmap(mContext, ActivityType.getActivityIcon(latestActivityType));
+                    mMarker = mMap.addMarker(new MarkerOptions().position(myPos).icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
                 } else {
                     mMarker.setPosition(myPos);
                 }
@@ -349,9 +377,7 @@ public class MainActivity extends AppCompatActivity
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(myPos));
                     mBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
                 }
-
             }
-
         }
     }
 
@@ -359,9 +385,11 @@ public class MainActivity extends AppCompatActivity
         if (i.hasExtra(InternalBroadcasts.KEY_ACTIVITY_UPDATE)) {
             ActivityData a = i.getParcelableExtra(InternalBroadcasts.KEY_ACTIVITY_UPDATE);
             ActivityType topActivity=a.getFirst().Type;
-
             if ((mMarker != null) && (topActivity != latestActivityType)) {
+                // This one works with everything except Lollipop
                 // mMarker.setIcon(BitmapDescriptorFactory.fromResource(ActivityType.getActivityIcon(topActivity)));
+                Bitmap bitmap = getBitmap(mContext, ActivityType.getActivityIcon(latestActivityType));
+                mMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
                 latestActivityType = topActivity;
             }
         }
