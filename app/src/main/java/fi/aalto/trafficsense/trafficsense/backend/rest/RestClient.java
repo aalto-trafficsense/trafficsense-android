@@ -381,8 +381,19 @@ public class RestClient {
 
                     @Override
                     public void failure(RetrofitError error) {
+
                         final String msg = error.getMessage();
                         // mAuthenticated.set(false);
+
+                        // TODO: Trace how often this occurs and under what circumstances
+                        String mTempTrace = Log.getStackTraceString(error);
+                        if(mTempTrace.contains("java.io.EOFException")) {
+                            Timber.e("RestApi-authentication-failure caught an EOFException");
+                            Timber.i("Msg: " + msg + "Error: " + error.toString());
+                            // mAuthenticating.set(false);
+                            // authenticate(request, callback);
+                            // return;
+                        }
 
                         if (msg != null) {
                             Timber.w("Authentication failed: " + msg);

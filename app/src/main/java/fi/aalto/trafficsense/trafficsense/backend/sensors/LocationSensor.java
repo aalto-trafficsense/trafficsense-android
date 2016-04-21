@@ -53,8 +53,9 @@ public class LocationSensor implements LocationListener {
         if (ContextCompat.checkSelfPermission(TrafficSenseApplication.getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             // Permission to access the location is missing.
-            Context ctx = TrafficSenseApplication.getContext();
-            Toast.makeText(ctx, ctx.getString(R.string.no_location_permission), Toast.LENGTH_SHORT).show();
+            // MJR: Don't do anything - MainActivity will try to get permission.
+            // Context ctx = TrafficSenseApplication.getContext();
+            // Toast.makeText(ctx, ctx.getString(R.string.no_location_permission), Toast.LENGTH_SHORT).show();
         } else {
             // Set location request settings
             LocationRequest mLocationRequest = LocationRequest.create();

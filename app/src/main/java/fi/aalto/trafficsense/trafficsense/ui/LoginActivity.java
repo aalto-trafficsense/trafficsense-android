@@ -68,6 +68,9 @@ public class LoginActivity extends AppCompatActivity
     private final AtomicReference<Boolean> mAuthenticationOngoing = new AtomicReference<>(false);
     private LocalBroadcastManager mLocalBroadcastManager;
 
+    private Context mContext;
+    private Resources mRes;
+
     /* Store the connection result from onConnectionFailed callbacks so that we can
      * resolve them when the user clicks sign-in. */
     private ConnectionResult mConnectionResult;
@@ -98,6 +101,8 @@ public class LoginActivity extends AppCompatActivity
 
 
     private BroadcastReceiver mMessageReceiver;
+
+    private final int MY_PERMISSIONS_GET_ACCOUNTS = 2;
 
     private final Callback<Boolean> mFetchAndSetAuthenticationTokensCallback = new Callback<Boolean>() {
         @Override
@@ -143,6 +148,9 @@ public class LoginActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mContext = this;
+        mRes = this.getResources();
+
         setContentView(R.layout.activity_login);
         initMembers(savedInstanceState);
 
@@ -156,8 +164,54 @@ public class LoginActivity extends AppCompatActivity
         if (isSignedIn()) {
             mSignInButton.setEnabled(false);
             setStatusAsAuthenticated();
+        } else {
+            // Check account permissions
+            checkAccountPermission();
         }
     }
+
+    private void checkAccountPermission() {
+        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.GET_ACCOUNTS)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission to get accounts is missing.
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(LoginActivity.this,
+                    Manifest.permission.GET_ACCOUNTS)) {
+                // Permission persistently refused by the user
+                Toast.makeText(this, mRes.getString(R.string.accounts_permission_persistently_refused), Toast.LENGTH_LONG).show();
+                finish();
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(LoginActivity.this,
+                        new String[]{Manifest.permission.GET_ACCOUNTS},
+                        MY_PERMISSIONS_GET_ACCOUNTS);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_GET_ACCOUNTS: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Timber.d("ACCESS_FINE_LOCATION permission granted.");
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Toast.makeText(this, mRes.getString(R.string.accounts_permission_persistently_refused), Toast.LENGTH_LONG).show();
+                    finish();
+                }
+                return;
+            }
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
 
     @Override
     protected void onDestroy() {
@@ -226,29 +280,32 @@ public class LoginActivity extends AppCompatActivity
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        if (mClearAccountTriggered.get()) {
-            // Connection was established to sign out
-            mClearAccountTriggered.set(false);
-            clearAccountAndReconnect();
-            return;
+        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.GET_ACCOUNTS)
+                == PackageManager.PERMISSION_GRANTED) {
+            if (mClearAccountTriggered.get()) {
+                // Connection was established to sign out
+                mClearAccountTriggered.set(false);
+                clearAccountAndReconnect();
+                return;
+            }
+
+            setUiControlStates(true);
+
+            if (isSignedIn()) {
+                // No need to get device authentication id
+                doSignInActions();
+                return;
+            }
+
+            if (mAuthenticationOngoing.get())
+                return;
+
+            mAuthenticationOngoing.set(true);
+            // Indicate that the sign in process is complete.
+            mStatus.setText(getResources().getString(R.string.status_fetch_auth_tokens));
+            Timber.i("Login: onConnected");
+            fetchAndSetAuthenticationTokens(mFetchAndSetAuthenticationTokensCallback);
         }
-
-        setUiControlStates(true);
-
-        if (isSignedIn()) {
-            // No need to get device authentication id
-            doSignInActions();
-            return;
-        }
-
-        if (mAuthenticationOngoing.get())
-            return;
-
-        mAuthenticationOngoing.set(true);
-        // Indicate that the sign in process is complete.
-        mStatus.setText(getResources().getString(R.string.status_fetch_auth_tokens));
-        Timber.i("Login: onConnected");
-        fetchAndSetAuthenticationTokens(mFetchAndSetAuthenticationTokensCallback);
     }
 
 
