@@ -172,6 +172,7 @@
     <string name="location_permission_refused">TrafficSense does not work meaningfully without location permissions.</string>
     <string name="no_location_permission">No location permission.</string>
     <string name="accounts_permission_persistently_refused">Cannot login to service without permission to access accounts.</string>
+    <string name="upload_state_failed">Failed</string>
 
 
 </resources>

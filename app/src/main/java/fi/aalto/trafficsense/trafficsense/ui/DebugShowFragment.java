@@ -226,24 +226,24 @@ public class DebugShowFragment extends Fragment {
         mUploadStatusTextField.setText(TSUploadState.getUploadStateString(newState));
         switch (newState) {
             case SWITCHEDOFF:
-                setTextColors(mServiceLabelTextField, R.color.grayText, R.color.white);
-                setTextColors(mServiceStatusTextField, R.color.grayText, R.color.white);
+                setTextColors(mUploadLabelTextField, R.color.grayText, R.color.white);
+                setTextColors(mUploadStatusTextField, R.color.grayText, R.color.white);
                 break;
             case SIGNEDOUT:
-                setTextColors(mServiceLabelTextField, R.color.normalText, R.color.colorBus);
-                setTextColors(mServiceStatusTextField, R.color.normalText, R.color.colorBus);
+                setTextColors(mUploadLabelTextField, R.color.normalText, R.color.colorBus);
+                setTextColors(mUploadStatusTextField, R.color.normalText, R.color.colorBus);
                 break;
             case NOCLIENTNUMBER:
-                setTextColors(mServiceLabelTextField, R.color.colorSubtitleText, R.color.colorInVehicle);
-                setTextColors(mServiceStatusTextField, R.color.colorSubtitleText, R.color.colorInVehicle);
+                setTextColors(mUploadLabelTextField, R.color.colorSubtitleText, R.color.colorInVehicle);
+                setTextColors(mUploadStatusTextField, R.color.colorSubtitleText, R.color.colorInVehicle);
                 break;
             case INPROGRESS:
-                setTextColors(mServiceLabelTextField, R.color.normalText, R.color.colorRunning);
-                setTextColors(mServiceStatusTextField, R.color.normalText, R.color.colorRunning);
+                setTextColors(mUploadLabelTextField, R.color.normalText, R.color.colorRunning);
+                setTextColors(mUploadStatusTextField, R.color.normalText, R.color.colorRunning);
                 break;
             default:
-                setTextColors(mServiceLabelTextField, R.color.colorSubtitleText, R.color.colorWalking);
-                setTextColors(mServiceStatusTextField, R.color.colorSubtitleText, R.color.colorWalking);
+                setTextColors(mUploadLabelTextField, R.color.colorSubtitleText, R.color.colorWalking);
+                setTextColors(mUploadStatusTextField, R.color.colorSubtitleText, R.color.colorWalking);
                 break;
         }
 

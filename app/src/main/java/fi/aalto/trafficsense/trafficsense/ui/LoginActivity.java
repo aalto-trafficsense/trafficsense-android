@@ -20,6 +20,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
 import fi.aalto.trafficsense.trafficsense.R;
+import fi.aalto.trafficsense.trafficsense.backend.uploader.RegularRoutesPipeline;
 import fi.aalto.trafficsense.trafficsense.util.BackendStorage;
 import fi.aalto.trafficsense.trafficsense.util.Callback;
 import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
@@ -115,6 +116,10 @@ public class LoginActivity extends AppCompatActivity
 
                         setGoogleSignInProgress(STATE_DEFAULT);
 
+                        // Return upload enabled state to previous state,
+                        // Upload-operation will authenticate when required so no need to wait
+                        RegularRoutesPipeline.setUploadEnabledState(mUploadEnabledState);
+
                         // Trigger RegularRoutes server authentication request:
                         Timber.d("Requesting LRR server authentication");
                         Intent intent = new Intent(InternalBroadcasts.KEY_REQUEST_AUTHENTICATION);
@@ -153,6 +158,9 @@ public class LoginActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_login);
         initMembers(savedInstanceState);
+        if (!isSignedIn())
+            // Turn off uploading while authenticating
+            RegularRoutesPipeline.setUploadEnabledState(false);
 
         initBroadcastReceiver();
     }
@@ -487,6 +495,7 @@ public class LoginActivity extends AppCompatActivity
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                RegularRoutesPipeline.setUploadEnabledState(true);
                                 setStatusAsAuthenticated();
                             }
                         });
@@ -495,6 +504,7 @@ public class LoginActivity extends AppCompatActivity
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                RegularRoutesPipeline.setUploadEnabledState(true);
                                 setStatusAsAuthenticated();
                             }
                         });
@@ -569,6 +579,7 @@ public class LoginActivity extends AppCompatActivity
     }
 
     private void revokeAccess() {
+        RegularRoutesPipeline.setUploadEnabledState(false);
         mStorage.clearSessionToken();
         mStorage.clearOneTimeToken();
         mStorage.clearUserId();
@@ -589,6 +600,7 @@ public class LoginActivity extends AppCompatActivity
 
     private void signOutUser() {
         mContinueButton.setVisibility(View.INVISIBLE);
+        RegularRoutesPipeline.setUploadEnabledState(false);
         mStorage.clearSessionToken();
         mStorage.clearOneTimeToken();
         mStorage.clearUserId();
@@ -746,6 +758,9 @@ public class LoginActivity extends AppCompatActivity
         // Update the UI to reflect that the user is signed out.
         setUiControlStates(false);
         mStatus.setText(R.string.status_signed_out);
+
+        // Disable uploading
+        RegularRoutesPipeline.setUploadEnabledState(false);
 
         Intent intent = new Intent(InternalBroadcasts.KEY_SIGNED_OUT);
         mLocalBroadcastManager.sendBroadcast(intent);

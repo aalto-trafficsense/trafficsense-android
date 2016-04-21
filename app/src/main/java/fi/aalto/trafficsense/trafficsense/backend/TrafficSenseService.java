@@ -100,7 +100,6 @@ public class TrafficSenseService extends Service {
 
         // Request sign-in if user-id is not available
         if (!mStorage.isUserIdAvailable()) {
-            RegularRoutesPipeline.setUploadEnabledState(false);
             if (mLocalBroadcastManager!=null)
             {
                 Intent i = new Intent(InternalBroadcasts.KEY_REQUEST_SIGN_IN);
@@ -117,10 +116,8 @@ public class TrafficSenseService extends Service {
 
     private void testUploadEnabled() {
         if (mStorage.isUserIdAvailable() && mStorage.isClientNumberAvailable()) {
-            RegularRoutesPipeline.setUploadEnabledState(true);
             updateUploadState(READY);
         } else {
-            RegularRoutesPipeline.setUploadEnabledState(false);
             TSUploadState testState = SWITCHEDOFF;
             if (!mStorage.isUserIdAvailable()) testState=SIGNEDOUT;
             if (!mStorage.isClientNumberAvailable()) testState=NOCLIENTNUMBER;

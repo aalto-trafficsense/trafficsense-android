@@ -89,7 +89,7 @@ public class DataQueue {
     }
 
     public boolean shouldBeFlushed() {
-        Timber.d("DataQueue:shouldBeFlushed (test) called with size:"+mDeque.size()+" threshold "+flushThreshold);
+        Timber.d("DataQueue:shouldBeFlushed (test) called with size:"+mDeque.size()+" threshold "+activeThreshold);
         return mDeque.size() >= activeThreshold;
     }
 

@@ -152,6 +152,7 @@ public class SensorFilter {
                         addActivity(ad);
                         break;
                     case InternalBroadcasts.KEY_DEBUG_SHOW_REQ:
+                    case InternalBroadcasts.KEY_MAIN_ACTIVITY_REQ:
                         broadcastLatestSensorData();
                         break;
                 }
@@ -161,6 +162,7 @@ public class SensorFilter {
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(InternalBroadcasts.KEY_ACTIVITY_UPDATE);
         intentFilter.addAction(InternalBroadcasts.KEY_DEBUG_SHOW_REQ);
+        intentFilter.addAction(InternalBroadcasts.KEY_MAIN_ACTIVITY_REQ);
 
         if (mLocalBroadcastManager != null) {
             mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, intentFilter);
