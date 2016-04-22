@@ -234,6 +234,7 @@ public class DebugShowFragment extends Fragment {
                 setTextColors(mUploadStatusTextField, R.color.normalText, R.color.colorBus);
                 break;
             case NOCLIENTNUMBER:
+            case FAILED:
                 setTextColors(mUploadLabelTextField, R.color.colorSubtitleText, R.color.colorInVehicle);
                 setTextColors(mUploadStatusTextField, R.color.colorSubtitleText, R.color.colorInVehicle);
                 break;
@@ -269,7 +270,15 @@ public class DebugShowFragment extends Fragment {
             locationIntervalTimer = System.currentTimeMillis();
             mLocationTimeTextField.setText(locTime);
 
-            mLocationAccuracyTextField.setText(String.format("%.0fm", l.getAccuracy()));
+            float acc = l.getAccuracy();
+            mLocationAccuracyTextField.setText(String.format("%.0fm", acc));
+            if (acc >= 50.0f) {
+                setTextColors(mLocationLabelTextField, R.color.colorSubtitleText, R.color.colorInVehicle);
+                setTextColors(mLocationProviderTextField, R.color.colorSubtitleText, R.color.colorInVehicle);
+            } else {
+                setTextColors(mLocationLabelTextField, R.color.colorSubtitleText, R.color.colorWalking);
+                setTextColors(mLocationProviderTextField, R.color.colorSubtitleText, R.color.colorWalking);
+            }
         }
     }
 

@@ -28,6 +28,7 @@ public class InternalBroadcasts {
 
     public static final String KEY_UPLOAD_STARTED = "UPLOAD_STARTED";
     public static final String KEY_UPLOAD_SUCCEEDED = "UPLOAD_SUCCEEDED";
+    public static final String KEY_UPLOAD_FAILED = "UPLOAD_FAILED";
     public static final String KEY_UPLOAD_TIME = "UPLOAD_TIME";
 
     public static final String KEY_SERVICE_GOING_TO_SLEEP = "GOING_TO_SLEEP";

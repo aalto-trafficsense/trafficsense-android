@@ -76,8 +76,8 @@ public class DataQueue {
     }
 
     public boolean increaseThreshold() {
-        if (activeThreshold * 2 < mMaxSize) {
-            activeThreshold *= 2;
+        if (activeThreshold + flushThreshold < mMaxSize) {
+            activeThreshold += flushThreshold;
             return true;
         } else {
             return false;

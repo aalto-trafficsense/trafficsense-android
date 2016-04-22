@@ -32,6 +32,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.KEY_UPLOAD_FAILED;
 import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.KEY_UPLOAD_SUCCEEDED;
 
 public class RestClient {
@@ -183,7 +184,7 @@ public class RestClient {
                 setUploading(false);
                 if (error != null) {
                     Timber.e(error, "Data upload failed");
-
+                    notifyRestClientResults(KEY_UPLOAD_FAILED);
                 } else {
                     queue.removeUntilSequence(body.mSequence);
                     Timber.d("Uploaded data up to sequence #%d", body.mSequence);
@@ -385,16 +386,6 @@ public class RestClient {
                         final String msg = error.getMessage();
                         // mAuthenticated.set(false);
 
-                        // TODO: Trace how often this occurs and under what circumstances
-                        String mTempTrace = Log.getStackTraceString(error);
-                        if(mTempTrace.contains("java.io.EOFException")) {
-                            Timber.e("RestApi-authentication-failure caught an EOFException");
-                            Timber.i("Msg: " + msg + "Error: " + error.toString());
-                            // mAuthenticating.set(false);
-                            // authenticate(request, callback);
-                            // return;
-                        }
-
                         if (msg != null) {
                             Timber.w("Authentication failed: " + msg);
 
@@ -418,13 +409,12 @@ public class RestClient {
                             }
 
                         } else { // msg==null
-                            // MJR: Not sure if this is the right way to handle, but it was the approach earlier
-                            //      When null-result was not avoided
                             if (error == null) {
                                 Timber.d("RestApi-authentication-failure with null error");
                             } else {
                                 String mStackTrace = Log.getStackTraceString(error);
                                 if(mStackTrace.contains("java.io.EOFException")) {
+                                    // Stack-internal bug, the request was never sent -> try again
                                     Timber.i("RestApi-authentication-failure caught an EOFException - trying again");
                                     mAuthenticating.set(false);
                                     authenticate(request, callback);
@@ -569,6 +559,7 @@ public class RestClient {
                 }
                 // Some other upload error
                 queue.increaseThreshold();
+                notifyRestClientResults(KEY_UPLOAD_FAILED);
                 callback.run(null, new RuntimeException("Data upload failed", error));
             }
         });

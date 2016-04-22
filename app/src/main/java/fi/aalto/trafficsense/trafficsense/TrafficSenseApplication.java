@@ -73,7 +73,7 @@ public class TrafficSenseApplication extends Application {
         updateServiceState();
         Intent serviceIntent = new Intent(this, TrafficSenseService.class);
         startService(serviceIntent);
-        bindService(serviceIntent, mServiceConnection, BIND_AUTO_CREATE);
+        bindService(serviceIntent, mServiceConnection, BIND_AUTO_CREATE | BIND_IMPORTANT);
         mTSServiceState = RUNNING;
     }
 
