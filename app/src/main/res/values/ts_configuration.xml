@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <bool name="use_test_server">true</bool>
-    <string name="feedback_form_address">https://docs.google.com/forms/d/10WimO9h3VYEWqwTMIjOm3klVKILLUy4olS_ROKu5xts/viewform</string>
     <integer name="flush_threshold">24</integer>
     <integer name="queue_size">4096</integer>
 </resources>
