@@ -1,0 +1,14 @@
+<resources xmlns:tools="http://schemas.android.com/tools"
+           tools:ignore="MissingTranslation">
+    <!-- Google app ID (project number, under dev console information) -->
+    <string name="google_app_id">insert_project_number_here</string>
+    <!-- Google Maps API key -->
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIza_starting_android_google_maps_api_key_here</string>
+
+    <string name="server_address_test">http://your.test.server.address/api</string>
+    <string name="web_client_id_test">your_test_server_web_client_id.apps.googleusercontent.com</string>
+
+    <string name="server_address_production">http://your.production.server/api</string>
+    <string name="web_client_id_production">your_production_server_web_client_id.apps.googleusercontent.com</string>
+
+</resources>
