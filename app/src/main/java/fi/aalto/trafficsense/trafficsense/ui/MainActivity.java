@@ -316,7 +316,6 @@ public class MainActivity extends AppCompatActivity
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-//         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
          mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initPosition, initZoom));
     }
 
@@ -437,9 +436,9 @@ public class MainActivity extends AppCompatActivity
             ActivityData a = i.getParcelableExtra(InternalBroadcasts.KEY_ACTIVITY_UPDATE);
             ActivityType topActivity=a.getFirst().Type;
             if ((mMarker != null) && (topActivity != latestActivityType)) {
-                // This one works with everything except Lollipop
+                // This one works with everything earlier than Lollipop
                 // mMarker.setIcon(BitmapDescriptorFactory.fromResource(ActivityType.getActivityIcon(topActivity)));
-                Bitmap bitmap = getBitmap(mContext, ActivityType.getActivityIcon(latestActivityType));
+                Bitmap bitmap = getBitmap(mContext, ActivityType.getActivityIcon(topActivity));
                 mMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
                 latestActivityType = topActivity;
             }
