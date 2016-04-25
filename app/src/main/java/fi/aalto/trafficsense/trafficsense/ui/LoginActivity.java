@@ -191,6 +191,7 @@ public class LoginActivity extends AppCompatActivity
                 finish();
             } else {
                 // No explanation needed, we can request the permission.
+                Toast.makeText(this, mRes.getString(R.string.accounts_permission_explanation), Toast.LENGTH_LONG).show();
                 ActivityCompat.requestPermissions(LoginActivity.this,
                         new String[]{Manifest.permission.GET_ACCOUNTS},
                         MY_PERMISSIONS_GET_ACCOUNTS);
