@@ -15,7 +15,7 @@ import fi.aalto.trafficsense.trafficsense.util.*;
 import timber.log.Timber;
 
 /**
- * Created by rinnem2 on 10/04/16.
+ * Created by mikko.rinne@aalto.fi on 10/04/16.
  */
 public class SensorFilter {
 
@@ -85,6 +85,8 @@ public class SensorFilter {
                 return;
             } else {
                 if (lastQueuedLocation.distanceTo(lastReceivedLocation) >= lastReceivedLocation.getAccuracy()) {
+                    // Moving. If inactivity timer is running (= mistake), restart timer
+                    if (inactivityTimerRunning) inactivityTimer = System.currentTimeMillis();
                     queueOutgoing();
                     return;
                 }
