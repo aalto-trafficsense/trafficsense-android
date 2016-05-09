@@ -20,8 +20,6 @@
                 <TextView android:id="@+id/debug_show_service_label"
                           android:textColor="@color/colorSubtitleText"
                           android:background="@color/colorSubtitleBackground"
-                          android:layout_width="fill_parent"
-                          android:layout_height="wrap_content"
                           android:layout_weight="1"
                           style="@android:style/TextAppearance.Large"
                           android:text="@string/service_state_label" />
@@ -58,8 +56,6 @@
             <TableRow>
                 <TextView android:id="@+id/debug_show_activity_label"
                           android:textColor="@color/colorSubtitleText"
-                          android:layout_width="fill_parent"
-                          android:layout_height="wrap_content"
                           android:layout_weight="1"
                           style="@android:style/TextAppearance.Large"
                           android:background="@color/colorSubtitleBackground"
@@ -75,7 +71,6 @@
             <TableRow>
                 <TextView android:id="@+id/debug_show_activity_list_label"
                           style="@android:style/TextAppearance.Medium"
-                          android:layout_marginBottom="6dp"
                           android:text="@string/debug_show_activitylist_prefix"
                           android:textColor="@color/black" />
                 <TextView android:id="@+id/debug_show_activities"
@@ -104,8 +99,6 @@
             <TableRow>
                 <TextView android:id="@+id/debug_show_location_label"
                           android:textColor="@color/colorSubtitleText"
-                          android:layout_width="fill_parent"
-                          android:layout_height="wrap_content"
                           android:layout_weight="1"
                           style="@android:style/TextAppearance.Large"
                           android:background="@color/colorSubtitleBackground"
@@ -152,8 +145,6 @@
                 <TextView android:id="@+id/debug_show_upload_label"
                           android:textColor="@color/colorSubtitleText"
                           android:background="@color/colorSubtitleBackground"
-                          android:layout_width="fill_parent"
-                          android:layout_height="wrap_content"
                           android:layout_weight="1"
                           style="@android:style/TextAppearance.Large"
                           android:text="@string/debug_show_upload_label" />
