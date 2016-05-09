@@ -8,8 +8,12 @@
             android:title="@string/navigation_about"/>
         <item
             android:id="@+id/nav_energy"
-            android:icon="@drawable/ic_directions_bike_24dp"
+            android:icon="@drawable/md_activity_bicycle_24dp1"
             android:title="@string/navigation_energy_certificate"/>
+        <item
+            android:id="@+id/nav_transport"
+            android:icon="@drawable/md_activity_bus_24dp"
+            android:title="@string/navigation_transport"/>
         <item
             android:id="@+id/nav_feedback"
             android:icon="@drawable/ic_message_24dp"

@@ -174,6 +174,7 @@
     <string name="accounts_permission_persistently_refused">Cannot login to service without permission to access accounts.</string>
     <string name="upload_state_failed">Failed</string>
     <string name="accounts_permission_explanation">TrafficSense needs access to your Google account to log you in. It will not access any of your contacts.</string>
+    <string name="navigation_transport">Register transport</string>
 
 
 </resources>

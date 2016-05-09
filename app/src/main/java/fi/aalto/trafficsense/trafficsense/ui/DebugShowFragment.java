@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.TableRow;
 import android.widget.TextView;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.util.*;
@@ -39,22 +40,26 @@ public class DebugShowFragment extends Fragment {
     private long locationIntervalTimer;
 
     /* UI Components */
+    private TableRow mServiceHeaderRow;
     private TextView mServiceLabelTextField;
     private TextView mServiceStatusTextField;
     private TextView mClientNumberTextField;
 
+    private TableRow mActivityHeaderRow;
     private TextView mActivityLabelTextField;
     private TextView mTopActivityTextField;
     private TextView mActivityListLabelTextField;
     private TextView mLatestActivitiesTextField;
     private TextView mActivityTimeTextField;
 
+    private TableRow mLocationHeaderRow;
     private TextView mLocationLabelTextField;
     private TextView mLocationProviderTextField;
     private TextView mLocationAccuracyLabelTextField;
     private TextView mLocationAccuracyTextField;
     private TextView mLocationTimeTextField;
 
+    private TableRow mUploadHeaderRow;
     private TextView mUploadLabelTextField;
     private TextView mUploadStatusTextField;
     private TextView mUploadQueueLengthTextField;
@@ -116,22 +121,26 @@ public class DebugShowFragment extends Fragment {
     }
 
     private void initFields() {
+        mServiceHeaderRow = (TableRow) getActivity().findViewById(R.id.debug_show_service_header_row);
         mServiceLabelTextField = (TextView) getActivity().findViewById(R.id.debug_show_service_label);
         mServiceStatusTextField = (TextView) getActivity().findViewById(R.id.debug_show_service_state);
         mClientNumberTextField = (TextView) getActivity().findViewById(R.id.debug_show_client_number);
 
+        mActivityHeaderRow = (TableRow) getActivity().findViewById(R.id.debug_show_activity_header_row);
         mActivityLabelTextField = (TextView) getActivity().findViewById(R.id.debug_show_activity_label);
         mTopActivityTextField = (TextView) getActivity().findViewById(R.id.debug_show_activity_top);
         mActivityListLabelTextField = (TextView) getActivity().findViewById(R.id.debug_show_activity_list_label);
         mLatestActivitiesTextField = (TextView) getActivity().findViewById(R.id.debug_show_activities);
         mActivityTimeTextField = (TextView) getActivity().findViewById(R.id.debug_show_activity_time);
 
+        mLocationHeaderRow = (TableRow) getActivity().findViewById(R.id.debug_show_location_header_row);
         mLocationLabelTextField = (TextView) getActivity().findViewById(R.id.debug_show_location_label);
         mLocationProviderTextField = (TextView) getActivity().findViewById(R.id.debug_show_location_provider);
         mLocationTimeTextField = (TextView) getActivity().findViewById(R.id.debug_show_location_time);
         mLocationAccuracyLabelTextField = (TextView) getActivity().findViewById(R.id.debug_show_location_accuracy_label);
         mLocationAccuracyTextField = (TextView) getActivity().findViewById(R.id.debug_show_location_accuracy);
 
+        mUploadHeaderRow = (TableRow) getActivity().findViewById(R.id.debug_show_upload_header_row);
         mUploadLabelTextField = (TextView) getActivity().findViewById(R.id.debug_show_upload_label);
         mUploadStatusTextField = (TextView) getActivity().findViewById(R.id.debug_show_upload_state);
         mUploadQueueLengthTextField = (TextView) getActivity().findViewById(R.id.debug_show_queue_length);
@@ -206,16 +215,25 @@ public class DebugShowFragment extends Fragment {
         else mClientNumberTextField.setText(String.format("%d", clientNumber));
         switch (newState) {
             case STOPPED:
-                setTextColors(mServiceLabelTextField, R.color.grayText, R.color.white);
-                setTextColors(mServiceStatusTextField, R.color.grayText, R.color.white);
+//                setTextColors(mServiceLabelTextField, R.color.grayText, R.color.white);
+//                setTextColors(mServiceStatusTextField, R.color.grayText, R.color.white);
+                mServiceLabelTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.grayText));
+                mServiceStatusTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.grayText));
+                mServiceHeaderRow.setBackgroundColor(ContextCompat.getColor(this.getContext(), R.color.colorStill));
                 break;
             case SLEEPING:
-                setTextColors(mServiceLabelTextField, R.color.colorSubtitleText, R.color.colorTilting);
-                setTextColors(mServiceStatusTextField, R.color.colorSubtitleText, R.color.colorTilting);
+//                setTextColors(mServiceLabelTextField, R.color.colorSubtitleText, R.color.colorTilting);
+//                setTextColors(mServiceStatusTextField, R.color.colorSubtitleText, R.color.colorTilting);
+                mServiceLabelTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
+                mServiceStatusTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
+                mServiceHeaderRow.setBackgroundColor(ContextCompat.getColor(this.getContext(), R.color.colorTilting));
                 break;
             default:
-                setTextColors(mServiceLabelTextField, R.color.normalText, R.color.colorRunning);
-                setTextColors(mServiceStatusTextField, R.color.normalText, R.color.colorRunning);
+//                setTextColors(mServiceLabelTextField, R.color.normalText, R.color.colorRunning);
+//                setTextColors(mServiceStatusTextField, R.color.normalText, R.color.colorRunning);
+                mServiceLabelTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.normalText));
+                mServiceStatusTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.normalText));
+                mServiceHeaderRow.setBackgroundColor(ContextCompat.getColor(this.getContext(), R.color.colorRunning));
             break;
         }
 
@@ -226,25 +244,40 @@ public class DebugShowFragment extends Fragment {
         mUploadStatusTextField.setText(TSUploadState.getUploadStateString(newState));
         switch (newState) {
             case SWITCHEDOFF:
-                setTextColors(mUploadLabelTextField, R.color.grayText, R.color.white);
-                setTextColors(mUploadStatusTextField, R.color.grayText, R.color.white);
+//                setTextColors(mUploadLabelTextField, R.color.grayText, R.color.white);
+//                setTextColors(mUploadStatusTextField, R.color.grayText, R.color.white);
+                mUploadLabelTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.grayText));
+                mUploadStatusTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.grayText));
+                mUploadHeaderRow.setBackgroundColor(ContextCompat.getColor(this.getContext(), R.color.colorStill));
                 break;
             case SIGNEDOUT:
-                setTextColors(mUploadLabelTextField, R.color.normalText, R.color.colorBus);
-                setTextColors(mUploadStatusTextField, R.color.normalText, R.color.colorBus);
+//                setTextColors(mUploadLabelTextField, R.color.normalText, R.color.colorBus);
+//                setTextColors(mUploadStatusTextField, R.color.normalText, R.color.colorBus);
+                mUploadLabelTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.normalText));
+                mUploadStatusTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.normalText));
+                mUploadHeaderRow.setBackgroundColor(ContextCompat.getColor(this.getContext(), R.color.colorBus));
                 break;
             case NOCLIENTNUMBER:
             case FAILED:
-                setTextColors(mUploadLabelTextField, R.color.colorSubtitleText, R.color.colorInVehicle);
-                setTextColors(mUploadStatusTextField, R.color.colorSubtitleText, R.color.colorInVehicle);
+//                setTextColors(mUploadLabelTextField, R.color.colorSubtitleText, R.color.colorInVehicle);
+//                setTextColors(mUploadStatusTextField, R.color.colorSubtitleText, R.color.colorInVehicle);
+                mUploadLabelTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
+                mUploadStatusTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
+                mUploadHeaderRow.setBackgroundColor(ContextCompat.getColor(this.getContext(), R.color.colorInVehicle));
                 break;
             case INPROGRESS:
-                setTextColors(mUploadLabelTextField, R.color.normalText, R.color.colorRunning);
-                setTextColors(mUploadStatusTextField, R.color.normalText, R.color.colorRunning);
+//                setTextColors(mUploadLabelTextField, R.color.normalText, R.color.colorRunning);
+//                setTextColors(mUploadStatusTextField, R.color.normalText, R.color.colorRunning);
+                mUploadLabelTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.normalText));
+                mUploadStatusTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.normalText));
+                mUploadHeaderRow.setBackgroundColor(ContextCompat.getColor(this.getContext(), R.color.colorRunning));
                 break;
             default:
-                setTextColors(mUploadLabelTextField, R.color.colorSubtitleText, R.color.colorWalking);
-                setTextColors(mUploadStatusTextField, R.color.colorSubtitleText, R.color.colorWalking);
+//                setTextColors(mUploadLabelTextField, R.color.colorSubtitleText, R.color.colorWalking);
+//                setTextColors(mUploadStatusTextField, R.color.colorSubtitleText, R.color.colorWalking);
+                mUploadLabelTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
+                mUploadStatusTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
+                mUploadHeaderRow.setBackgroundColor(ContextCompat.getColor(this.getContext(), R.color.colorWalking));
                 break;
         }
 
@@ -273,11 +306,17 @@ public class DebugShowFragment extends Fragment {
             float acc = l.getAccuracy();
             mLocationAccuracyTextField.setText(String.format("%.0fm", acc));
             if (acc >= 50.0f) {
-                setTextColors(mLocationLabelTextField, R.color.colorSubtitleText, R.color.colorInVehicle);
-                setTextColors(mLocationProviderTextField, R.color.colorSubtitleText, R.color.colorInVehicle);
+//                setTextColors(mLocationLabelTextField, R.color.colorSubtitleText, R.color.colorInVehicle);
+//                setTextColors(mLocationProviderTextField, R.color.colorSubtitleText, R.color.colorInVehicle);
+                mLocationLabelTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
+                mLocationProviderTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
+                mLocationHeaderRow.setBackgroundColor(ContextCompat.getColor(this.getContext(), R.color.colorInVehicle));
             } else {
-                setTextColors(mLocationLabelTextField, R.color.colorSubtitleText, R.color.colorWalking);
-                setTextColors(mLocationProviderTextField, R.color.colorSubtitleText, R.color.colorWalking);
+//                setTextColors(mLocationLabelTextField, R.color.colorSubtitleText, R.color.colorWalking);
+//                setTextColors(mLocationProviderTextField, R.color.colorSubtitleText, R.color.colorWalking);
+                mLocationLabelTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
+                mLocationProviderTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
+                mLocationHeaderRow.setBackgroundColor(ContextCompat.getColor(this.getContext(), R.color.colorWalking));
             }
         }
     }
@@ -298,36 +337,60 @@ public class DebugShowFragment extends Fragment {
 
             switch (topActivity) {
                 case IN_VEHICLE:
-                    setTextColors(mActivityLabelTextField, R.color.colorSubtitleText, R.color.colorInVehicle);
-                    setTextColors(mTopActivityTextField, R.color.colorSubtitleText, R.color.colorInVehicle);
+//                    setTextColors(mActivityLabelTextField, R.color.colorSubtitleText, R.color.colorInVehicle);
+//                    setTextColors(mTopActivityTextField, R.color.colorSubtitleText, R.color.colorInVehicle);
+                    mActivityLabelTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
+                    mTopActivityTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
+                    mActivityHeaderRow.setBackgroundColor(ContextCompat.getColor(this.getContext(), R.color.colorInVehicle));
                     break;
                 case ON_BICYCLE:
-                    setTextColors(mActivityLabelTextField, R.color.colorSubtitleText, R.color.colorOnBicycle);
-                    setTextColors(mTopActivityTextField, R.color.colorSubtitleText, R.color.colorOnBicycle);
+//                    setTextColors(mActivityLabelTextField, R.color.colorSubtitleText, R.color.colorOnBicycle);
+//                    setTextColors(mTopActivityTextField, R.color.colorSubtitleText, R.color.colorOnBicycle);
+                    mActivityLabelTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
+                    mTopActivityTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
+                    mActivityHeaderRow.setBackgroundColor(ContextCompat.getColor(this.getContext(), R.color.colorOnBicycle));
                     break;
                 case RUNNING:
-                    setTextColors(mActivityLabelTextField, R.color.normalText, R.color.colorRunning);
-                    setTextColors(mTopActivityTextField, R.color.normalText, R.color.colorRunning);
+//                    setTextColors(mActivityLabelTextField, R.color.normalText, R.color.colorRunning);
+//                    setTextColors(mTopActivityTextField, R.color.normalText, R.color.colorRunning);
+                    mActivityLabelTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.normalText));
+                    mTopActivityTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.normalText));
+                    mActivityHeaderRow.setBackgroundColor(ContextCompat.getColor(this.getContext(), R.color.colorRunning));
                     break;
                 case STILL:
-                    setTextColors(mActivityLabelTextField, R.color.normalText, R.color.colorStill);
-                    setTextColors(mTopActivityTextField, R.color.normalText, R.color.colorStill);
+//                    setTextColors(mActivityLabelTextField, R.color.normalText, R.color.colorStill);
+//                    setTextColors(mTopActivityTextField, R.color.normalText, R.color.colorStill);
+                    mActivityLabelTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.normalText));
+                    mTopActivityTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.normalText));
+                    mActivityHeaderRow.setBackgroundColor(ContextCompat.getColor(this.getContext(), R.color.colorStill));
                     break;
                 case TILTING:
-                    setTextColors(mActivityLabelTextField, R.color.colorSubtitleText, R.color.colorTilting);
-                    setTextColors(mTopActivityTextField, R.color.colorSubtitleText, R.color.colorTilting);
+//                    setTextColors(mActivityLabelTextField, R.color.colorSubtitleText, R.color.colorTilting);
+//                    setTextColors(mTopActivityTextField, R.color.colorSubtitleText, R.color.colorTilting);
+                    mActivityLabelTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
+                    mTopActivityTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
+                    mActivityHeaderRow.setBackgroundColor(ContextCompat.getColor(this.getContext(), R.color.colorTilting));
                     break;
                 case UNKNOWN:
-                    setTextColors(mActivityLabelTextField, R.color.colorSubtitleText, R.color.colorUnknown);
-                    setTextColors(mTopActivityTextField, R.color.colorSubtitleText, R.color.colorUnknown);
+//                    setTextColors(mActivityLabelTextField, R.color.colorSubtitleText, R.color.colorUnknown);
+//                    setTextColors(mTopActivityTextField, R.color.colorSubtitleText, R.color.colorUnknown);
+                    mActivityLabelTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
+                    mTopActivityTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
+                    mActivityHeaderRow.setBackgroundColor(ContextCompat.getColor(this.getContext(), R.color.colorUnknown));
                     break;
                 case WALKING:
-                    setTextColors(mActivityLabelTextField, R.color.colorSubtitleText, R.color.colorWalking);
-                    setTextColors(mTopActivityTextField, R.color.colorSubtitleText, R.color.colorWalking);
+//                    setTextColors(mActivityLabelTextField, R.color.colorSubtitleText, R.color.colorWalking);
+//                    setTextColors(mTopActivityTextField, R.color.colorSubtitleText, R.color.colorWalking);
+                    mActivityLabelTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
+                    mTopActivityTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
+                    mActivityHeaderRow.setBackgroundColor(ContextCompat.getColor(this.getContext(), R.color.colorWalking));
                     break;
                 default:
-                    setTextColors(mActivityLabelTextField, R.color.colorSubtitleText, R.color.colorUnknown);
-                    setTextColors(mTopActivityTextField, R.color.colorSubtitleText, R.color.colorUnknown);
+//                    setTextColors(mActivityLabelTextField, R.color.colorSubtitleText, R.color.colorUnknown);
+//                    setTextColors(mTopActivityTextField, R.color.colorSubtitleText, R.color.colorUnknown);
+                    mActivityLabelTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
+                    mTopActivityTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
+                    mActivityHeaderRow.setBackgroundColor(ContextCompat.getColor(this.getContext(), R.color.colorUnknown));
                     break;
             }
 

@@ -20,6 +20,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -50,6 +51,8 @@ public class MainActivity extends AppCompatActivity
     private ActionBarDrawerToggle mDrawerToggle;
     private Context mContext;
     private Resources mRes;
+    private BackendStorage mStorage;
+
     private MenuItem mStartupItem;
     private MenuItem mShutdownItem;
     private FloatingActionButton mFab;
@@ -119,7 +122,7 @@ public class MainActivity extends AppCompatActivity
 
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
         initBroadcastReceiver();
-
+        mStorage = BackendStorage.create(mContext);
     }
 
 
@@ -258,6 +261,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_energy:
                 openActivity(EnergyCertificateActivity.class);
                 break;
+            case R.id.nav_transport:
+                openRegisterTransportForm();
+                break;
             case R.id.nav_feedback:
                 openFeedbackForm();
                 break;
@@ -298,9 +304,40 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void openFeedbackForm() {
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mRes.getString(R.string.feedback_form_address)));
+        String uriString = mRes.getString(R.string.feedback_form_address);
+        String clientNumberString = mRes.getString(R.string.not_available);
+        if (mStorage.isClientNumberAvailable()) {
+            clientNumberString = String.format("%d", mStorage.readClientNumber().get());
+        }
+        String clientVersionString = "";
+        try {
+            clientVersionString = getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            clientVersionString = mRes.getString(R.string.not_available);
+        }
+
+        String phoneModelString =  Build.MODEL;
+
+        uriString = uriString.replace("client_number", clientNumberString);
+        uriString = uriString.replace("client_version", clientVersionString);
+        uriString = uriString.replace("phone_model", phoneModelString);
+
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uriString));
         startActivity(browserIntent);
     }
+
+    private void openRegisterTransportForm() {
+        String uriString = mRes.getString(R.string.transport_form_address);
+        String clientNumberString = mRes.getString(R.string.not_available);
+        if (mStorage.isClientNumberAvailable()) {
+            clientNumberString = String.format("%d", mStorage.readClientNumber().get());
+        }
+        uriString = uriString.replace("client_number", clientNumberString);
+
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uriString));
+        startActivity(browserIntent);
+    }
+
 
 
     /**
