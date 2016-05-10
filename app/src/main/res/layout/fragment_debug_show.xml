@@ -13,8 +13,7 @@
         android:padding="3dp"
         android:background="@drawable/border">
 
-        <TableLayout android:id="@+id/debug_show_service_table"
-                     android:layout_width="match_parent"
+        <TableLayout android:layout_width="match_parent"
                      android:layout_height="wrap_content">
             <TableRow android:id="@+id/debug_show_service_header_row"
                       android:background="@color/colorSubtitleBackground">
@@ -50,12 +49,10 @@
         android:padding="3dp"
         android:background="@drawable/border">
 
-        <TableLayout android:id="@+id/debug_show_activity_table"
-                     android:layout_width="match_parent"
+        <TableLayout android:layout_width="match_parent"
                      android:layout_height="wrap_content">
             <TableRow android:id="@+id/debug_show_activity_header_row"
-                      android:background="@color/colorSubtitleBackground"
-                      android:layout_width="match_parent">
+                      android:background="@color/colorSubtitleBackground">
                 <TextView android:id="@+id/debug_show_activity_label"
                           android:textColor="@color/colorSubtitleText"
                           android:layout_weight="1"
@@ -68,18 +65,20 @@
                           android:gravity="end"/>
 
             </TableRow>
-            <TableRow android:layout_width="match_parent">
+            <TableRow>
                 <TextView android:id="@+id/debug_show_activity_list_label"
                           style="@android:style/TextAppearance.Medium"
                           android:layout_weight="1"
                           android:text="@string/debug_show_activitylist_prefix"
                           android:textColor="@color/black" />
                 <TextView android:id="@+id/debug_show_activities"
+                          android:layout_height="60dp"
                           android:textColor="@color/black"
                           android:layout_weight="2"
-                          android:gravity="end"/>
+                          android:gravity="end"
+                    />
                 </TableRow>
-            <TableRow android:layout_width="match_parent">
+            <TableRow>
                 <TextView android:id="@+id/debug_show_activity_time"
                           android:textColor="@color/black"/>
             </TableRow>
@@ -98,8 +97,7 @@
                      android:layout_width="match_parent"
                      android:layout_height="wrap_content">
             <TableRow android:id="@+id/debug_show_location_header_row"
-                      android:background="@color/colorSubtitleBackground"
-                      android:layout_width="match_parent">
+                      android:background="@color/colorSubtitleBackground">
                 <TextView android:id="@+id/debug_show_location_label"
                           android:textColor="@color/colorSubtitleText"
                           android:layout_weight="1"
@@ -111,7 +109,7 @@
                           android:layout_weight="2"
                           android:gravity="end"/>
             </TableRow>
-            <TableRow android:layout_width="match_parent">
+            <TableRow>
                 <TextView android:id="@+id/debug_show_location_accuracy_label"
                 style="@android:style/TextAppearance.Medium"
                           android:layout_weight="1"
@@ -123,7 +121,7 @@
                           android:layout_weight="2"
                           android:gravity="end"/>
             </TableRow>
-            <TableRow android:layout_width="match_parent">
+            <TableRow>
                 <TextView android:id="@+id/debug_show_location_time"
                           android:textColor="@color/black"
                           android:background="@color/white"/>
@@ -144,8 +142,7 @@
                      android:layout_height="wrap_content">
 
             <TableRow android:id="@+id/debug_show_upload_header_row"
-                      android:background="@color/colorSubtitleBackground"
-                      android:layout_width="match_parent">
+                      android:background="@color/colorSubtitleBackground">
                 <TextView android:id="@+id/debug_show_upload_label"
                           android:textColor="@color/colorSubtitleText"
                           android:layout_weight="1"
@@ -157,7 +154,7 @@
                           android:layout_weight="2"
                           android:gravity="end"/>
             </TableRow>
-            <TableRow android:layout_width="match_parent">
+            <TableRow>
                 <TextView style="@android:style/TextAppearance.Medium"
                           android:layout_weight="1"
                           android:text="@string/debug_show_upload_queue_length_label"
@@ -169,7 +166,7 @@
                     android:layout_weight="2"
                     android:gravity="end"/>
             </TableRow>
-            <TableRow android:layout_width="match_parent">
+            <TableRow>
                 <TextView style="@android:style/TextAppearance.Medium"
                           android:layout_weight="1"
                           android:text="@string/debug_show_upload_latest_upload_label"
