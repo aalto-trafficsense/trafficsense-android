@@ -7,7 +7,9 @@ import android.support.v4.app.*;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import fi.aalto.trafficsense.trafficsense.R;
+import fi.aalto.trafficsense.trafficsense.util.BroadcastHelper;
 import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
 import timber.log.Timber;
 
@@ -51,6 +53,12 @@ public class DebugActivity extends AppCompatActivity {
         super.onPause();
         broadcastViewResumed(false);
     }
+
+    // Set in fragment_debug_show.xml
+    public void uploadButton(View view) {
+        BroadcastHelper.simpleBroadcast(mLocalBroadcastManager, InternalBroadcasts.KEY_UPLOAD_REQUEST);
+    }
+
 
 
     public class DebugPager extends FragmentPagerAdapter {

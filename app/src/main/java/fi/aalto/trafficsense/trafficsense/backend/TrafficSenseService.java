@@ -55,22 +55,10 @@ public class TrafficSenseService extends Service {
     private AtomicReference<Boolean> mClientNumberFetchOngoing = new AtomicReference<>(false);
 
     private static boolean viewActive = false;
-//    private static boolean isForeground = false;
-//    private boolean uploadInProgress = false;
-//    private boolean uploadFailed = false;
 
     private ActivityType mPreviousActivity = STILL;
 
     private static final int ONGOING_NOTIFICATION_ID = 1212; // Not zero, pulled from sleeve
-
-    // Delayed check for going foreground:
-//    private final Runnable mDelayedForegroundCheck = new Runnable() {
-//        @Override
-//        public void run() {
-//            checkForeground();
-//        }
-//    };
-
 
     /* Overridden Methods */
     @Override
@@ -96,9 +84,6 @@ public class TrafficSenseService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // viewActive = true; // If someone binds, there is likely an active view
-//        mHandler.postDelayed(mDelayedForegroundCheck, foregroundBootCheckDelay);
-
         // Request sign-in if user-id is not available
         if (!mStorage.isUserIdAvailable()) {
             if (mLocalBroadcastManager!=null)
@@ -179,19 +164,6 @@ public class TrafficSenseService extends Service {
 
     public static TSServiceState getServiceState() { return mServiceState; }
 
-//    private void checkForeground() {
-//        // If nobody is watching after the delay, go foreground
-//        if (!isViewActive()) {
-//            if (TrafficSenseService.getServiceState() == SLEEPING) {
-//                startForeground(ONGOING_NOTIFICATION_ID, buildSleepNotification());
-//                mPreviousActivity = STILL; // Prevent replacing sleep notification with still
-//            } else {
-//                startForeground(ONGOING_NOTIFICATION_ID, buildActivityNotification(mPreviousActivity));
-//            }
-//            isForeground=true;
-//        }
-//    }
-
     private Notification buildActivityNotification(ActivityType act) {
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
@@ -237,14 +209,9 @@ public class TrafficSenseService extends Service {
                         break;
                     case InternalBroadcasts.KEY_VIEW_RESUMED:
                         viewActive = true;
-//                        if (isForeground) {
-//                            stopForeground(true);
-//                            isForeground = false;
-//                        }
                         break;
                     case InternalBroadcasts.KEY_VIEW_PAUSED:
                         viewActive = false;
-//                        mHandler.postDelayed(mDelayedForegroundCheck, foregroundCheckDelay);
                         break;
                     case InternalBroadcasts.KEY_CLIENT_NUMBER_FETCH_COMPLETED:
                         mClientNumberFetchOngoing.set(false);
@@ -259,21 +226,19 @@ public class TrafficSenseService extends Service {
                     case InternalBroadcasts.KEY_USER_ID_CLEARED:
                         testUploadEnabled();
                         break;
+                    case InternalBroadcasts.KEY_UPLOAD_REQUEST:
+                        mPipeline.requestUploadThread();
+                        break;
                     case InternalBroadcasts.KEY_UPLOAD_STARTED:
                         updateUploadState(TSUploadState.INPROGRESS);
                         break;
                     case InternalBroadcasts.KEY_UPLOAD_SUCCEEDED:
                         updateUploadState(TSUploadState.READY);
-//                        uploadInProgress = false;
-//                        uploadFailed = false;
-//                        testUploadEnabled();
                         break;
                     case InternalBroadcasts.KEY_UPLOAD_FAILED:
                         updateUploadState(TSUploadState.FAILED);
-//                        testUploadEnabled();
                         break;
                     case InternalBroadcasts.KEY_ACTIVITY_UPDATE:
-//                        if (isForeground) updateActivity(intent);
                         updateActivity(intent);
                         break;
                 }
@@ -291,6 +256,7 @@ public class TrafficSenseService extends Service {
         intentFilter.addAction(InternalBroadcasts.KEY_AUTHENTICATION_SUCCEEDED);
         intentFilter.addAction(InternalBroadcasts.KEY_AUTHENTICATION_FAILED);
         intentFilter.addAction(InternalBroadcasts.KEY_USER_ID_CLEARED);
+        intentFilter.addAction(InternalBroadcasts.KEY_UPLOAD_REQUEST);
         intentFilter.addAction(InternalBroadcasts.KEY_UPLOAD_STARTED);
         intentFilter.addAction(InternalBroadcasts.KEY_UPLOAD_SUCCEEDED);
         intentFilter.addAction(InternalBroadcasts.KEY_UPLOAD_FAILED);

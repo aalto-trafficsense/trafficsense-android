@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity
     private Circle mCircle=null;
     private ActivityType latestActivityType=ActivityType.STILL;
     private boolean showTraffic=false;
-    private boolean mapToolbarEnabled=false;
 
     private LatLng initPosition=(new LatLng(60.1841396, 24.8300838));
     private float initZoom=12;
@@ -206,13 +205,12 @@ public class MainActivity extends AppCompatActivity
         fixServiceStateToMenu(false);
     }
 
-    // MJR: Removing the options menu for now - everything in the drawer
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
-//    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.activity_main_toolbar, menu);
+        return true;
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -225,20 +223,15 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
-//        int id = item.getItemId();
-//
-//        switch (id) {
-//            case R.id.action_about:
-//                openActivity(AboutActivity.class);
-//                return true;
-//            case R.id.action_exit:
-//                finish();
-//                return true;
-//            case R.id.action_debug:
-//                openActivity(DebugActivity.class);
-//                return true;
-//
-//        }
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.main_toolbar_traffic:
+                showTraffic = !showTraffic;
+                mMap.setTrafficEnabled(showTraffic);
+                return true;
+
+        }
 
         return super.onOptionsItemSelected(item);
     }

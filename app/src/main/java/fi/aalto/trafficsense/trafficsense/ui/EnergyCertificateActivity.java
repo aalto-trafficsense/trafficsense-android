@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import com.caverock.androidsvg.SVG;
@@ -34,7 +35,9 @@ public class EnergyCertificateActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_energy_certificate);
-        // getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.energy_certificate_toolbar);
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         container = (RelativeLayout) findViewById(R.id.energy_certificate);
         svgImageView = new SVGImageView(this);

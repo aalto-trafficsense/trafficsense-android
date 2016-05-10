@@ -76,22 +76,32 @@ public class PipelineThread {
             public void run() {
                 mThreadGlue.verify();
                 Timber.d("onDataReceived with isUploadEnabled: "+mRestClient.isUploadEnabled()+" and isUploading: "+mRestClient.isUploading());
-                // Timber.d("PipelineThread: onDataReceived called");
                 mDataQueue.onDataReady(p);
-                // MJR: Copying here from onDataCompleted, put somewhere reasonable
                 if (mDataQueue.shouldBeFlushed()) {
                     if (!mRestClient.isUploadEnabled()) {
                         mDataQueue.increaseThreshold();
                     } else { // Upload is enabled
                         if (!mRestClient.isUploading()) {
-                            Intent intent = new Intent(InternalBroadcasts.KEY_UPLOAD_STARTED);
-                            mLocalBroadcastManager.sendBroadcast(intent);
                             mRestClient.uploadData(mDataQueue);
                         }
                     }
                 }
             }
         });
+    }
+
+    public void requestUpload() {
+        mHandler.post(new Runnable() {
+                          @Override
+                          public void run() {
+                              mThreadGlue.verify();
+                              if (!mRestClient.isUploading()) {
+                                  mRestClient.uploadData(mDataQueue);
+                              }
+                          }
+
+                      }
+        );
     }
 
     // getter for Pipeline to get Handler needed for instantiation of archive, update and upload actions

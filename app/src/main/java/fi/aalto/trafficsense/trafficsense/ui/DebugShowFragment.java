@@ -101,7 +101,7 @@ public class DebugShowFragment extends Fragment {
         super.onResume();
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
         initBroadcastReceiver();
-        simpleBroadcast(InternalBroadcasts.KEY_DEBUG_SHOW_REQ);
+        BroadcastHelper.simpleBroadcast(mLocalBroadcastManager, InternalBroadcasts.KEY_DEBUG_SHOW_REQ);
         activityIntervalTimer = 0;
         locationIntervalTimer = 0;
     }
@@ -116,6 +116,7 @@ public class DebugShowFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
     }
+
 
     private void initFields() {
         mServiceHeaderRow = (TableRow) getActivity().findViewById(R.id.debug_show_service_header_row);
@@ -143,15 +144,6 @@ public class DebugShowFragment extends Fragment {
         mUploadQueueLengthTextField = (TextView) getActivity().findViewById(R.id.debug_show_queue_length);
         mUploadTimeTextField = (TextView) getActivity().findViewById(R.id.debug_show_latest_upload);
 
-    }
-
-    // Broadcaster
-    private void simpleBroadcast(String messageType) {
-        if (mLocalBroadcastManager != null)
-        {
-            Intent intent = new Intent(messageType);
-            mLocalBroadcastManager.sendBroadcast(intent);
-        }
     }
 
     /* Local broadcast receiver */

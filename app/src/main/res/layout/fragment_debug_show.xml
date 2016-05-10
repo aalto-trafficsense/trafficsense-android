@@ -178,7 +178,21 @@
                     android:layout_weight="2"
                     android:gravity="end"/>
             </TableRow>
+            <TableRow
+                android:layout_width="match_parent"
+                android:gravity="end">
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Upload"
+                    android:textAllCaps="false"
+                    android:id="@+id/debug_show_upload_button"
+                    android:onClick="uploadButton"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"/>
+            </TableRow>
         </TableLayout>
+
     </RelativeLayout>
 
 </LinearLayout>

@@ -30,7 +30,6 @@ public class RegularRoutesPipeline {
             mThread.set(thread);
             sPipeline.set(thread);
         }
-
     }
 
     public void disconnect() {
@@ -46,14 +45,21 @@ public class RegularRoutesPipeline {
         }
     }
 
-    public boolean isEnabled() {
-        return mThread.get() != null;
-    }
-
     public PipelineThread getPipelineThread() {
         return sPipeline.get();
     }
 
+    // Peaceful upload request by e.g. button press
+    public void requestUploadThread() {
+        PipelineThread pipeline = sPipeline.get();
+        try {
+            pipeline.requestUpload();
+        } catch (Exception ex) {
+            Timber.e("Failed to flush data queue to server: " + ex.getMessage());
+        }
+    }
+
+    // Forceful upload request due to e.g. exiting
     public boolean flushDataQueueToServer() {
         PipelineThread pipeline = sPipeline.get();
         if (pipeline == null)
@@ -83,32 +89,6 @@ public class RegularRoutesPipeline {
     }
 
     /**
-     * Get state if pipeline is uploading data or not
-     *
-     * @return true, if uploading is ongoing
-     */
-    public static boolean isUploading() {
-        PipelineThread pipeline = sPipeline.get();
-        if (pipeline == null)
-            return false;
-
-        return pipeline.getUploadingState();
-    }
-
-    /**
-     * Get enabled state of upload procedure
-     *
-     * @return true, if uploading is enabled
-     */
-    public static boolean isUploadEnabled() {
-        PipelineThread pipeline = sPipeline.get();
-        if (pipeline == null)
-            return false;
-
-        return pipeline.getUploadEnabledState();
-    }
-
-    /**
      * Set enabled state of upload procedure
      *
      * @return true, if state was changed successfully
@@ -120,16 +100,6 @@ public class RegularRoutesPipeline {
 
         pipeline.setUploadEnabledState(enabled);
         return true;
-    }
-
-    /*
-     * A Helper method to fetch the current queue size from pipelineThread
-     */
-    public static int queueSize() {
-        PipelineThread pipeline = sPipeline.get();
-        if (pipeline == null)
-            return 0;
-        return pipeline.queueSize();
     }
 
 }

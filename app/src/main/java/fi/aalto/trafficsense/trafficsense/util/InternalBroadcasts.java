@@ -26,6 +26,7 @@ public class InternalBroadcasts {
     public static final String KEY_AUTHENTICATION_FAILED = "AUTHENTICATION_FAILED";
     public static final String KEY_SIGNED_OUT = "SIGNED_OUT";
 
+    public static final String KEY_UPLOAD_REQUEST = "UPLOAD_REQUEST";
     public static final String KEY_UPLOAD_STARTED = "UPLOAD_STARTED";
     public static final String KEY_UPLOAD_SUCCEEDED = "UPLOAD_SUCCEEDED";
     public static final String KEY_UPLOAD_FAILED = "UPLOAD_FAILED";

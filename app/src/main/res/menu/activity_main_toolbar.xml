@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/main_toolbar_traffic"
+        android:icon="@drawable/ic_traffic_24dp"
+        android:title="@string/main_toolbar_traffic_label"
+        app:showAsAction="ifRoom"/>
+</menu>

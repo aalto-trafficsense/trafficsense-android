@@ -149,6 +149,8 @@ public class RestClient {
      * @return false if upload is disabled, other uploading is ongoing and operation was therefore aborted; true otherwise.
      */
     public boolean uploadData(final DataQueue queue) {
+        Intent intent = new Intent(InternalBroadcasts.KEY_UPLOAD_STARTED);
+        mLocalBroadcastManager.sendBroadcast(intent);
         mThreadGlue.verify();
         // Timber.d("uploadData called with mAuthenticated: "+mAuthenticated.get());
         if (!isUploadEnabled()) { // Try to resolve for next time
