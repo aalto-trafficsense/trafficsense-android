@@ -644,7 +644,8 @@ public class MainActivity extends AppCompatActivity
                     processPath();
                     pathLayer.addLayerToMap();
                 } else {
-                    if (!pathCal.equals(Calendar.getInstance())) { // unless the request was for today
+                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                    if (!df.format(pathCal.getTime()).equals(df.format(Calendar.getInstance().getTime()))) { // unless the request was for today
                         // No content - uncheck the menu item
                         Toast.makeText(mContext, R.string.path_no_data_for_date, Toast.LENGTH_LONG).show();
                         showPath = false;
