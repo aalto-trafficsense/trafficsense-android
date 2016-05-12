@@ -79,10 +79,13 @@ public class MainActivity extends AppCompatActivity
     private LatLngBounds mBounds;
     private Marker mMarker=null;
     private Circle mCircle=null;
+    private Polyline mLine=null;
+    private PolylineOptions mPolylineOptions=null;
     private ActivityType latestActivityType=ActivityType.STILL;
     private LatLng latestPosition;
     private boolean showTraffic=false;
     private boolean showPath=false;
+    private static Calendar pathCal = Calendar.getInstance();
 
     private GeoJsonLayer pathLayer=null;
 
@@ -280,10 +283,10 @@ public class MainActivity extends AppCompatActivity
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the current date as the default date in the picker
-            final Calendar c = Calendar.getInstance();
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
+//            final Calendar c = Calendar.getInstance();
+            int year = pathCal.get(Calendar.YEAR);
+            int month = pathCal.get(Calendar.MONTH);
+            int day = pathCal.get(Calendar.DAY_OF_MONTH);
 
             // Create a new instance of DatePickerDialog and return it
             return new DatePickerDialog(getActivity(), (DatePickerDialog.OnDateSetListener) getActivity(), year, month, day);
@@ -293,16 +296,16 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onDateSet(DatePicker view, int year, int month, int day) {
         // Only query for current or past dates
-        Calendar selected = Calendar.getInstance();
-        selected.set(Calendar.YEAR, year);
-        selected.set(Calendar.MONTH, month);
-        selected.set(Calendar.DAY_OF_MONTH, day);
-        if (selected.after(Calendar.getInstance())) {
+//        Calendar selected = Calendar.getInstance();
+        pathCal.set(Calendar.YEAR, year);
+        pathCal.set(Calendar.MONTH, month);
+        pathCal.set(Calendar.DAY_OF_MONTH, day);
+        if (pathCal.after(Calendar.getInstance())) {
             Toast.makeText(this, R.string.path_future_date_request, Toast.LENGTH_LONG).show();
             showPath = false;
             mPathItem.setIcon(R.drawable.road_variant_off);
         } else {
-            Date selDate = selected.getTime();
+            Date selDate = pathCal.getTime();
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
             fetchPath(df.format(selDate));
         }
@@ -496,6 +499,15 @@ public class MainActivity extends AppCompatActivity
             Location l = i.getParcelableExtra(InternalBroadcasts.KEY_LOCATION_UPDATE);
             // Timber.d("Location came back as:" + l.toString());
             if (l != null) {
+                if (showPath && pathCal.equals(Calendar.getInstance())) {
+                    if (latestPosition!=null) {
+                        // Requesting today's path, have both previous and new position --> let's draw a line!
+                        PolylineOptions line = new PolylineOptions().add(latestPosition)
+                                .add(new LatLng(l.getLatitude(), l.getLongitude()))
+                                .color(ContextCompat.getColor(mContext, ActivityType.getActivityColor(latestActivityType)));
+                        mMap.addPolyline(line);
+                    }
+                }
                 latestPosition = new LatLng(l.getLatitude(), l.getLongitude());
                 if (mMarker == null) {
                     Bitmap bitmap = getBitmap(mContext, ActivityType.getActivityIcon(latestActivityType));
@@ -631,10 +643,13 @@ public class MainActivity extends AppCompatActivity
                     pathLayer = new GeoJsonLayer(mMap, geoJson);
                     processPath();
                     pathLayer.addLayerToMap();
-                } else { // No content - uncheck the menu item
-                    Toast.makeText(mContext, R.string.path_no_data_for_date, Toast.LENGTH_LONG).show();
-                    showPath = false;
-                    mPathItem.setIcon(R.drawable.road_variant_off);
+                } else {
+                    if (!pathCal.equals(Calendar.getInstance())) { // unless the request was for today
+                        // No content - uncheck the menu item
+                        Toast.makeText(mContext, R.string.path_no_data_for_date, Toast.LENGTH_LONG).show();
+                        showPath = false;
+                        mPathItem.setIcon(R.drawable.road_variant_off);
+                    }
                 }
             }
         }
@@ -647,12 +662,12 @@ public class MainActivity extends AppCompatActivity
      */
     private void processPath() {
         // Iterate over all the features stored in the layer
-        GeoJsonLineStringStyle mStyle = new GeoJsonLineStringStyle();
         LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
         for (GeoJsonFeature feature : pathLayer.getFeatures()) {
             // Check if the activity property exists
             if (feature.hasProperty("activity")) {
                 String activity = feature.getProperty("activity");
+                GeoJsonLineStringStyle mStyle = new GeoJsonLineStringStyle();
                 mStyle.setColor(ContextCompat.getColor(mContext, ActivityType.getActivityColorByString(activity)));
                 feature.setLineStringStyle(mStyle);
             }
@@ -667,7 +682,7 @@ public class MainActivity extends AppCompatActivity
             boundsBuilder.include(latestPosition);
         }
         LatLngBounds bounds = boundsBuilder.build();
-        if (bounds != null) mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0));
+        if (bounds != null) mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 5));
     }
 
 }
