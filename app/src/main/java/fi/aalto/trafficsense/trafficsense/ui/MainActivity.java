@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,7 +22,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -37,15 +35,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.DatePicker;
 import android.widget.Toast;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 import com.google.common.base.Optional;
-import com.google.maps.android.geojson.GeoJsonFeature;
-import com.google.maps.android.geojson.GeoJsonLayer;
-import com.google.maps.android.geojson.GeoJsonLineStringStyle;
+import com.google.maps.android.geojson.*;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.util.*;
 import org.json.JSONException;
@@ -56,6 +51,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -84,6 +80,7 @@ public class MainActivity extends AppCompatActivity
     private Marker mMarker=null;
     private Circle mCircle=null;
     private ActivityType latestActivityType=ActivityType.STILL;
+    private LatLng latestPosition;
     private boolean showTraffic=false;
     private boolean showPath=false;
 
@@ -305,7 +302,9 @@ public class MainActivity extends AppCompatActivity
             showPath = false;
             mPathItem.setIcon(R.drawable.road_variant_off);
         } else {
-            fetchPath(String.format("%d-%d-%d",year,month,day));
+            Date selDate = selected.getTime();
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            fetchPath(df.format(selDate));
         }
     }
 
@@ -497,23 +496,23 @@ public class MainActivity extends AppCompatActivity
             Location l = i.getParcelableExtra(InternalBroadcasts.KEY_LOCATION_UPDATE);
             // Timber.d("Location came back as:" + l.toString());
             if (l != null) {
-                LatLng myPos = new LatLng(l.getLatitude(), l.getLongitude());
+                latestPosition = new LatLng(l.getLatitude(), l.getLongitude());
                 if (mMarker == null) {
                     Bitmap bitmap = getBitmap(mContext, ActivityType.getActivityIcon(latestActivityType));
-                    mMarker = mMap.addMarker(new MarkerOptions().position(myPos).icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
+                    mMarker = mMap.addMarker(new MarkerOptions().position(latestPosition).icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
                 } else {
-                    mMarker.setPosition(myPos);
+                    mMarker.setPosition(latestPosition);
                 }
                 if (l.getAccuracy() > 50.0) {
                     if (mCircle == null) {
                         CircleOptions circleOptions = new CircleOptions()
-                                .center(myPos)
+                                .center(latestPosition)
                                 .radius(l.getAccuracy()).strokeColor(Color.BLUE)
                                 .strokeWidth(1.0f);
                         mCircle = mMap.addCircle(circleOptions);
                     } else {
                         mCircle.setRadius(l.getAccuracy());
-                        mCircle.setCenter(myPos);
+                        mCircle.setCenter(latestPosition);
                     }
                 } else { // Accuracy <= 50.0 - no circle
                     if (mCircle != null) {
@@ -525,8 +524,8 @@ public class MainActivity extends AppCompatActivity
                     //This is the current user-viewable region of the map
                     mBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
                 }
-                if (!mBounds.contains(myPos)) {
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(myPos));
+                if (!mBounds.contains(latestPosition)) {
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latestPosition));
                     mBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
                 }
             }
@@ -621,14 +620,19 @@ public class MainActivity extends AppCompatActivity
 //            Timber.d("DownloadPathTask Received a string of length: " + info.length());
 //            Timber.d("First 200 characters: \n" + info.substring(0,min(200,info.length())));
             if (geoJson != null) {
-                if (true) {
-                    Timber.d("geoJson.has_activity: " + geoJson.has("activity"));
-                    Timber.d("geoJson length: " + geoJson.length());
+                int l = -1;
+                try {
+                    l = geoJson.getJSONArray("features").length();
+                } catch (JSONException e) {
+                    Timber.e("JSONException: " + e.toString());
+                }
+//                Timber.d("geoJson features array size: " + l);
+                if (l>0) { // received one or more lines
                     pathLayer = new GeoJsonLayer(mMap, geoJson);
-                    addColorsToLineStrings();
+                    processPath();
                     pathLayer.addLayerToMap();
-                } else {
-                    // No content - uncheck the menu item
+                } else { // No content - uncheck the menu item
+                    Toast.makeText(mContext, R.string.path_no_data_for_date, Toast.LENGTH_LONG).show();
                     showPath = false;
                     mPathItem.setIcon(R.drawable.road_variant_off);
                 }
@@ -638,11 +642,13 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * Adds the appropriate color to each linestring based on the activity
+     * Construct new bounds for the window
      * Modified from "addColorsToMarkers" from: https://github.com/googlemaps/android-maps-utils/blob/master/demo/src/com/google/maps/android/utils/demo/GeoJsonDemoActivity.java
      */
-    private void addColorsToLineStrings() {
+    private void processPath() {
         // Iterate over all the features stored in the layer
         GeoJsonLineStringStyle mStyle = new GeoJsonLineStringStyle();
+        LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
         for (GeoJsonFeature feature : pathLayer.getFeatures()) {
             // Check if the activity property exists
             if (feature.hasProperty("activity")) {
@@ -650,7 +656,18 @@ public class MainActivity extends AppCompatActivity
                 mStyle.setColor(ContextCompat.getColor(mContext, ActivityType.getActivityColorByString(activity)));
                 feature.setLineStringStyle(mStyle);
             }
+            if (feature.hasGeometry()) {
+                GeoJsonLineString ls = (GeoJsonLineString)feature.getGeometry();
+                for (LatLng pos : ls.getCoordinates()) {
+                    boundsBuilder.include(pos);
+                }
+            }
         }
+        if (latestPosition!=null) {
+            boundsBuilder.include(latestPosition);
+        }
+        LatLngBounds bounds = boundsBuilder.build();
+        if (bounds != null) mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0));
     }
 
 }
