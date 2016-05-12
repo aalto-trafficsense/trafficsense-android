@@ -44,22 +44,20 @@ public class DebugActivity extends AppCompatActivity {
     public void onResume()
     {
         super.onResume();
-        broadcastViewResumed(true);
+        BroadcastHelper.broadcastViewResumed(mLocalBroadcastManager, true);
     }
 
     @Override
     public void onPause()
     {
         super.onPause();
-        broadcastViewResumed(false);
+        BroadcastHelper.broadcastViewResumed(mLocalBroadcastManager, false);
     }
 
     // Set in fragment_debug_show.xml
     public void uploadButton(View view) {
         BroadcastHelper.simpleBroadcast(mLocalBroadcastManager, InternalBroadcasts.KEY_UPLOAD_REQUEST);
     }
-
-
 
     public class DebugPager extends FragmentPagerAdapter {
         public DebugPager(FragmentManager fm) {
@@ -107,18 +105,6 @@ public class DebugActivity extends AppCompatActivity {
             return title;
         }
 
-    }
-
-    // Update (viewing) activity status to service
-    public void broadcastViewResumed(boolean resumed) {
-        if (mLocalBroadcastManager != null)
-        {
-            String key;
-            if (resumed) key = InternalBroadcasts.KEY_VIEW_RESUMED;
-            else key = InternalBroadcasts.KEY_VIEW_PAUSED;
-            Intent intent = new Intent(key);
-            mLocalBroadcastManager.sendBroadcast(intent);
-        }
     }
 
 }

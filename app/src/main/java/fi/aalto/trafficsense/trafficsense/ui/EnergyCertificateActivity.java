@@ -50,7 +50,7 @@ public class EnergyCertificateActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        fetchCertificate();
+        // fetchCertificate();
     }
 
     @Override
@@ -71,7 +71,7 @@ public class EnergyCertificateActivity extends AppCompatActivity {
                 downloader.execute(url);
             } catch (MalformedURLException e) {
                 Context context = getApplicationContext();
-                Toast toast = Toast.makeText(context, "URL was broken", Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(context, "Certificate URL broken.", Toast.LENGTH_SHORT);
                 toast.show();
             }
         }

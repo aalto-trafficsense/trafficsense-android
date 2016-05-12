@@ -2,8 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/main_toolbar_path"
+        android:icon="@drawable/road_variant_off"
+        android:title="@string/main_toolbar_path_label"
+        app:showAsAction="ifRoom"/>
+    <item
         android:id="@+id/main_toolbar_traffic"
-        android:icon="@drawable/ic_traffic_24dp"
+        android:icon="@drawable/ic_traffic_24dp_off"
         android:title="@string/main_toolbar_traffic_label"
         app:showAsAction="ifRoom"/>
 </menu>

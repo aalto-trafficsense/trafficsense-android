@@ -2,6 +2,8 @@ package fi.aalto.trafficsense.trafficsense.ui;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,12 +20,14 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
@@ -34,17 +38,34 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.Toast;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
+import com.google.common.base.Optional;
+import com.google.maps.android.geojson.GeoJsonFeature;
+import com.google.maps.android.geojson.GeoJsonLayer;
+import com.google.maps.android.geojson.GeoJsonLineStringStyle;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.util.*;
+import org.json.JSONException;
+import org.json.JSONObject;
 import timber.log.Timber;
 
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Calendar;
+import java.util.Date;
+
 import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_STATE_INDEX;
+import static java.lang.Math.min;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,OnMapReadyCallback {
+        implements  NavigationView.OnNavigationItemSelectedListener,
+                    OnMapReadyCallback,
+                    DatePickerDialog.OnDateSetListener {
 
     private LocalBroadcastManager mLocalBroadcastManager;
     private BroadcastReceiver mBroadcastReceiver;
@@ -55,6 +76,8 @@ public class MainActivity extends AppCompatActivity
 
     private MenuItem mStartupItem;
     private MenuItem mShutdownItem;
+    private MenuItem mPathItem;
+    private MenuItem mTrafficItem;
     private FloatingActionButton mFab;
     private GoogleMap mMap;
     private LatLngBounds mBounds;
@@ -62,6 +85,9 @@ public class MainActivity extends AppCompatActivity
     private Circle mCircle=null;
     private ActivityType latestActivityType=ActivityType.STILL;
     private boolean showTraffic=false;
+    private boolean showPath=false;
+
+    private GeoJsonLayer pathLayer=null;
 
     private LatLng initPosition=(new LatLng(60.1841396, 24.8300838));
     private float initZoom=12;
@@ -76,22 +102,22 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
 
-        mFab = (FloatingActionButton) findViewById(R.id.fab);
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Toggle traffic display
-                if (mMap!=null) {
-                    showTraffic = !showTraffic;
-                    mMap.setTrafficEnabled(showTraffic);
-                    if (showTraffic) mFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(mContext, R.color.colorInVehicle)));
-                    else mFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(mContext, R.color.white)));
-                }
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-            }
-        });
-
+//        mFab = (FloatingActionButton) findViewById(R.id.fab);
+//        mFab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                // Toggle traffic display
+//                if (mMap!=null) {
+//                    showTraffic = !showTraffic;
+//                    mMap.setTrafficEnabled(showTraffic);
+//                    if (showTraffic) mFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(mContext, R.color.colorInVehicle)));
+//                    else mFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(mContext, R.color.white)));
+//                }
+////                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+////                        .setAction("Action", null).show();
+//            }
+//        });
+//
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerToggle = new ActionBarDrawerToggle(
                 this, drawer, myToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -116,7 +142,7 @@ public class MainActivity extends AppCompatActivity
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         } else {
-            Toast.makeText(this, "Error - Map Fragment was null!!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.error_creating_map, Toast.LENGTH_SHORT).show();
         }
 
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
@@ -135,7 +161,7 @@ public class MainActivity extends AppCompatActivity
     public void onResume()
     {
         super.onResume();
-        broadcastViewResumed(true);
+        BroadcastHelper.broadcastViewResumed(mLocalBroadcastManager, true);
         BroadcastHelper.simpleBroadcast(mLocalBroadcastManager, InternalBroadcasts.KEY_MAIN_ACTIVITY_REQ);
         checkLocationPermission(); // Check the dynamic location permissions
     }
@@ -144,7 +170,7 @@ public class MainActivity extends AppCompatActivity
     public void onPause()
     {
         super.onPause();
-        broadcastViewResumed(false);
+        BroadcastHelper.broadcastViewResumed(mLocalBroadcastManager, false);
     }
 
 
@@ -209,6 +235,9 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.activity_main_toolbar, menu);
+//        Menu tbMenu = myToolbar.getMenu();
+        mPathItem = menu.findItem(R.id.main_toolbar_path);
+        mTrafficItem = menu.findItem(R.id.main_toolbar_traffic);
         return true;
     }
 
@@ -229,11 +258,55 @@ public class MainActivity extends AppCompatActivity
             case R.id.main_toolbar_traffic:
                 showTraffic = !showTraffic;
                 mMap.setTrafficEnabled(showTraffic);
+                mTrafficItem.setIcon(showTraffic ? R.drawable.ic_traffic_24dp_on : R.drawable.ic_traffic_24dp_off);
                 return true;
-
+            case R.id.main_toolbar_path:
+                showPath = !showPath;
+                if (showPath) {
+                    DialogFragment newFragment = new DatePickerFragment();
+                    newFragment.show(getSupportFragmentManager(), "datePicker");
+                    mPathItem.setIcon(R.drawable.road_variant_on);
+                } else {
+                    if (pathLayer!=null) {
+                        pathLayer.removeLayerFromMap();
+                    }
+                    mPathItem.setIcon(R.drawable.road_variant_off);
+                }
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public static class DatePickerFragment extends DialogFragment {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current date as the default date in the picker
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            // Create a new instance of DatePickerDialog and return it
+            return new DatePickerDialog(getActivity(), (DatePickerDialog.OnDateSetListener) getActivity(), year, month, day);
+        }
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int day) {
+        // Only query for current or past dates
+        Calendar selected = Calendar.getInstance();
+        selected.set(Calendar.YEAR, year);
+        selected.set(Calendar.MONTH, month);
+        selected.set(Calendar.DAY_OF_MONTH, day);
+        if (selected.after(Calendar.getInstance())) {
+            Toast.makeText(this, R.string.path_future_date_request, Toast.LENGTH_LONG).show();
+            showPath = false;
+            mPathItem.setIcon(R.drawable.road_variant_off);
+        } else {
+            fetchPath(String.format("%d-%d-%d",year,month,day));
+        }
     }
 
     private void openActivity(Class c) {
@@ -274,7 +347,6 @@ public class MainActivity extends AppCompatActivity
                 fixServiceStateToMenu(true);
                 break;
             case R.id.nav_debug:
-            case R.id.action_debug:
                 openActivity(DebugActivity.class);
                 break;
         }
@@ -481,17 +553,104 @@ public class MainActivity extends AppCompatActivity
         else fixServiceStateToMenu(true);
     }
 
-    // Update (viewing) activity status to service
-    public void broadcastViewResumed(boolean resumed) {
-        if (mLocalBroadcastManager != null)
-        {
-            String key;
-            if (resumed) key = InternalBroadcasts.KEY_VIEW_RESUMED;
-            else key = InternalBroadcasts.KEY_VIEW_PAUSED;
-            Intent intent = new Intent(key);
-            mLocalBroadcastManager.sendBroadcast(intent);
+    public void fetchPath(String pathDate) {
+        Optional<String> token = mStorage.readSessionToken();
+        if (!token.isPresent()) {
+            Toast toast = Toast.makeText(this, "Not signed in?", Toast.LENGTH_SHORT);
+            toast.show();
+        } else {
+            try {
+                URL url = new URL(mStorage.getServerName().toString() + "/path/" + token.get() + "?date=" + pathDate + "&maxpts=20000&mindist=20");
+                DownloadPathTask downloader = new DownloadPathTask();
+                downloader.execute(url);
+            } catch (MalformedURLException e) {
+                Context context = getApplicationContext();
+                Toast toast = Toast.makeText(context, "Path URL broken", Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        }
+
+    }
+
+
+    private class DownloadPathTask extends AsyncTask<URL, Void, JSONObject> {
+        protected JSONObject doInBackground(URL... urls) {
+            String returnVal = null;
+            if (urls.length != 1) {
+                Timber.e("Path downloader attempted to get more or less than one URL");
+                return null;
+            }
+
+            HttpURLConnection urlConnection = null;
+            try {
+                Timber.d("Opening with URL: " + urls[0].toString());
+                urlConnection = (HttpURLConnection) urls[0].openConnection();
+
+                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                java.util.Scanner s = new java.util.Scanner(in).useDelimiter("\\A");
+                if (s.hasNext()) {
+                    returnVal = s.next();
+                }
+                else {
+                    Timber.e("DownloadPathTask received no data!");
+                }
+                in.close();
+
+            }
+            catch (IOException e) {
+                Timber.e("DownloadPathTask error connecting to URL.");
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+            }
+
+            JSONObject geoJson = null;
+            if (returnVal != null) {
+                try {
+                    geoJson = new JSONObject(returnVal);
+                } catch (JSONException e) {
+                    Timber.e("Path GeoJson conversion returned an exception: " + e.toString());
+                    return null;
+                }
+            }
+            return geoJson;
+        }
+
+        protected void onPostExecute(JSONObject geoJson) {
+//            Timber.d("DownloadPathTask Received a string of length: " + info.length());
+//            Timber.d("First 200 characters: \n" + info.substring(0,min(200,info.length())));
+            if (geoJson != null) {
+                if (true) {
+                    Timber.d("geoJson.has_activity: " + geoJson.has("activity"));
+                    Timber.d("geoJson length: " + geoJson.length());
+                    pathLayer = new GeoJsonLayer(mMap, geoJson);
+                    addColorsToLineStrings();
+                    pathLayer.addLayerToMap();
+                } else {
+                    // No content - uncheck the menu item
+                    showPath = false;
+                    mPathItem.setIcon(R.drawable.road_variant_off);
+                }
+            }
         }
     }
 
+    /**
+     * Adds the appropriate color to each linestring based on the activity
+     * Modified from "addColorsToMarkers" from: https://github.com/googlemaps/android-maps-utils/blob/master/demo/src/com/google/maps/android/utils/demo/GeoJsonDemoActivity.java
+     */
+    private void addColorsToLineStrings() {
+        // Iterate over all the features stored in the layer
+        GeoJsonLineStringStyle mStyle = new GeoJsonLineStringStyle();
+        for (GeoJsonFeature feature : pathLayer.getFeatures()) {
+            // Check if the activity property exists
+            if (feature.hasProperty("activity")) {
+                String activity = feature.getProperty("activity");
+                mStyle.setColor(ContextCompat.getColor(mContext, ActivityType.getActivityColorByString(activity)));
+                feature.setLineStringStyle(mStyle);
+            }
+        }
+    }
 
 }

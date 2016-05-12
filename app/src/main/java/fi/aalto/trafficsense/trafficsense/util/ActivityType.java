@@ -113,4 +113,26 @@ public enum ActivityType {
         }
     }
 
+    public static int getActivityColorByString(String activity) {
+        switch(activity) {
+            case "IN_VEHICLE":
+                return R.color.colorInVehicle;
+            case "ON_BICYCLE":
+                return R.color.colorOnBicycle;
+            case "RUNNING":
+                return R.color.colorRunning;
+            case "STILL":
+                return R.color.colorStill;
+            case "TILTING":
+                return R.color.colorTilting;
+            case "UNKNOWN":
+                return R.color.colorUnknown;
+            case "WALKING":
+                return R.color.colorWalking;
+            default:
+                return R.color.colorUnknown;
+        }
+    }
+
+
 }
