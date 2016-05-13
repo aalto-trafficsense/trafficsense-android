@@ -31,8 +31,8 @@ public class AboutActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        final View controlsView = findViewById(R.id.abt_Buttons);
-        final View titleView = findViewById(R.id.abt_pageTitleField);
+//        final View controlsView = findViewById(R.id.abt_Buttons);
+//        final View titleView = findViewById(R.id.abt_pageTitleField);
         final Button okButton = (Button) findViewById(R.id.abt_ok_button);
 
         // Upon interacting with UI controls, delay any scheduled hide()

@@ -43,6 +43,7 @@ import com.google.common.base.Optional;
 import com.google.maps.android.geojson.*;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.util.*;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import timber.log.Timber;
@@ -84,6 +85,7 @@ public class MainActivity extends AppCompatActivity
     private PolylineOptions mPolylineOptions=null;
     private ActivityType latestActivityType=ActivityType.STILL;
     private LatLng latestPosition;
+    private LatLng pathEnd;
     private boolean showTraffic=false;
     private boolean showPath=false;
     private static Calendar pathCal = Calendar.getInstance();
@@ -623,6 +625,19 @@ public class MainActivity extends AppCompatActivity
             if (returnVal != null) {
                 try {
                     geoJson = new JSONObject(returnVal);
+                    if (isTodaysPath()) { // Dig out the latest coordinates of today.
+                        JSONArray ga = geoJson.getJSONArray("features");
+                        int i = ga.length();
+                        if (i>0) {
+                            JSONObject geom = ga.getJSONObject(i-1);
+                            JSONArray coord = geom.getJSONObject("geometry").getJSONArray("coordinates");
+                            i = coord.length();
+                            Timber.d("Coordinate array length: " + i);
+                            JSONArray lngLat = coord.getJSONArray(i-1);
+                            Timber.d("Got lngLat: " + lngLat.toString());
+                            pathEnd = new LatLng(lngLat.getDouble(1),lngLat.getDouble(0));
+                        } else pathEnd=null;
+                    }
                 } catch (JSONException e) {
                     Timber.e("Path GeoJson conversion returned an exception: " + e.toString());
                     return null;
@@ -649,10 +664,13 @@ public class MainActivity extends AppCompatActivity
                 } else {
                     if (!isTodaysPath()) { // unless the request was for today
                         // No content - uncheck the menu item
-                        Toast.makeText(mContext, R.string.path_no_data_for_date, Toast.LENGTH_LONG).show();
+                        Toast.makeText(mContext, R.string.path_no_data_for_date, Toast.LENGTH_SHORT).show();
                         showPath = false;
                         mPathItem.setIcon(R.drawable.road_variant_off);
                     }
+                }
+                if (isTodaysPath()) {
+                    Toast.makeText(mContext, R.string.path_no_public_transport, Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -670,7 +688,6 @@ public class MainActivity extends AppCompatActivity
     private void processPath() {
         // Iterate over all the features stored in the layer
         LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
-        LatLng lastPos=null;
         for (GeoJsonFeature feature : pathLayer.getFeatures()) {
             // Check if the activity property exists
             if (feature.hasProperty("activity")) {
@@ -683,14 +700,13 @@ public class MainActivity extends AppCompatActivity
                 GeoJsonLineString ls = (GeoJsonLineString)feature.getGeometry();
                 for (LatLng pos : ls.getCoordinates()) {
                     boundsBuilder.include(pos);
-                    lastPos=pos;
                 }
             }
         }
         if (latestPosition!=null) {
             boundsBuilder.include(latestPosition);
             // Quick-n-dirty solution to bypass all the queued points with one line
-            if (lastPos!=null && isTodaysPath()) addLine(lastPos, latestPosition, ActivityType.getActivityColor(latestActivityType));
+            if (pathEnd!=null && isTodaysPath()) addLine(pathEnd, latestPosition, ActivityType.getActivityColor(latestActivityType));
         }
         LatLngBounds bounds = boundsBuilder.build();
         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
