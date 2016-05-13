@@ -52,6 +52,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -86,6 +87,7 @@ public class MainActivity extends AppCompatActivity
     private boolean showTraffic=false;
     private boolean showPath=false;
     private static Calendar pathCal = Calendar.getInstance();
+    private final SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     private GeoJsonLayer pathLayer=null;
 
@@ -164,6 +166,8 @@ public class MainActivity extends AppCompatActivity
         BroadcastHelper.broadcastViewResumed(mLocalBroadcastManager, true);
         BroadcastHelper.simpleBroadcast(mLocalBroadcastManager, InternalBroadcasts.KEY_MAIN_ACTIVITY_REQ);
         checkLocationPermission(); // Check the dynamic location permissions
+        // Make sure showPath status is aligned when resuming.
+        if (pathLayer==null) showPath=false;
     }
 
     @Override
@@ -305,9 +309,7 @@ public class MainActivity extends AppCompatActivity
             showPath = false;
             mPathItem.setIcon(R.drawable.road_variant_off);
         } else {
-            Date selDate = pathCal.getTime();
-            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-            fetchPath(df.format(selDate));
+            fetchPath();
         }
     }
 
@@ -499,13 +501,10 @@ public class MainActivity extends AppCompatActivity
             Location l = i.getParcelableExtra(InternalBroadcasts.KEY_LOCATION_UPDATE);
             // Timber.d("Location came back as:" + l.toString());
             if (l != null) {
-                if (showPath && pathCal.equals(Calendar.getInstance())) {
-                    if (latestPosition!=null) {
+                if (showPath) {
+                    if (isTodaysPath() && latestPosition!=null) {
                         // Requesting today's path, have both previous and new position --> let's draw a line!
-                        PolylineOptions line = new PolylineOptions().add(latestPosition)
-                                .add(new LatLng(l.getLatitude(), l.getLongitude()))
-                                .color(ContextCompat.getColor(mContext, ActivityType.getActivityColor(latestActivityType)));
-                        mMap.addPolyline(line);
+                        addLine(latestPosition, new LatLng(l.getLatitude(), l.getLongitude()), ActivityType.getActivityColor(latestActivityType));
                     }
                 }
                 latestPosition = new LatLng(l.getLatitude(), l.getLongitude());
@@ -564,7 +563,11 @@ public class MainActivity extends AppCompatActivity
         else fixServiceStateToMenu(true);
     }
 
-    public void fetchPath(String pathDate) {
+    public void fetchPath() {
+        Date selDate = pathCal.getTime();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        String pathDate = df.format(selDate);
+
         Optional<String> token = mStorage.readSessionToken();
         if (!token.isPresent()) {
             Toast toast = Toast.makeText(this, "Not signed in?", Toast.LENGTH_SHORT);
@@ -644,8 +647,7 @@ public class MainActivity extends AppCompatActivity
                     processPath();
                     pathLayer.addLayerToMap();
                 } else {
-                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-                    if (!df.format(pathCal.getTime()).equals(df.format(Calendar.getInstance().getTime()))) { // unless the request was for today
+                    if (!isTodaysPath()) { // unless the request was for today
                         // No content - uncheck the menu item
                         Toast.makeText(mContext, R.string.path_no_data_for_date, Toast.LENGTH_LONG).show();
                         showPath = false;
@@ -656,6 +658,10 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private boolean isTodaysPath() {
+        return mDateFormat.format(pathCal.getTime()).equals(mDateFormat.format(Calendar.getInstance().getTime()));
+    }
+
     /**
      * Adds the appropriate color to each linestring based on the activity
      * Construct new bounds for the window
@@ -664,6 +670,7 @@ public class MainActivity extends AppCompatActivity
     private void processPath() {
         // Iterate over all the features stored in the layer
         LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
+        LatLng lastPos=null;
         for (GeoJsonFeature feature : pathLayer.getFeatures()) {
             // Check if the activity property exists
             if (feature.hasProperty("activity")) {
@@ -676,14 +683,31 @@ public class MainActivity extends AppCompatActivity
                 GeoJsonLineString ls = (GeoJsonLineString)feature.getGeometry();
                 for (LatLng pos : ls.getCoordinates()) {
                     boundsBuilder.include(pos);
+                    lastPos=pos;
                 }
             }
         }
         if (latestPosition!=null) {
             boundsBuilder.include(latestPosition);
+            // Quick-n-dirty solution to bypass all the queued points with one line
+            if (lastPos!=null && isTodaysPath()) addLine(lastPos, latestPosition, ActivityType.getActivityColor(latestActivityType));
         }
         LatLngBounds bounds = boundsBuilder.build();
-        if (bounds != null) mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 5));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
+    }
+
+    private void addLine(LatLng start, LatLng end, int color) {
+        if (pathLayer!=null) {
+            ArrayList<LatLng> lineStringArray = new ArrayList<>();
+            lineStringArray.add(start);
+            lineStringArray.add(end);
+            GeoJsonLineString lineString = new GeoJsonLineString(lineStringArray);
+            GeoJsonFeature lineStringFeature = new GeoJsonFeature(lineString, null, null, null);
+            GeoJsonLineStringStyle lineStringStyle = new GeoJsonLineStringStyle();
+            lineStringStyle.setColor(ContextCompat.getColor(mContext, color));
+            lineStringFeature.setLineStringStyle(lineStringStyle);
+            pathLayer.addFeature(lineStringFeature);
+        }
     }
 
 }
