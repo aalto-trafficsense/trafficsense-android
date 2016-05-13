@@ -37,10 +37,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.DatePicker;
 import android.widget.Toast;
-import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.*;
 import com.google.common.base.Optional;
-import com.google.maps.android.geojson.*;
+import com.google.maps.android.geojson.GeoJsonFeature;
+import com.google.maps.android.geojson.GeoJsonLayer;
+import com.google.maps.android.geojson.GeoJsonLineString;
+import com.google.maps.android.geojson.GeoJsonLineStringStyle;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.util.*;
 import org.json.JSONArray;
@@ -48,17 +54,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import timber.log.Timber;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_STATE_INDEX;
-import static java.lang.Math.min;
 
 public class MainActivity extends AppCompatActivity
         implements  NavigationView.OnNavigationItemSelectedListener,
@@ -76,13 +82,11 @@ public class MainActivity extends AppCompatActivity
     private MenuItem mShutdownItem;
     private MenuItem mPathItem;
     private MenuItem mTrafficItem;
-    private FloatingActionButton mFab;
+    // private FloatingActionButton mFab;
     private GoogleMap mMap;
     private LatLngBounds mBounds;
     private Marker mMarker=null;
     private Circle mCircle=null;
-    private Polyline mLine=null;
-    private PolylineOptions mPolylineOptions=null;
     private ActivityType latestActivityType=ActivityType.STILL;
     private LatLng latestPosition;
     private LatLng pathEnd;
@@ -180,15 +184,11 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
+    /********************************
+     *
+     * Runtime permission checking
+     *
+     ********************************/
 
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -232,16 +232,16 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void requestServiceShutdown() {
-        BroadcastHelper.simpleBroadcast(mLocalBroadcastManager, InternalBroadcasts.KEY_SERVICE_STOP);
-        fixServiceStateToMenu(false);
-    }
+    /********************************
+     *
+     * Process options (toolbar) menu
+     *
+     ********************************/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.activity_main_toolbar, menu);
-//        Menu tbMenu = myToolbar.getMenu();
         mPathItem = menu.findItem(R.id.main_toolbar_path);
         mTrafficItem = menu.findItem(R.id.main_toolbar_traffic);
         return true;
@@ -288,8 +288,7 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the current date as the default date in the picker
-//            final Calendar c = Calendar.getInstance();
+            // Use pathCal as the default date in the picker
             int year = pathCal.get(Calendar.YEAR);
             int month = pathCal.get(Calendar.MONTH);
             int day = pathCal.get(Calendar.DAY_OF_MONTH);
@@ -302,7 +301,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onDateSet(DatePicker view, int year, int month, int day) {
         // Only query for current or past dates
-//        Calendar selected = Calendar.getInstance();
         pathCal.set(Calendar.YEAR, year);
         pathCal.set(Calendar.MONTH, month);
         pathCal.set(Calendar.DAY_OF_MONTH, day);
@@ -315,9 +313,20 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void openActivity(Class c) {
-        Intent intent = new Intent(this, c);
-        startActivity(intent);
+    /*******************************
+     *
+     * Process drawer menu
+     *
+     *******************************/
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -362,6 +371,16 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    private void openActivity(Class c) {
+        Intent intent = new Intent(this, c);
+        startActivity(intent);
+    }
+
+    private void requestServiceShutdown() {
+        BroadcastHelper.simpleBroadcast(mLocalBroadcastManager, InternalBroadcasts.KEY_SERVICE_STOP);
+        fixServiceStateToMenu(false);
+    }
+
     private void fixServiceStateToMenu(boolean running) {
         if (running) {
             mShutdownItem.setVisible(true);
@@ -376,60 +395,54 @@ public class MainActivity extends AppCompatActivity
 
     private void openFeedbackForm() {
         String uriString = mRes.getString(R.string.feedback_form_address);
-        String clientNumberString = mRes.getString(R.string.not_available);
-        if (mStorage.isClientNumberAvailable()) {
-            clientNumberString = String.format("%d", mStorage.readClientNumber().get());
-        }
+
+        uriString = uriString.replace("client_number", getClientNumberString());
         String clientVersionString = "";
         try {
             clientVersionString = getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName;
         } catch (PackageManager.NameNotFoundException e) {
             clientVersionString = mRes.getString(R.string.not_available);
         }
-
-        String phoneModelString =  Build.MODEL;
-
-        uriString = uriString.replace("client_number", clientNumberString);
         uriString = uriString.replace("client_version", clientVersionString);
-        uriString = uriString.replace("phone_model", phoneModelString);
-
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uriString));
-        startActivity(browserIntent);
+        uriString = uriString.replace("phone_model", Build.MODEL);
+        launchBrowser(uriString);
     }
 
     private void openRegisterTransportForm() {
         String uriString = mRes.getString(R.string.transport_form_address);
-        String clientNumberString = mRes.getString(R.string.not_available);
+        uriString = uriString.replace("client_number", getClientNumberString());
+        launchBrowser(uriString);
+    }
+
+    private String getClientNumberString() {
+        String clientNumberString;
         if (mStorage.isClientNumberAvailable()) {
             clientNumberString = String.format("%d", mStorage.readClientNumber().get());
+        } else {
+            clientNumberString = mRes.getString(R.string.not_available);
         }
-        uriString = uriString.replace("client_number", clientNumberString);
+        return clientNumberString;
+    }
 
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uriString));
+    private void launchBrowser(String us) {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(us));
         startActivity(browserIntent);
     }
 
-
-
     /**
-     * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initPosition, initZoom));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initPosition, initZoom));
     }
 
 
     /*************************
-     Broadcast handler
+     *
+     * Broadcast handler
+     *
      *************************/
 
     /* Local broadcast receiver */
@@ -503,13 +516,14 @@ public class MainActivity extends AppCompatActivity
             Location l = i.getParcelableExtra(InternalBroadcasts.KEY_LOCATION_UPDATE);
             // Timber.d("Location came back as:" + l.toString());
             if (l != null) {
+                LatLng nextPosition = new LatLng(l.getLatitude(), l.getLongitude());
                 if (showPath) {
                     if (isTodaysPath() && latestPosition!=null) {
                         // Requesting today's path, have both previous and new position --> let's draw a line!
-                        addLine(latestPosition, new LatLng(l.getLatitude(), l.getLongitude()), ActivityType.getActivityColor(latestActivityType));
+                        addLine(latestPosition, nextPosition, ActivityType.getActivityColor(latestActivityType));
                     }
                 }
-                latestPosition = new LatLng(l.getLatitude(), l.getLongitude());
+                latestPosition = nextPosition;
                 if (mMarker == null) {
                     Bitmap bitmap = getBitmap(mContext, ActivityType.getActivityIcon(latestActivityType));
                     mMarker = mMap.addMarker(new MarkerOptions().position(latestPosition).icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
@@ -565,10 +579,14 @@ public class MainActivity extends AppCompatActivity
         else fixServiceStateToMenu(true);
     }
 
+    /**********************************
+     *
+     * Show the path of the user on map
+     *
+     **********************************/
+
     public void fetchPath() {
-        Date selDate = pathCal.getTime();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        String pathDate = df.format(selDate);
+        String pathDate = mDateFormat.format(pathCal.getTime());
 
         Optional<String> token = mStorage.readSessionToken();
         if (!token.isPresent()) {
@@ -629,12 +647,8 @@ public class MainActivity extends AppCompatActivity
                         JSONArray ga = geoJson.getJSONArray("features");
                         int i = ga.length();
                         if (i>0) {
-                            JSONObject geom = ga.getJSONObject(i-1);
-                            JSONArray coord = geom.getJSONObject("geometry").getJSONArray("coordinates");
-                            i = coord.length();
-                            Timber.d("Coordinate array length: " + i);
-                            JSONArray lngLat = coord.getJSONArray(i-1);
-                            Timber.d("Got lngLat: " + lngLat.toString());
+                            JSONArray coord = ga.getJSONObject(i-1).getJSONObject("geometry").getJSONArray("coordinates");
+                            JSONArray lngLat = coord.getJSONArray(coord.length()-1);
                             pathEnd = new LatLng(lngLat.getDouble(1),lngLat.getDouble(0));
                         } else pathEnd=null;
                     }
@@ -656,7 +670,6 @@ public class MainActivity extends AppCompatActivity
                 } catch (JSONException e) {
                     Timber.e("JSONException: " + e.toString());
                 }
-//                Timber.d("geoJson features array size: " + l);
                 if (l>0) { // received one or more lines
                     pathLayer = new GeoJsonLayer(mMap, geoJson);
                     processPath();
@@ -708,8 +721,7 @@ public class MainActivity extends AppCompatActivity
             // Quick-n-dirty solution to bypass all the queued points with one line
             if (pathEnd!=null && isTodaysPath()) addLine(pathEnd, latestPosition, ActivityType.getActivityColor(latestActivityType));
         }
-        LatLngBounds bounds = boundsBuilder.build();
-        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 20));
     }
 
     private void addLine(LatLng start, LatLng end, int color) {
