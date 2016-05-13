@@ -27,8 +27,9 @@ public class AboutActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_about);
         // setupActionBar(); // Not in application theme, throws an exception
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.about_toolbar);
         setSupportActionBar(myToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         final View controlsView = findViewById(R.id.abt_Buttons);
         final View titleView = findViewById(R.id.abt_pageTitleField);
