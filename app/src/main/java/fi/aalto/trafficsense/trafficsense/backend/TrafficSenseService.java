@@ -36,9 +36,6 @@ import static fi.aalto.trafficsense.trafficsense.util.TSUploadState.*;
 
 public class TrafficSenseService extends Service {
 
-//    private final int foregroundCheckDelay = 5000; // milliseconds, delay after view inactive until checking, whether to go foreground
-//    private final int foregroundBootCheckDelay = 15000; // milliseconds, delay after servicestart until checking, whether to go foreground
-                                                        // Activates the notification, if service is starting after a reboot
     /* Private Members */
     private static Context mContext;
     private final IBinder mBinder = new LocalBinder<TrafficSenseService>(this);
@@ -49,8 +46,6 @@ public class TrafficSenseService extends Service {
     private static LocalBroadcastManager mLocalBroadcastManager;
     private BroadcastReceiver mBroadcastReceiver;
     private NotificationManager mNotificationManager;
-    private Resources mRes;
-    private Handler mHandler = new Handler();
     private static BackendStorage mStorage;
     private AtomicReference<Boolean> mClientNumberFetchOngoing = new AtomicReference<>(false);
 
@@ -66,12 +61,11 @@ public class TrafficSenseService extends Service {
         super.onCreate();
         mContext = this;
         mPipeline = new RegularRoutesPipeline();
-        // PlayServiceInterface -> SensorController -> SensorFilter requires pipeline to be set up.
+        // PlayServiceInterface -> SensorController -> SensorFilter requires pipeline to be set up first.
         mPlayServiceInterface = new PlayServiceInterface();
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
         initBroadcastReceiver();
         mStorage = BackendStorage.create(mContext);
-        mRes = this.getResources();
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     }
 
@@ -155,7 +149,7 @@ public class TrafficSenseService extends Service {
     public static void setServiceState(TSServiceState newState) {
         if (newState != mServiceState) {
             updateServiceState(newState);
-            if (newState==SLEEPING) { //  && isForeground
+            if (newState==SLEEPING) {
                 NotificationManager nM = (NotificationManager) TrafficSenseService.getContext().getSystemService(NOTIFICATION_SERVICE);
                 nM.notify(ONGOING_NOTIFICATION_ID, buildServiceStateNotification());
             }
