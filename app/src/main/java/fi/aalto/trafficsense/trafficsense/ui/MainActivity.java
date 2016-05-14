@@ -91,13 +91,10 @@ public class MainActivity extends AppCompatActivity
     private ActivityType latestActivityType=ActivityType.STILL;
     private LatLng latestPosition;
     private LatLng pathEnd;
-//    private boolean showTraffic=false;
-//    private boolean showPath=false;
     private static Calendar pathCal = Calendar.getInstance();
     private final SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     private GeoJsonLayer pathLayer=null;
-//    private JSONObject mPathGeoJson=null;
 
     private LatLng initPosition=(new LatLng(60.1841396, 24.8300838));
     private float initZoom=12;
@@ -180,27 +177,27 @@ public class MainActivity extends AppCompatActivity
         checkLocationPermission(); // Check the dynamic location permissions
         // Make sure showPath status is aligned when resuming.
         // if (pathLayer==null) showPath=false;
-        Timber.d("onResume");
     }
 
     /**
-     * This callback is triggered when the map is ready to be used.
+     * This callback is triggered when the map is almost ready. (dimensions do not work yet)
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initPosition, initZoom));
         mMap.setOnMapLoadedCallback(this);
-        Timber.d("onMapReady");
     }
 
+    /**
+     * This callback is triggered when the map is really ready.
+     */
     @Override
     public void onMapLoaded() {
-        Timber.d("onMapLoaded");
         if (mMap != null) {
             if (getSharedBoolean(SharedPrefs.KEY_SHOW_PATH)) { // Redraw current path, if displayed.
                 String geoJsonString = mPref.getString(SharedPrefs.KEY_PATH_OBJECT, null);
-                Timber.d("GeoJsonString: " + geoJsonString);
+                // Timber.d("GeoJsonString: " + geoJsonString);
                 Boolean success = false;
                 if (geoJsonString != null) {
                     try {
@@ -306,7 +303,6 @@ public class MainActivity extends AppCompatActivity
         mTrafficItem = menu.findItem(R.id.main_toolbar_traffic);
         if (getSharedBoolean(SharedPrefs.KEY_SHOW_PATH)) mPathItem.setIcon(R.drawable.road_variant_on);
         if (getSharedBoolean(SharedPrefs.KEY_SHOW_TRAFFIC)) mTrafficItem.setIcon(R.drawable.ic_traffic_24dp_on);
-        Timber.d("onCreateOptionsMenu");
         return true;
     }
 
@@ -330,13 +326,16 @@ public class MainActivity extends AppCompatActivity
                 mTrafficItem.setIcon(b ? R.drawable.ic_traffic_24dp_on : R.drawable.ic_traffic_24dp_off);
                 return true;
             case R.id.main_toolbar_path:
-                if (flipSharedBoolean(SharedPrefs.KEY_SHOW_PATH)) {
+                if (!getSharedBoolean(SharedPrefs.KEY_SHOW_PATH)) {
                     DialogFragment newFragment = new DatePickerFragment();
                     newFragment.show(getSupportFragmentManager(), "datePicker");
                 } else {
                     if (pathLayer!=null) {
                         pathLayer.removeLayerFromMap();
                     }
+                    mPrefEditor.putString(SharedPrefs.KEY_PATH_OBJECT, null); // reset path object
+                    mPrefEditor.commit();
+                    flipSharedBoolean(SharedPrefs.KEY_SHOW_PATH);
                     mPathItem.setIcon(R.drawable.road_variant_off);
                 }
                 return true;
@@ -368,10 +367,8 @@ public class MainActivity extends AppCompatActivity
         pathCal.set(Calendar.DAY_OF_MONTH, day);
         if (pathCal.after(Calendar.getInstance())) {
             Toast.makeText(this, R.string.path_future_date_request, Toast.LENGTH_LONG).show();
-            mPrefEditor.putBoolean(SharedPrefs.KEY_SHOW_PATH, false);
-            mPrefEditor.commit();
-            mPathItem.setIcon(R.drawable.road_variant_off);
         } else {
+            flipSharedBoolean(SharedPrefs.KEY_SHOW_PATH);
             mPathItem.setIcon(R.drawable.road_variant_on);
             mPathItem.setEnabled(false);
             fetchPath();
@@ -781,7 +778,7 @@ public class MainActivity extends AppCompatActivity
             if (pathEnd!=null && isTodaysPath()) addLine(pathEnd, latestPosition, ActivityType.getActivityColor(latestActivityType));
         }
 //        LatLngBounds nb = boundsBuilder.build();
-        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 40));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 20));
     }
 
     private void addLine(LatLng start, LatLng end, int color) {
