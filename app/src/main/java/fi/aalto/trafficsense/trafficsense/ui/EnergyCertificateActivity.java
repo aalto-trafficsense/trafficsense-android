@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import com.caverock.androidsvg.SVG;
@@ -25,11 +26,8 @@ import java.net.URL;
 
 public class EnergyCertificateActivity extends AppCompatActivity {
 
-    private RelativeLayout container;
     private SVGImageView svgImageView;
     private BackendStorage mStorage;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +37,7 @@ public class EnergyCertificateActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        container = (RelativeLayout) findViewById(R.id.energy_certificate);
+        FrameLayout container = (FrameLayout) findViewById(R.id.energy_certificate);
         svgImageView = new SVGImageView(this);
         container.addView(svgImageView, ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
 
@@ -62,17 +60,14 @@ public class EnergyCertificateActivity extends AppCompatActivity {
     private void fetchCertificate() {
         Optional<String> token = mStorage.readSessionToken();
         if (!token.isPresent()) {
-            Toast toast = Toast.makeText(this, "Not signed in?", Toast.LENGTH_SHORT);
-            toast.show();
+            Toast.makeText(this, R.string.not_signed_in, Toast.LENGTH_SHORT).show();
         } else {
             try {
                 URL url = new URL(mStorage.getServerName().toString() + "/svg/" + token.get());
                 DownloadDataTask downloader = new DownloadDataTask();
                 downloader.execute(url);
             } catch (MalformedURLException e) {
-                Context context = getApplicationContext();
-                Toast toast = Toast.makeText(context, "Certificate URL broken.", Toast.LENGTH_SHORT);
-                toast.show();
+                Toast.makeText(this, R.string.certificate_url_broken, Toast.LENGTH_SHORT).show();
             }
         }
     }

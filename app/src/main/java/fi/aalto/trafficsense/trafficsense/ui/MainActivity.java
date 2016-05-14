@@ -4,10 +4,7 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.*;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -63,12 +60,14 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_STATE_INDEX;
 
 public class MainActivity extends AppCompatActivity
         implements  NavigationView.OnNavigationItemSelectedListener,
                     OnMapReadyCallback,
+        GoogleMap.OnMapLoadedCallback,
                     DatePickerDialog.OnDateSetListener {
 
     private LocalBroadcastManager mLocalBroadcastManager;
@@ -77,6 +76,8 @@ public class MainActivity extends AppCompatActivity
     private Context mContext;
     private Resources mRes;
     private BackendStorage mStorage;
+    private SharedPreferences mPref;
+    private SharedPreferences.Editor mPrefEditor;
 
     private MenuItem mStartupItem;
     private MenuItem mShutdownItem;
@@ -90,12 +91,13 @@ public class MainActivity extends AppCompatActivity
     private ActivityType latestActivityType=ActivityType.STILL;
     private LatLng latestPosition;
     private LatLng pathEnd;
-    private boolean showTraffic=false;
-    private boolean showPath=false;
+//    private boolean showTraffic=false;
+//    private boolean showPath=false;
     private static Calendar pathCal = Calendar.getInstance();
     private final SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     private GeoJsonLayer pathLayer=null;
+//    private JSONObject mPathGeoJson=null;
 
     private LatLng initPosition=(new LatLng(60.1841396, 24.8300838));
     private float initZoom=12;
@@ -156,6 +158,10 @@ public class MainActivity extends AppCompatActivity
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
         initBroadcastReceiver();
         mStorage = BackendStorage.create(mContext);
+
+        // Initialize shared preferences access for persistent storage of values
+        mPref = this.getPreferences(Context.MODE_PRIVATE);
+        mPrefEditor = mPref.edit();
     }
 
 
@@ -173,7 +179,50 @@ public class MainActivity extends AppCompatActivity
         BroadcastHelper.simpleBroadcast(mLocalBroadcastManager, InternalBroadcasts.KEY_MAIN_ACTIVITY_REQ);
         checkLocationPermission(); // Check the dynamic location permissions
         // Make sure showPath status is aligned when resuming.
-        if (pathLayer==null) showPath=false;
+        // if (pathLayer==null) showPath=false;
+        Timber.d("onResume");
+    }
+
+    /**
+     * This callback is triggered when the map is ready to be used.
+     */
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initPosition, initZoom));
+        mMap.setOnMapLoadedCallback(this);
+        Timber.d("onMapReady");
+    }
+
+    @Override
+    public void onMapLoaded() {
+        Timber.d("onMapLoaded");
+        if (mMap != null) {
+            if (getSharedBoolean(SharedPrefs.KEY_SHOW_PATH)) { // Redraw current path, if displayed.
+                String geoJsonString = mPref.getString(SharedPrefs.KEY_PATH_OBJECT, null);
+                Timber.d("GeoJsonString: " + geoJsonString);
+                Boolean success = false;
+                if (geoJsonString != null) {
+                    try {
+                        JSONObject geoJson = new JSONObject(geoJsonString);
+                        pathLayer = new GeoJsonLayer(mMap, geoJson);
+                        processPath();
+                        pathLayer.addLayerToMap();
+                        success = true;
+                    }
+                    catch (JSONException e) {
+                        Timber.e("Path GeoJson conversion returned an exception: " + e.toString());
+                    }
+                }
+                if (!success) { // Boolean said we had a path but could not show it => switch off
+                    flipSharedBoolean(SharedPrefs.KEY_SHOW_PATH);
+                    mPathItem.setIcon(R.drawable.road_variant_off);
+                }
+            }
+            if (getSharedBoolean(SharedPrefs.KEY_SHOW_TRAFFIC)) {
+                mMap.setTrafficEnabled(true);
+            }
+        }
     }
 
     @Override
@@ -183,6 +232,17 @@ public class MainActivity extends AppCompatActivity
         BroadcastHelper.broadcastViewResumed(mLocalBroadcastManager, false);
     }
 
+    private boolean getSharedBoolean(String key) {
+        return mPref.getBoolean(key, false);
+    }
+
+    private boolean flipSharedBoolean(String key) {
+        boolean b = mPref.getBoolean(key, false);
+        b = !b;
+        mPrefEditor.putBoolean(key, b);
+        mPrefEditor.commit();
+        return b;
+    }
 
     /********************************
      *
@@ -244,6 +304,9 @@ public class MainActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.activity_main_toolbar, menu);
         mPathItem = menu.findItem(R.id.main_toolbar_path);
         mTrafficItem = menu.findItem(R.id.main_toolbar_traffic);
+        if (getSharedBoolean(SharedPrefs.KEY_SHOW_PATH)) mPathItem.setIcon(R.drawable.road_variant_on);
+        if (getSharedBoolean(SharedPrefs.KEY_SHOW_TRAFFIC)) mTrafficItem.setIcon(R.drawable.ic_traffic_24dp_on);
+        Timber.d("onCreateOptionsMenu");
         return true;
     }
 
@@ -262,16 +325,14 @@ public class MainActivity extends AppCompatActivity
 
         switch (id) {
             case R.id.main_toolbar_traffic:
-                showTraffic = !showTraffic;
-                mMap.setTrafficEnabled(showTraffic);
-                mTrafficItem.setIcon(showTraffic ? R.drawable.ic_traffic_24dp_on : R.drawable.ic_traffic_24dp_off);
+                Boolean b = flipSharedBoolean(SharedPrefs.KEY_SHOW_TRAFFIC);
+                mMap.setTrafficEnabled(b);
+                mTrafficItem.setIcon(b ? R.drawable.ic_traffic_24dp_on : R.drawable.ic_traffic_24dp_off);
                 return true;
             case R.id.main_toolbar_path:
-                showPath = !showPath;
-                if (showPath) {
+                if (flipSharedBoolean(SharedPrefs.KEY_SHOW_PATH)) {
                     DialogFragment newFragment = new DatePickerFragment();
                     newFragment.show(getSupportFragmentManager(), "datePicker");
-                    mPathItem.setIcon(R.drawable.road_variant_on);
                 } else {
                     if (pathLayer!=null) {
                         pathLayer.removeLayerFromMap();
@@ -301,14 +362,18 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onDateSet(DatePicker view, int year, int month, int day) {
         // Only query for current or past dates
+        pathCal = Calendar.getInstance();
         pathCal.set(Calendar.YEAR, year);
         pathCal.set(Calendar.MONTH, month);
         pathCal.set(Calendar.DAY_OF_MONTH, day);
         if (pathCal.after(Calendar.getInstance())) {
             Toast.makeText(this, R.string.path_future_date_request, Toast.LENGTH_LONG).show();
-            showPath = false;
+            mPrefEditor.putBoolean(SharedPrefs.KEY_SHOW_PATH, false);
+            mPrefEditor.commit();
             mPathItem.setIcon(R.drawable.road_variant_off);
         } else {
+            mPathItem.setIcon(R.drawable.road_variant_on);
+            mPathItem.setEnabled(false);
             fetchPath();
         }
     }
@@ -429,15 +494,6 @@ public class MainActivity extends AppCompatActivity
         startActivity(browserIntent);
     }
 
-    /**
-     * This callback is triggered when the map is ready to be used.
-     */
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initPosition, initZoom));
-    }
-
 
     /*************************
      *
@@ -517,7 +573,7 @@ public class MainActivity extends AppCompatActivity
             // Timber.d("Location came back as:" + l.toString());
             if (l != null) {
                 LatLng nextPosition = new LatLng(l.getLatitude(), l.getLongitude());
-                if (showPath) {
+                if (getSharedBoolean(SharedPrefs.KEY_SHOW_PATH)) {
                     if (isTodaysPath() && latestPosition!=null) {
                         // Requesting today's path, have both previous and new position --> let's draw a line!
                         addLine(latestPosition, nextPosition, ActivityType.getActivityColor(latestActivityType));
@@ -590,17 +646,16 @@ public class MainActivity extends AppCompatActivity
 
         Optional<String> token = mStorage.readSessionToken();
         if (!token.isPresent()) {
-            Toast toast = Toast.makeText(this, "Not signed in?", Toast.LENGTH_SHORT);
-            toast.show();
+            Toast.makeText(this, R.string.not_signed_in, Toast.LENGTH_SHORT).show();
+            mPathItem.setEnabled(true);
         } else {
             try {
                 URL url = new URL(mStorage.getServerName().toString() + "/path/" + token.get() + "?date=" + pathDate + "&maxpts=20000&mindist=20");
                 DownloadPathTask downloader = new DownloadPathTask();
                 downloader.execute(url);
             } catch (MalformedURLException e) {
-                Context context = getApplicationContext();
-                Toast toast = Toast.makeText(context, "Path URL broken", Toast.LENGTH_SHORT);
-                toast.show();
+                Toast.makeText(this, R.string.path_url_broken, Toast.LENGTH_SHORT).show();
+                mPathItem.setEnabled(true);
             }
         }
 
@@ -612,6 +667,7 @@ public class MainActivity extends AppCompatActivity
             String returnVal = null;
             if (urls.length != 1) {
                 Timber.e("Path downloader attempted to get more or less than one URL");
+                mPathItem.setEnabled(true);
                 return null;
             }
 
@@ -629,7 +685,6 @@ public class MainActivity extends AppCompatActivity
                     Timber.e("DownloadPathTask received no data!");
                 }
                 in.close();
-
             }
             catch (IOException e) {
                 Timber.e("DownloadPathTask error connecting to URL.");
@@ -671,6 +726,8 @@ public class MainActivity extends AppCompatActivity
                     Timber.e("JSONException: " + e.toString());
                 }
                 if (l>0) { // received one or more lines
+                    mPrefEditor.putString(SharedPrefs.KEY_PATH_OBJECT, geoJson.toString()); // save a copy for screen redraws
+                    mPrefEditor.commit();
                     pathLayer = new GeoJsonLayer(mMap, geoJson);
                     processPath();
                     pathLayer.addLayerToMap();
@@ -678,7 +735,8 @@ public class MainActivity extends AppCompatActivity
                     if (!isTodaysPath()) { // unless the request was for today
                         // No content - uncheck the menu item
                         Toast.makeText(mContext, R.string.path_no_data_for_date, Toast.LENGTH_SHORT).show();
-                        showPath = false;
+                        mPrefEditor.putBoolean(SharedPrefs.KEY_SHOW_PATH, false);
+                        mPrefEditor.commit();
                         mPathItem.setIcon(R.drawable.road_variant_off);
                     }
                 }
@@ -686,6 +744,7 @@ public class MainActivity extends AppCompatActivity
                     Toast.makeText(mContext, R.string.path_no_public_transport, Toast.LENGTH_SHORT).show();
                 }
             }
+            mPathItem.setEnabled(true);
         }
     }
 
@@ -721,7 +780,8 @@ public class MainActivity extends AppCompatActivity
             // Quick-n-dirty solution to bypass all the queued points with one line
             if (pathEnd!=null && isTodaysPath()) addLine(pathEnd, latestPosition, ActivityType.getActivityColor(latestActivityType));
         }
-        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 20));
+//        LatLngBounds nb = boundsBuilder.build();
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 40));
     }
 
     private void addLine(LatLng start, LatLng end, int color) {
