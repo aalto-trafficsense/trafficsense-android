@@ -23,6 +23,8 @@
                           style="@android:style/TextAppearance.Large"
                           android:text="@string/service_state_label" />
                 <TextView android:id="@+id/debug_show_service_state"
+                          android:layout_width="match_parent"
+                          android:layout_height="match_parent"
                           style="@android:style/TextAppearance.Large"
                           android:textColor="@color/colorSubtitleText"
                           android:layout_weight="2"
@@ -34,6 +36,8 @@
                           android:text="@string/debug_show_client_number_label"
                           android:textColor="@color/black" />
                 <TextView android:id="@+id/debug_show_client_number"
+                          android:layout_width="match_parent"
+                          android:layout_height="match_parent"
                           android:textColor="@color/black"
                           android:layout_weight="2"
                           android:gravity="end"/>
@@ -59,6 +63,8 @@
                           style="@android:style/TextAppearance.Large"
                           android:text="@string/debug_show_activity_label" />
                 <TextView android:id="@+id/debug_show_activity_top"
+                          android:layout_width="match_parent"
+                          android:layout_height="match_parent"
                           style="@android:style/TextAppearance.Large"
                           android:textColor="@color/colorSubtitleText"
                           android:layout_weight="2"
@@ -72,6 +78,7 @@
                           android:text="@string/debug_show_activitylist_prefix"
                           android:textColor="@color/black" />
                 <TextView android:id="@+id/debug_show_activities"
+                          android:layout_width="match_parent"
                           android:layout_height="60dp"
                           android:textColor="@color/black"
                           android:layout_weight="2"
@@ -80,6 +87,8 @@
                 </TableRow>
             <TableRow>
                 <TextView android:id="@+id/debug_show_activity_time"
+                          android:layout_width="match_parent"
+                          android:layout_height="match_parent"
                           android:textColor="@color/black"/>
             </TableRow>
         </TableLayout>
@@ -104,6 +113,8 @@
                           style="@android:style/TextAppearance.Large"
                           android:text="@string/debug_show_location_label" />
                 <TextView android:id="@+id/debug_show_location_provider"
+                          android:layout_width="match_parent"
+                          android:layout_height="match_parent"
                           style="@android:style/TextAppearance.Large"
                           android:textColor="@color/colorSubtitleText"
                           android:layout_weight="2"
@@ -116,6 +127,8 @@
                           android:text="@string/debug_show_location_accuracy_label"
                           android:textColor="@color/black" />
                 <TextView android:id="@+id/debug_show_location_accuracy"
+                          android:layout_width="match_parent"
+                          android:layout_height="match_parent"
                           android:textColor="@color/black"
                           android:background="@color/white"
                           android:layout_weight="2"
@@ -123,6 +136,8 @@
             </TableRow>
             <TableRow>
                 <TextView android:id="@+id/debug_show_location_time"
+                          android:layout_width="match_parent"
+                          android:layout_height="match_parent"
                           android:textColor="@color/black"
                           android:background="@color/white"/>
             </TableRow>
@@ -149,6 +164,8 @@
                           style="@android:style/TextAppearance.Large"
                           android:text="@string/debug_show_upload_label" />
                 <TextView android:id="@+id/debug_show_upload_state"
+                          android:layout_width="match_parent"
+                          android:layout_height="match_parent"
                           style="@android:style/TextAppearance.Large"
                           android:textColor="@color/colorSubtitleText"
                           android:layout_weight="2"
@@ -162,6 +179,8 @@
                           android:id="@+id/debug_show_queue_length_label"/>
                 <TextView
                     android:id="@+id/debug_show_queue_length"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:textColor="@color/black"
                     android:layout_weight="2"
                     android:gravity="end"/>
@@ -174,6 +193,8 @@
                           android:id="@+id/debug_show_latest_upload_label"/>
                 <TextView
                     android:id="@+id/debug_show_latest_upload"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:textColor="@color/black"
                     android:layout_weight="2"
                     android:gravity="end"/>
@@ -182,8 +203,8 @@
                 android:layout_width="match_parent"
                 android:gravity="end">
                 <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:text="Upload"
                     android:textAllCaps="false"
                     android:id="@+id/debug_show_upload_button"

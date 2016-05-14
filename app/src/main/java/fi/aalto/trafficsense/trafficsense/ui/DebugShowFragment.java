@@ -224,8 +224,8 @@ public class DebugShowFragment extends Fragment {
         mServiceStatusTextField.setTextColor(ContextCompat.getColor(this.getContext(), headerTextColor));
         mServiceHeaderRow.setBackgroundColor(ContextCompat.getColor(this.getContext(), headerBackgroundColor));
 
-        mServiceStatusTextField.setGravity(Gravity.END);
-        mClientNumberTextField.setGravity(Gravity.END);
+//        mServiceStatusTextField.setGravity(Gravity.END);
+//        mClientNumberTextField.setGravity(Gravity.END);
 
     }
 
@@ -262,7 +262,7 @@ public class DebugShowFragment extends Fragment {
         mUploadStatusTextField.setTextColor(ContextCompat.getColor(this.getContext(), headerTextColor));
         mUploadHeaderRow.setBackgroundColor(ContextCompat.getColor(this.getContext(), headerBackgroundColor));
 
-        mUploadStatusTextField.setGravity(Gravity.END);
+//        mUploadStatusTextField.setGravity(Gravity.END);
 
     }
 
@@ -292,8 +292,8 @@ public class DebugShowFragment extends Fragment {
             }
         }
 
-        mLocationProviderTextField.setGravity(Gravity.END);
-        mLocationAccuracyTextField.setGravity(Gravity.END);
+//        mLocationProviderTextField.setGravity(Gravity.END);
+//        mLocationAccuracyTextField.setGravity(Gravity.END);
     }
 
     private void updateActivity (Intent i) {
@@ -349,8 +349,8 @@ public class DebugShowFragment extends Fragment {
             mTopActivityTextField.setTextColor(ContextCompat.getColor(this.getContext(), headerTextColor));
             mActivityHeaderRow.setBackgroundColor(ContextCompat.getColor(this.getContext(), headerBackgroundColor));
 
-            mTopActivityTextField.setGravity(Gravity.END);
-            mLatestActivitiesTextField.setGravity(Gravity.END);
+//            mTopActivityTextField.setGravity(Gravity.END);
+//            mLatestActivitiesTextField.setGravity(Gravity.END);
 
         }
     }
@@ -359,7 +359,7 @@ public class DebugShowFragment extends Fragment {
         int queueLength = i.getIntExtra(InternalBroadcasts.LABEL_QUEUE_LENGTH,0);
         int activeThreshold = i.getIntExtra(InternalBroadcasts.LABEL_QUEUE_THRESHOLD,0);
         mUploadQueueLengthTextField.setText(queueLength + " / " + activeThreshold);
-        mUploadQueueLengthTextField.setGravity(Gravity.END);
+//        mUploadQueueLengthTextField.setGravity(Gravity.END);
     }
 
     private void updateLatestUpload (Intent i) {
@@ -372,7 +372,7 @@ public class DebugShowFragment extends Fragment {
             mUploadTimeTextField.setText(uploadFormatted);
         }
 
-        mUploadTimeTextField.setGravity(Gravity.END);
+//        mUploadTimeTextField.setGravity(Gravity.END);
     }
 
 }
