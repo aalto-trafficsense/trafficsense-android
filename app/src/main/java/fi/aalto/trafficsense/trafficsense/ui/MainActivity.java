@@ -195,30 +195,22 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onMapLoaded() {
         if (mMap != null) {
+
             if (getSharedBoolean(SharedPrefs.KEY_SHOW_PATH)) { // Redraw current path, if displayed.
                 String geoJsonString = mPref.getString(SharedPrefs.KEY_PATH_OBJECT, null);
                 // Timber.d("GeoJsonString: " + geoJsonString);
-                Boolean success = false;
-                if (geoJsonString != null) {
-                    try {
-                        JSONObject geoJson = new JSONObject(geoJsonString);
-                        pathLayer = new GeoJsonLayer(mMap, geoJson);
-                        processPath();
-                        pathLayer.addLayerToMap();
-                        success = true;
-                    }
-                    catch (JSONException e) {
-                        Timber.e("Path GeoJson conversion returned an exception: " + e.toString());
-                    }
-                }
-                if (!success) { // Boolean said we had a path but could not show it => switch off
-                    flipSharedBoolean(SharedPrefs.KEY_SHOW_PATH);
-                    mPathItem.setIcon(R.drawable.road_variant_off);
+                if (geoJsonString == null) {
+                    // Path on but no cached path (probably today) - fetch a fresh path from the server
+                    fetchPath();
+                } else {
+                    cachedPath(geoJsonString);
                 }
             }
+
             if (getSharedBoolean(SharedPrefs.KEY_SHOW_TRAFFIC)) {
                 mMap.setTrafficEnabled(true);
             }
+
         }
     }
 
@@ -655,13 +647,12 @@ public class MainActivity extends AppCompatActivity
                 mPathItem.setEnabled(true);
             }
         }
-
     }
 
 
     private class DownloadPathTask extends AsyncTask<URL, Void, JSONObject> {
         protected JSONObject doInBackground(URL... urls) {
-            String returnVal = null;
+            String geoJsonString = null;
             if (urls.length != 1) {
                 Timber.e("Path downloader attempted to get more or less than one URL");
                 mPathItem.setEnabled(true);
@@ -676,7 +667,7 @@ public class MainActivity extends AppCompatActivity
                 InputStream in = new BufferedInputStream(urlConnection.getInputStream());
                 java.util.Scanner s = new java.util.Scanner(in).useDelimiter("\\A");
                 if (s.hasNext()) {
-                    returnVal = s.next();
+                    geoJsonString = s.next();
                 }
                 else {
                     Timber.e("DownloadPathTask received no data!");
@@ -692,18 +683,27 @@ public class MainActivity extends AppCompatActivity
             }
 
             JSONObject geoJson = null;
-            if (returnVal != null) {
+            if (geoJsonString != null) {
                 try {
-                    geoJson = new JSONObject(returnVal);
-                    if (isTodaysPath()) { // Dig out the latest coordinates of today.
-                        JSONArray ga = geoJson.getJSONArray("features");
-                        int i = ga.length();
+                    geoJson = new JSONObject(geoJsonString);
+                    JSONArray ga = geoJson.getJSONArray("features");
+                    int i = ga.length();
+                    boolean cachePath = false; // reset unless a non-zero path from a past day
+                    if (isTodaysPath()) {
                         if (i>0) {
+                            // Dig out the latest coordinates of today.
                             JSONArray coord = ga.getJSONObject(i-1).getJSONObject("geometry").getJSONArray("coordinates");
                             JSONArray lngLat = coord.getJSONArray(coord.length()-1);
                             pathEnd = new LatLng(lngLat.getDouble(1),lngLat.getDouble(0));
                         } else pathEnd=null;
+                    } else { // Not today
+                        if (i>0) {
+                            cachePath = true;  // save a copy for screen redraws
+                        }
                     }
+                    if (cachePath) mPrefEditor.putString(SharedPrefs.KEY_PATH_OBJECT, geoJsonString);
+                    else mPrefEditor.putString(SharedPrefs.KEY_PATH_OBJECT, null);
+                    mPrefEditor.commit();
                 } catch (JSONException e) {
                     Timber.e("Path GeoJson conversion returned an exception: " + e.toString());
                     return null;
@@ -723,8 +723,6 @@ public class MainActivity extends AppCompatActivity
                     Timber.e("JSONException: " + e.toString());
                 }
                 if (l>0) { // received one or more lines
-                    mPrefEditor.putString(SharedPrefs.KEY_PATH_OBJECT, geoJson.toString()); // save a copy for screen redraws
-                    mPrefEditor.commit();
                     pathLayer = new GeoJsonLayer(mMap, geoJson);
                     processPath();
                     pathLayer.addLayerToMap();
@@ -793,6 +791,21 @@ public class MainActivity extends AppCompatActivity
             lineStringFeature.setLineStringStyle(lineStringStyle);
             pathLayer.addFeature(lineStringFeature);
         }
+    }
+
+    public void cachedPath(String geoJsonString) {
+        try {
+            JSONObject geoJson = new JSONObject(geoJsonString);
+            pathLayer = new GeoJsonLayer(mMap, geoJson);
+            processPath();
+            pathLayer.addLayerToMap();
+        }
+        catch (JSONException e) {
+            Timber.e("Cached path GeoJson conversion returned an exception: " + e.toString());
+            flipSharedBoolean(SharedPrefs.KEY_SHOW_PATH);
+            mPathItem.setIcon(R.drawable.road_variant_off);
+        }
+
     }
 
 }
