@@ -19,7 +19,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
@@ -60,7 +59,6 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_STATE_INDEX;
 
@@ -175,8 +173,6 @@ public class MainActivity extends AppCompatActivity
         BroadcastHelper.broadcastViewResumed(mLocalBroadcastManager, true);
         BroadcastHelper.simpleBroadcast(mLocalBroadcastManager, InternalBroadcasts.KEY_MAIN_ACTIVITY_REQ);
         checkLocationPermission(); // Check the dynamic location permissions
-        // Make sure showPath status is aligned when resuming.
-        // if (pathLayer==null) showPath=false;
     }
 
     /**
@@ -323,7 +319,7 @@ public class MainActivity extends AppCompatActivity
                     DialogFragment newFragment = new DatePickerFragment();
                     newFragment.show(getSupportFragmentManager(), "datePicker");
                 } else {
-                    setNoPath();
+                    setPathOff();
                     if (pathLayer!=null) {
                         pathLayer.removeLayerFromMap();
                     }
@@ -356,13 +352,21 @@ public class MainActivity extends AppCompatActivity
         pathCal.set(Calendar.MONTH, month);
         pathCal.set(Calendar.DAY_OF_MONTH, day);
         if (pathCal.after(Calendar.getInstance())) {
-            Toast.makeText(this, R.string.path_future_date_request, Toast.LENGTH_LONG).show();
-        } else {
-            flipSharedBoolean(SharedPrefs.KEY_SHOW_PATH);
-            mPathItem.setIcon(R.drawable.road_variant_on);
-            mPathItem.setEnabled(false);
-            fetchPath();
+//            Toast.makeText(this, R.string.path_future_date_request, Toast.LENGTH_LONG).show();
+//        } else {
+            setPreviousMatchingWeekday(); // A little joke for the funny
         }
+        fetchPath();
+    }
+
+    private void setPreviousMatchingWeekday() {
+        int req = pathCal.get(Calendar.DAY_OF_WEEK);
+        int curr = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+        pathCal = Calendar.getInstance();
+        if (curr>req) pathCal.add(Calendar.DATE, req-curr);
+        if (curr==req) pathCal.add(Calendar.DATE, -7);
+        if (curr<req) pathCal.add(Calendar.DATE, req-curr-7);
+        Timber.d("PathCal set to date: " + mDateFormat.format(pathCal.getTime()) + " Day of week: " + pathCal.get(Calendar.DAY_OF_WEEK));
     }
 
     /*******************************
@@ -629,6 +633,7 @@ public class MainActivity extends AppCompatActivity
      **********************************/
 
     public void fetchPath() {
+        mPathItem.setEnabled(false);
         String pathDate = mDateFormat.format(pathCal.getTime());
 
         Optional<String> token = mStorage.readSessionToken();
@@ -654,7 +659,6 @@ public class MainActivity extends AppCompatActivity
             if (urls.length != 1) {
                 Timber.e("Path downloader attempted to get more or less than one URL");
                 mPathItem.setEnabled(true);
-                setNoPath();
                 return null;
             }
 
@@ -706,7 +710,6 @@ public class MainActivity extends AppCompatActivity
                 } catch (JSONException e) {
                     Timber.e("Path GeoJson conversion returned an exception: " + e.toString());
                     mPathItem.setEnabled(true);
-                    setNoPath();
                     return null;
                 }
             }
@@ -727,11 +730,13 @@ public class MainActivity extends AppCompatActivity
                     pathLayer = new GeoJsonLayer(mMap, geoJson);
                     processPath();
                     pathLayer.addLayerToMap();
+                    setPathOn();
                 } else {
-                    if (!isTodaysPath()) { // unless the request was for today
+                    if (isTodaysPath()) {
+                        setPathOn(); // Today can be on even without content
+                    } else {
                         // No content - uncheck the menu item
                         Toast.makeText(mContext, R.string.path_no_data_for_date, Toast.LENGTH_SHORT).show();
-                        setNoPath();
                     }
                 }
                 if (isTodaysPath()) {
@@ -746,11 +751,17 @@ public class MainActivity extends AppCompatActivity
         return mDateFormat.format(pathCal.getTime()).equals(mDateFormat.format(Calendar.getInstance().getTime()));
     }
 
-    private void setNoPath() {
+    private void setPathOff() {
         mPrefEditor.putBoolean(SharedPrefs.KEY_SHOW_PATH, false);
         mPrefEditor.putString(SharedPrefs.KEY_PATH_OBJECT, null);
         mPrefEditor.commit();
         mPathItem.setIcon(R.drawable.road_variant_off);
+    }
+
+    private void setPathOn() {
+        mPrefEditor.putBoolean(SharedPrefs.KEY_SHOW_PATH, true);
+        mPrefEditor.commit();
+        mPathItem.setIcon(R.drawable.road_variant_on);
     }
 
     /**
@@ -785,7 +796,16 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void addLine(LatLng start, LatLng end, int color) {
-        if (pathLayer!=null) {
+        if (pathLayer==null) { // This happens when today's path was selected with no data on the server
+            try { // generate an empty geojsonlayer
+                JSONObject dummy = new JSONObject("{ \"features\": [], \"type\": \"FeatureCollection\" }");
+                pathLayer = new GeoJsonLayer(mMap, dummy);
+            }
+            catch (JSONException e) {
+                Timber.e("Dummy GeoJson conversion returned an exception: " + e.toString());
+            }
+        }
+        if (pathLayer != null) {
             ArrayList<LatLng> lineStringArray = new ArrayList<>();
             lineStringArray.add(start);
             lineStringArray.add(end);
@@ -807,7 +827,7 @@ public class MainActivity extends AppCompatActivity
         }
         catch (JSONException e) {
             Timber.e("Cached path GeoJson conversion returned an exception: " + e.toString());
-            setNoPath();
+            setPathOff();
         }
 
     }
