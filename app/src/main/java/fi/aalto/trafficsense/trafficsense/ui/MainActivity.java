@@ -153,7 +153,6 @@ public class MainActivity extends AppCompatActivity
         }
 
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
-        initBroadcastReceiver();
         mStorage = BackendStorage.create(mContext);
 
         // Initialize shared preferences access for persistent storage of values
@@ -172,6 +171,7 @@ public class MainActivity extends AppCompatActivity
     public void onResume()
     {
         super.onResume();
+        initBroadcastReceiver();
         BroadcastHelper.broadcastViewResumed(mLocalBroadcastManager, true);
         BroadcastHelper.simpleBroadcast(mLocalBroadcastManager, InternalBroadcasts.KEY_MAIN_ACTIVITY_REQ);
         checkLocationPermission(); // Check the dynamic location permissions
@@ -219,6 +219,7 @@ public class MainActivity extends AppCompatActivity
     {
         super.onPause();
         BroadcastHelper.broadcastViewResumed(mLocalBroadcastManager, false);
+        mLocalBroadcastManager.unregisterReceiver(mBroadcastReceiver);
     }
 
     private boolean getSharedBoolean(String key) {
@@ -322,13 +323,10 @@ public class MainActivity extends AppCompatActivity
                     DialogFragment newFragment = new DatePickerFragment();
                     newFragment.show(getSupportFragmentManager(), "datePicker");
                 } else {
+                    setNoPath();
                     if (pathLayer!=null) {
                         pathLayer.removeLayerFromMap();
                     }
-                    mPrefEditor.putString(SharedPrefs.KEY_PATH_OBJECT, null); // reset path object
-                    mPrefEditor.commit();
-                    flipSharedBoolean(SharedPrefs.KEY_SHOW_PATH);
-                    mPathItem.setIcon(R.drawable.road_variant_off);
                 }
                 return true;
         }
@@ -656,6 +654,7 @@ public class MainActivity extends AppCompatActivity
             if (urls.length != 1) {
                 Timber.e("Path downloader attempted to get more or less than one URL");
                 mPathItem.setEnabled(true);
+                setNoPath();
                 return null;
             }
 
@@ -706,6 +705,8 @@ public class MainActivity extends AppCompatActivity
                     mPrefEditor.commit();
                 } catch (JSONException e) {
                     Timber.e("Path GeoJson conversion returned an exception: " + e.toString());
+                    mPathItem.setEnabled(true);
+                    setNoPath();
                     return null;
                 }
             }
@@ -730,9 +731,7 @@ public class MainActivity extends AppCompatActivity
                     if (!isTodaysPath()) { // unless the request was for today
                         // No content - uncheck the menu item
                         Toast.makeText(mContext, R.string.path_no_data_for_date, Toast.LENGTH_SHORT).show();
-                        mPrefEditor.putBoolean(SharedPrefs.KEY_SHOW_PATH, false);
-                        mPrefEditor.commit();
-                        mPathItem.setIcon(R.drawable.road_variant_off);
+                        setNoPath();
                     }
                 }
                 if (isTodaysPath()) {
@@ -745,6 +744,13 @@ public class MainActivity extends AppCompatActivity
 
     private boolean isTodaysPath() {
         return mDateFormat.format(pathCal.getTime()).equals(mDateFormat.format(Calendar.getInstance().getTime()));
+    }
+
+    private void setNoPath() {
+        mPrefEditor.putBoolean(SharedPrefs.KEY_SHOW_PATH, false);
+        mPrefEditor.putString(SharedPrefs.KEY_PATH_OBJECT, null);
+        mPrefEditor.commit();
+        mPathItem.setIcon(R.drawable.road_variant_off);
     }
 
     /**
@@ -775,7 +781,6 @@ public class MainActivity extends AppCompatActivity
             // Quick-n-dirty solution to bypass all the queued points with one line
             if (pathEnd!=null && isTodaysPath()) addLine(pathEnd, latestPosition, ActivityType.getActivityColor(latestActivityType));
         }
-//        LatLngBounds nb = boundsBuilder.build();
         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 20));
     }
 
@@ -802,8 +807,7 @@ public class MainActivity extends AppCompatActivity
         }
         catch (JSONException e) {
             Timber.e("Cached path GeoJson conversion returned an exception: " + e.toString());
-            flipSharedBoolean(SharedPrefs.KEY_SHOW_PATH);
-            mPathItem.setIcon(R.drawable.road_variant_off);
+            setNoPath();
         }
 
     }

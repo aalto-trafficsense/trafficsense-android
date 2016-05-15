@@ -151,29 +151,4 @@ public class TrafficSenseApplication extends Application {
         }
     }
 
-    // Update values for Debug Settings
-//    private void updateDebugSettings () {
-//        if (mLocalBroadcastManager != null)
-//        {
-//            Intent intent = new Intent(InternalBroadcasts.KEY_DEBUG_SETTINGS);
-//            Bundle args = new Bundle();
-//            args.putInt(LABEL_STATE_INDEX,mServiceState.ordinal());
-//            intent.putExtras(args);
-//            mLocalBroadcastManager.sendBroadcast(intent);
-//        }
-//    }
-
-    // Update values for Debug Show
-//    private void updateDebugShow () {
-//        if (mLocalBroadcastManager != null)
-//        {
-//            Intent intent = new Intent(InternalBroadcasts.KEY_DEBUG_SHOW);
-//            Bundle args = new Bundle();
-//            args.putInt(LABEL_STATE_INDEX,mServiceState.ordinal());
-//            intent.putExtras(args);
-//            mLocalBroadcastManager.sendBroadcast(intent);
-//        }
-//    }
-
-
 }
