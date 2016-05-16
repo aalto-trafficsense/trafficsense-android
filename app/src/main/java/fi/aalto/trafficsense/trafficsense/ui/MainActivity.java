@@ -322,6 +322,7 @@ public class MainActivity extends AppCompatActivity
                     setPathOff();
                     if (pathLayer!=null) {
                         pathLayer.removeLayerFromMap();
+                        pathLayer = null;
                     }
                 }
                 return true;
@@ -354,7 +355,7 @@ public class MainActivity extends AppCompatActivity
         if (pathCal.after(Calendar.getInstance())) {
 //            Toast.makeText(this, R.string.path_future_date_request, Toast.LENGTH_LONG).show();
 //        } else {
-            setPreviousMatchingWeekday(); // A little joke for the funny
+            setPreviousMatchingWeekday(); // A little joke for the young at heart
         }
         fetchPath();
     }
@@ -798,14 +799,19 @@ public class MainActivity extends AppCompatActivity
     private void addLine(LatLng start, LatLng end, int color) {
         if (pathLayer==null) { // This happens when today's path was selected with no data on the server
             try { // generate an empty geojsonlayer
-                JSONObject dummy = new JSONObject("{ \"features\": [], \"type\": \"FeatureCollection\" }");
-                pathLayer = new GeoJsonLayer(mMap, dummy);
+                Timber.d("Generating a one-line geojsonlayer");
+                JSONObject firstLine = new JSONObject(String.format("{ \"features\": [ { \"geometry\": { \"coordinates\": [ [%f,%f], [%f,%f] ], \"type\": \"LineString\" }, \"properties\": { \"type\": \"line\" }, \"type\": \"Feature\" } ], \"type\": \"FeatureCollection\" }", start.longitude, start.latitude, end.longitude, end.latitude));
+//                JSONObject dummy = new JSONObject("{\"features\":[],\"type\":\"FeatureCollection\"}");
+                pathLayer = new GeoJsonLayer(mMap, firstLine);
+                    GeoJsonLineStringStyle mStyle = new GeoJsonLineStringStyle();
+                    mStyle.setColor(ContextCompat.getColor(mContext, color));
+                pathLayer.getFeatures().iterator().next().setLineStringStyle(mStyle);
+                pathLayer.addLayerToMap();
             }
             catch (JSONException e) {
                 Timber.e("Dummy GeoJson conversion returned an exception: " + e.toString());
             }
-        }
-        if (pathLayer != null) {
+        } else {
             ArrayList<LatLng> lineStringArray = new ArrayList<>();
             lineStringArray.add(start);
             lineStringArray.add(end);
