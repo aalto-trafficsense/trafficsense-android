@@ -183,6 +183,7 @@
     <string name="not_signed_in">Not signed in?</string>
     <string name="path_url_broken">Path URL broken.</string>
     <string name="certificate_url_broken">Certificate URL broken.</string>
+    <string name="today">Today</string>
 
 
 </resources>

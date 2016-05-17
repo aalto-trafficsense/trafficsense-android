@@ -31,7 +31,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.DatePicker;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -56,6 +59,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -81,7 +85,10 @@ public class MainActivity extends AppCompatActivity
     private MenuItem mShutdownItem;
     private MenuItem mPathItem;
     private MenuItem mTrafficItem;
+    private TextView mPathDate;
+    private FrameLayout mPathDateLayout;
     // private FloatingActionButton mFab;
+
     private GoogleMap mMap;
     private LatLngBounds mBounds;
     private Marker mMarker=null;
@@ -94,7 +101,8 @@ public class MainActivity extends AppCompatActivity
 
     private GeoJsonLayer pathLayer=null;
 
-    private LatLng initPosition=(new LatLng(60.1841396, 24.8300838));
+    private float initLat = 60.1841396f;
+    private float initLng = 24.8300838f;
     private float initZoom=12;
 
     private final int MY_PERMISSIONS_ACCESS_FINE_LOCATION = 1;
@@ -138,6 +146,9 @@ public class MainActivity extends AppCompatActivity
         mStartupItem = navMenu.findItem(R.id.nav_startup);
         mShutdownItem = navMenu.findItem(R.id.nav_shutdown);
 
+        mPathDate = (TextView) findViewById(R.id.main_path_date);
+        mPathDateLayout = (FrameLayout) findViewById(R.id.main_path_date_layout);
+
         // Hide items not implemented yet:
         navMenu.findItem(R.id.nav_settings).setVisible(false);
 
@@ -156,8 +167,13 @@ public class MainActivity extends AppCompatActivity
         // Initialize shared preferences access for persistent storage of values
         mPref = this.getPreferences(Context.MODE_PRIVATE);
         mPrefEditor = mPref.edit();
-    }
 
+        if (mPref.getBoolean(SharedPrefs.KEY_SHOW_PATH, false)) {
+            pathCal.set(Calendar.YEAR, mPref.getInt(SharedPrefs.KEY_PATH_YEAR, pathCal.get(Calendar.YEAR)));
+            pathCal.set(Calendar.MONTH, mPref.getInt(SharedPrefs.KEY_PATH_MONTH, pathCal.get(Calendar.MONTH)));
+            pathCal.set(Calendar.DAY_OF_MONTH, mPref.getInt(SharedPrefs.KEY_PATH_DAY, pathCal.get(Calendar.DAY_OF_MONTH)));
+        }
+    }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -181,7 +197,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initPosition, initZoom));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng((double)mPref.getFloat(SharedPrefs.KEY_MAP_LAT, initLat)
+                , (double)mPref.getFloat(SharedPrefs.KEY_MAP_LNG, initLng)), mPref.getFloat(SharedPrefs.KEY_MAP_ZOOM, initZoom)));
         mMap.setOnMapLoadedCallback(this);
     }
 
@@ -214,6 +231,19 @@ public class MainActivity extends AppCompatActivity
     public void onPause()
     {
         super.onPause();
+
+        if (latestPosition != null) { // This would probably work fine in onDestroy
+            mPrefEditor.putFloat(SharedPrefs.KEY_MAP_LAT, (float)latestPosition.latitude);
+            mPrefEditor.putFloat(SharedPrefs.KEY_MAP_LNG, (float)latestPosition.longitude);
+            if (mMap != null) {
+                mPrefEditor.putFloat(SharedPrefs.KEY_MAP_ZOOM, mMap.getCameraPosition().zoom);
+            }
+        }
+        mPrefEditor.putInt(SharedPrefs.KEY_PATH_YEAR, pathCal.get(Calendar.YEAR));
+        mPrefEditor.putInt(SharedPrefs.KEY_PATH_MONTH, pathCal.get(Calendar.MONTH));
+        mPrefEditor.putInt(SharedPrefs.KEY_PATH_DAY, pathCal.get(Calendar.DAY_OF_MONTH));
+        mPrefEditor.commit();
+
         BroadcastHelper.broadcastViewResumed(mLocalBroadcastManager, false);
         mLocalBroadcastManager.unregisterReceiver(mBroadcastReceiver);
     }
@@ -290,7 +320,7 @@ public class MainActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.activity_main_toolbar, menu);
         mPathItem = menu.findItem(R.id.main_toolbar_path);
         mTrafficItem = menu.findItem(R.id.main_toolbar_traffic);
-        if (getSharedBoolean(SharedPrefs.KEY_SHOW_PATH)) mPathItem.setIcon(R.drawable.road_variant_on);
+//        if (getSharedBoolean(SharedPrefs.KEY_SHOW_PATH)) mPathItem.setIcon(R.drawable.road_variant_on);
         if (getSharedBoolean(SharedPrefs.KEY_SHOW_TRAFFIC)) mTrafficItem.setIcon(R.drawable.ic_traffic_24dp_on);
         return true;
     }
@@ -574,7 +604,9 @@ public class MainActivity extends AppCompatActivity
                 latestPosition = nextPosition;
                 if (mMarker == null) {
                     Bitmap bitmap = getBitmap(mContext, ActivityType.getActivityIcon(latestActivityType));
-                    mMarker = mMap.addMarker(new MarkerOptions().position(latestPosition).icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
+                    mMarker = mMap.addMarker(new MarkerOptions()
+                            .position(latestPosition)
+                            .icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
                 } else {
                     mMarker.setPosition(latestPosition);
                 }
@@ -752,17 +784,21 @@ public class MainActivity extends AppCompatActivity
         return mDateFormat.format(pathCal.getTime()).equals(mDateFormat.format(Calendar.getInstance().getTime()));
     }
 
+    private void setPathOn() {
+        mPrefEditor.putBoolean(SharedPrefs.KEY_SHOW_PATH, true);
+        mPrefEditor.commit();
+        mPathItem.setIcon(R.drawable.road_variant_on);
+        if (isTodaysPath()) mPathDate.setText(R.string.today);
+        else mPathDate.setText(DateFormat.getDateInstance().format(pathCal.getTime()));
+        mPathDateLayout.setVisibility(View.VISIBLE);
+    }
+
     private void setPathOff() {
         mPrefEditor.putBoolean(SharedPrefs.KEY_SHOW_PATH, false);
         mPrefEditor.putString(SharedPrefs.KEY_PATH_OBJECT, null);
         mPrefEditor.commit();
         mPathItem.setIcon(R.drawable.road_variant_off);
-    }
-
-    private void setPathOn() {
-        mPrefEditor.putBoolean(SharedPrefs.KEY_SHOW_PATH, true);
-        mPrefEditor.commit();
-        mPathItem.setIcon(R.drawable.road_variant_on);
+        mPathDateLayout.setVisibility(View.GONE);
     }
 
     /**
@@ -773,6 +809,7 @@ public class MainActivity extends AppCompatActivity
     private void processPath() {
         // Iterate over all the features stored in the layer
         LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
+        boolean boundsOk = false; // Only build the new bounds if there is some content
         for (GeoJsonFeature feature : pathLayer.getFeatures()) {
             // Check if the activity property exists
             if (feature.hasProperty("activity")) {
@@ -782,6 +819,7 @@ public class MainActivity extends AppCompatActivity
                 feature.setLineStringStyle(mStyle);
             }
             if (feature.hasGeometry()) {
+                boundsOk = true; // A LineString will always contain at least two points
                 GeoJsonLineString ls = (GeoJsonLineString)feature.getGeometry();
                 for (LatLng pos : ls.getCoordinates()) {
                     boundsBuilder.include(pos);
@@ -793,7 +831,7 @@ public class MainActivity extends AppCompatActivity
             // Quick-n-dirty solution to bypass all the queued points with one line
             if (pathEnd!=null && isTodaysPath()) addLine(pathEnd, latestPosition, ActivityType.getActivityColor(latestActivityType));
         }
-        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 20));
+        if (boundsOk) mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 20));
     }
 
     private void addLine(LatLng start, LatLng end, int color) {
@@ -801,10 +839,9 @@ public class MainActivity extends AppCompatActivity
             try { // generate an empty geojsonlayer
                 Timber.d("Generating a one-line geojsonlayer");
                 JSONObject firstLine = new JSONObject(String.format("{ \"features\": [ { \"geometry\": { \"coordinates\": [ [%f,%f], [%f,%f] ], \"type\": \"LineString\" }, \"properties\": { \"type\": \"line\" }, \"type\": \"Feature\" } ], \"type\": \"FeatureCollection\" }", start.longitude, start.latitude, end.longitude, end.latitude));
-//                JSONObject dummy = new JSONObject("{\"features\":[],\"type\":\"FeatureCollection\"}");
                 pathLayer = new GeoJsonLayer(mMap, firstLine);
-                    GeoJsonLineStringStyle mStyle = new GeoJsonLineStringStyle();
-                    mStyle.setColor(ContextCompat.getColor(mContext, color));
+                GeoJsonLineStringStyle mStyle = new GeoJsonLineStringStyle();
+                mStyle.setColor(ContextCompat.getColor(mContext, color));
                 pathLayer.getFeatures().iterator().next().setLineStringStyle(mStyle);
                 pathLayer.addLayerToMap();
             }
@@ -830,6 +867,7 @@ public class MainActivity extends AppCompatActivity
             pathLayer = new GeoJsonLayer(mMap, geoJson);
             processPath();
             pathLayer.addLayerToMap();
+            setPathOn();
         }
         catch (JSONException e) {
             Timber.e("Cached path GeoJson conversion returned an exception: " + e.toString());
