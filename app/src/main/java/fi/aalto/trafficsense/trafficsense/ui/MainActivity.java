@@ -101,9 +101,10 @@ public class MainActivity extends AppCompatActivity
 
     private GeoJsonLayer pathLayer=null;
 
-    private float initLat = 60.1841396f;
-    private float initLng = 24.8300838f;
-    private float initZoom=12;
+    // Very first view opens in Otaniemi :-)
+    private final float initLat = 60.1841396f;
+    private final float initLng = 24.8300838f;
+    private final float initZoom = 12;
 
     private final int MY_PERMISSIONS_ACCESS_FINE_LOCATION = 1;
 
@@ -232,12 +233,10 @@ public class MainActivity extends AppCompatActivity
     {
         super.onPause();
 
-        if (latestPosition != null) { // This would probably work fine in onDestroy
-            mPrefEditor.putFloat(SharedPrefs.KEY_MAP_LAT, (float)latestPosition.latitude);
-            mPrefEditor.putFloat(SharedPrefs.KEY_MAP_LNG, (float)latestPosition.longitude);
-            if (mMap != null) {
-                mPrefEditor.putFloat(SharedPrefs.KEY_MAP_ZOOM, mMap.getCameraPosition().zoom);
-            }
+        if (mMap != null) { // Updating these prefs could probably work also in onDestroy? Not tested yet
+            mPrefEditor.putFloat(SharedPrefs.KEY_MAP_LAT, (float)mMap.getCameraPosition().target.latitude);
+            mPrefEditor.putFloat(SharedPrefs.KEY_MAP_LNG, (float)mMap.getCameraPosition().target.longitude);
+            mPrefEditor.putFloat(SharedPrefs.KEY_MAP_ZOOM, mMap.getCameraPosition().zoom);
         }
         mPrefEditor.putInt(SharedPrefs.KEY_PATH_YEAR, pathCal.get(Calendar.YEAR));
         mPrefEditor.putInt(SharedPrefs.KEY_PATH_MONTH, pathCal.get(Calendar.MONTH));
@@ -350,10 +349,6 @@ public class MainActivity extends AppCompatActivity
                     newFragment.show(getSupportFragmentManager(), "datePicker");
                 } else {
                     setPathOff();
-                    if (pathLayer!=null) {
-                        pathLayer.removeLayerFromMap();
-                        pathLayer = null;
-                    }
                 }
                 return true;
         }
@@ -665,6 +660,12 @@ public class MainActivity extends AppCompatActivity
      *
      **********************************/
 
+    public void pathDateClick(View view) { // Shortcut to change date
+        setPathOff();
+        DialogFragment newFragment = new DatePickerFragment();
+        newFragment.show(getSupportFragmentManager(), "datePicker");
+    }
+
     public void fetchPath() {
         mPathItem.setEnabled(false);
         String pathDate = mDateFormat.format(pathCal.getTime());
@@ -799,6 +800,10 @@ public class MainActivity extends AppCompatActivity
         mPrefEditor.commit();
         mPathItem.setIcon(R.drawable.road_variant_off);
         mPathDateLayout.setVisibility(View.GONE);
+        if (pathLayer!=null) {
+            pathLayer.removeLayerFromMap();
+            pathLayer = null;
+        }
     }
 
     /**

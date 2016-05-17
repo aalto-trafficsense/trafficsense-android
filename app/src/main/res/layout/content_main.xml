@@ -41,6 +41,7 @@
                     android:id="@+id/main_path_date"
                     android:background="@color/white"
                     android:textColor="@color/black"
+                    android:onClick="pathDateClick"
                     android:singleLine="true"/>
 
 
