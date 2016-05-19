@@ -29,6 +29,12 @@ public class DebugPreferenceFragment extends PreferenceFragmentCompat implements
 
         mPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
+        setRestoreButton();
+
+        // onSharedPreferenceChanged(sharedPreferences, getString(R.string.preftest_categories_key));
+    }
+
+    private void setRestoreButton() {
         Preference restoreButton = findPreference(getString(R.string.debug_settings_restore_defaults_key));
         restoreButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -38,18 +44,16 @@ public class DebugPreferenceFragment extends PreferenceFragmentCompat implements
                 editor.commit();
                 setPreferenceScreen(null);
                 addPreferencesFromResource(R.xml.debug_settings);
+                setRestoreButton(); // re-initialize the button
                 return true;
             }
         });
-
-        // onSharedPreferenceChanged(sharedPreferences, getString(R.string.preftest_categories_key));
     }
 
 
     @Override
     public void onResume() {
         super.onResume();
-        //unregister the preferenceChange listener
         getPreferenceScreen().getSharedPreferences()
                 .registerOnSharedPreferenceChangeListener(this);
     }
