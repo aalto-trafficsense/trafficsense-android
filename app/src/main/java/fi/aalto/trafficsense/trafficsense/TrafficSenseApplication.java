@@ -46,12 +46,14 @@ public class TrafficSenseApplication extends Application {
         mRes = getContext().getResources();
         mSettings = getDefaultSharedPreferences(getContext());
 
-        Timber.d("--- TrafficSenseApplication pre-def sees activitysensor interval as: %d", mSettings.getInt(mRes.getString(R.string.debug_settings_activity_interval_key), -1));
+//        Timber.d("--- TrafficSenseApplication pre-def sees activitysensor interval as: %d", mSettings.getInt(mRes.getString(R.string.debug_settings_activity_interval_key), -1));
 
-        // Load preferences from xml
+        // Load preferences from xml on the first execution
         PreferenceManager.setDefaultValues(this, R.xml.debug_settings, false);
 
-        Timber.d("--- TrafficSenseApplication post-def sees activitysensor interval as: %d", mSettings.getInt(mRes.getString(R.string.debug_settings_activity_interval_key), -1));
+//        Timber.d("--- TrafficSenseApplication post-def sees activitysensor interval as: %d", mSettings.getInt(mRes.getString(R.string.debug_settings_activity_interval_key), -1));
+
+        boolean serviceSetOn = mSettings.getBoolean(mRes.getString(R.string.debug_settings_service_running_key), false);
 
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
         initBroadcastReceiver();

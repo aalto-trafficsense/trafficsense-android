@@ -9,7 +9,7 @@
         android:title="@string/debug_settings_general">
 
         <SwitchPreferenceCompat
-            android:key="debug_settings_service_running"
+            android:key="@string/debug_settings_service_running_key"
             android:defaultValue="true"
             android:title="@string/debug_settings_service_running_title"
             android:summary="@string/debug_settings_service_running_summary" />
@@ -51,16 +51,19 @@
             sbp:maxValue="60"
             sbp:unit="@string/seconds" />
 
-
     </PreferenceCategory>
 
+    <Preference android:key="@string/debug_settings_restore_defaults_key"
+                android:title="@string/debug_settings_restore_defaults_title"
+                android:summary="@string/debug_settings_restore_defaults_summary"/>
 
-    <ListPreference
-        android:defaultValue="popular"
-        android:entries="@array/categories"
-        android:entryValues="@array/categories_value"
-        android:summary="Select categories of movies"
-        android:title="Categories"
-        android:key="@string/preftest_categories_key" />
+
+    <!--<ListPreference-->
+        <!--android:defaultValue="popular"-->
+        <!--android:entries="@array/categories"-->
+        <!--android:entryValues="@array/categories_value"-->
+        <!--android:summary="Select categories of movies"-->
+        <!--android:title="Categories"-->
+        <!--android:key="@string/preftest_categories_key" />-->
 
 </PreferenceScreen>

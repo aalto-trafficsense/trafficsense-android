@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.preference.*;
+import android.widget.Toast;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.backend.TrafficSenseService;
 import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
@@ -16,8 +17,7 @@ import timber.log.Timber;
  */
 public class DebugPreferenceFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private SharedPreferences sharedPreferences;
-    private Resources mRes;
+    private SharedPreferences mPref;
     private LocalBroadcastManager mLocalBroadcastManager;
 
     @Override
@@ -25,10 +25,22 @@ public class DebugPreferenceFragment extends PreferenceFragmentCompat implements
         //add xml
         addPreferencesFromResource(R.xml.debug_settings);
 
-        mRes = this.getResources();
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this.getContext());
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        mPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+        Preference restoreButton = findPreference(getString(R.string.debug_settings_restore_defaults_key));
+        restoreButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                SharedPreferences.Editor editor = mPref.edit();
+                editor.clear();
+                editor.commit();
+                setPreferenceScreen(null);
+                addPreferencesFromResource(R.xml.debug_settings);
+                return true;
+            }
+        });
 
         // onSharedPreferenceChanged(sharedPreferences, getString(R.string.preftest_categories_key));
     }
@@ -44,7 +56,7 @@ public class DebugPreferenceFragment extends PreferenceFragmentCompat implements
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(mRes.getString(R.string.debug_settings_activity_interval_key))) {
+        if (key.equals(getString(R.string.debug_settings_activity_interval_key))) {
             Timber.d("Activity interval changed!!");
             mLocalBroadcastManager.sendBroadcast(new Intent(InternalBroadcasts.KEY_SETTINGS_ACTIVITY_INTERVAL));
         }
