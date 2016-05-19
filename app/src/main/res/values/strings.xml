@@ -58,6 +58,8 @@
 
     <string name="interval">Interval:</string>
     <string name="seconds">s.</string>
+    <string name="minutes">min.</string>
+    <string name="meters">meters</string>
     <string name="str_clientVersionPrefix">Version:</string>
     <string name="str_legalNotice">Legal notice:</string>
     <string name="str_contributions">Contributions:</string>
@@ -99,6 +101,28 @@
     <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
+
+    <!-- The new real settings -->
+    <string name="debug_settings_general">General</string>
+
+    <string name="debug_settings_service_running_title">Service running</string>
+    <string name="debug_settings_service_running_summary">TrafficSense service on/off.</string>
+
+    <string name="debug_settings_location">Location</string>
+
+    <string name="debug_settings_location_interval_summary">Location update request interval and max rate.</string>
+    <string name="debug_settings_location_interval_key">settings_location_interval</string>
+
+    <string name="debug_settings_queue_location_accuracy_title">Accuracy</string>
+    <string name="debug_settings_queue_location_accuracy_dialog">Queue location accuracy</string>
+    <string name="debug_settings_queue_location_accuracy_summary">Accuracy limit to push a new point (othern than ping) to queue.</string>
+
+    <string name="debug_settings_activity">Activity</string>
+
+    <string name="debug_settings_activity_interval_summary">Requested activity recognition report interval.</string>
+    <string name="debug_settings_activity_interval_key">settings_activity_interval</string>
+
+
 
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>
@@ -184,6 +208,7 @@
     <string name="path_url_broken">Path URL broken.</string>
     <string name="certificate_url_broken">Certificate URL broken.</string>
     <string name="today">Today</string>
+    <string name="preftest_categories_key">testiavain</string>
 
 
 </resources>

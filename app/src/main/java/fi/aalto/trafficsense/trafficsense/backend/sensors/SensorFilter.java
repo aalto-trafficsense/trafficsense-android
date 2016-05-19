@@ -1,18 +1,17 @@
 package fi.aalto.trafficsense.trafficsense.backend.sensors;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.*;
 import android.location.Location;
 import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 import com.google.android.gms.location.DetectedActivity;
+import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.backend.TrafficSenseService;
 import fi.aalto.trafficsense.trafficsense.backend.uploader.PipelineThread;
-import fi.aalto.trafficsense.trafficsense.backend.uploader.RegularRoutesPipeline;
 import fi.aalto.trafficsense.trafficsense.util.*;
 import timber.log.Timber;
+
+import static android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences;
 
 /**
  * Created by mikko.rinne@aalto.fi on 10/04/16.
@@ -22,6 +21,8 @@ public class SensorFilter {
     private LocalBroadcastManager mLocalBroadcastManager;
     private BroadcastReceiver mBroadcastReceiver;
     private PipelineThread mPipelineThread;
+    private SharedPreferences mSettings;
+
 
     private SensorController mSensorController;
 
@@ -54,6 +55,9 @@ public class SensorFilter {
 
         dummyActivity = new ActivityData(System.currentTimeMillis());
         dummyActivity.add(DetectedActivity.UNKNOWN,0);
+
+        mSettings = getDefaultSharedPreferences(TrafficSenseService.getContext());
+
     }
 
     public void addLocation(Location l) {
@@ -72,6 +76,7 @@ public class SensorFilter {
                 return;
             }
         }
+        Timber.d("Queue accuracy threshold from settings: %s", mSettings.getString("debug_settings_queue_location_accuracy", "ei saatu"));
         // Proceed if accuracy is < queueAccuracyThreshold m.
         if (lastReceivedLocation.getAccuracy() <= queueAccuracyThreshold) {
             // Queue if activity is different

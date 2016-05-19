@@ -622,13 +622,16 @@ public class MainActivity extends AppCompatActivity
                         mCircle = null;
                     }
                 }
-                if (mBounds == null) {
-                    //This is the current user-viewable region of the map
-                    mBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
-                }
-                if (!mBounds.contains(latestPosition)) {
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latestPosition));
-                    mBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
+                // Only adjust camera position when the path is not shown
+                if (!mPref.getBoolean(SharedPrefs.KEY_SHOW_PATH, false)) {
+                    if (mBounds == null) {
+                        //This is the current user-viewable region of the map
+                        mBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
+                    }
+                    if (!mBounds.contains(latestPosition)) {
+                        mMap.moveCamera(CameraUpdateFactory.newLatLng(latestPosition));
+                        mBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
+                    }
                 }
             }
         }
@@ -820,7 +823,7 @@ public class MainActivity extends AppCompatActivity
             if (feature.hasProperty("activity")) {
                 String activity = feature.getProperty("activity");
                 GeoJsonLineStringStyle mStyle = new GeoJsonLineStringStyle();
-                mStyle.setColor(ContextCompat.getColor(mContext, ActivityType.getActivityColorByString(activity)));
+                mStyle.setColor(ContextCompat.getColor(mContext, getActivityColorByString(activity)));
                 feature.setLineStringStyle(mStyle);
             }
             if (feature.hasGeometry()) {
@@ -831,12 +834,41 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }
-        if (latestPosition!=null) {
+        if (isTodaysPath() && latestPosition!=null) {
             boundsBuilder.include(latestPosition);
             // Quick-n-dirty solution to bypass all the queued points with one line
-            if (pathEnd!=null && isTodaysPath()) addLine(pathEnd, latestPosition, ActivityType.getActivityColor(latestActivityType));
+            if (pathEnd!=null) addLine(pathEnd, latestPosition, ActivityType.getActivityColor(latestActivityType));
         }
         if (boundsOk) mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 20));
+    }
+
+    private int getActivityColorByString(String activity) {
+        switch(activity) {
+            case "IN_VEHICLE":
+                return R.color.colorInVehicle;
+            case "ON_BICYCLE":
+                return R.color.colorOnBicycle;
+            case "RUNNING":
+                return R.color.colorRunning;
+            case "STILL":
+                return R.color.colorStill;
+            case "TILTING":
+                return R.color.colorTilting;
+            case "UNKNOWN":
+                return R.color.colorUnknown;
+            case "WALKING":
+                return R.color.colorWalking;
+            case "TRAIN":
+                return R.color.colorTrain;
+            case "TRAM":
+            case "SUBWAY":
+                return R.color.colorSubway;
+            case "BUS":
+            case "FERRY":
+                return R.color.colorBus;
+            default:
+                return R.color.colorUnknown;
+        }
     }
 
     private void addLine(LatLng start, LatLng end, int color) {

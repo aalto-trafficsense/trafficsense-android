@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sbp="http://schemas.android.com/apk/lib/fi.aalto.trafficsense.trafficsense.ui.SeekBarPreference"
+                  xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        android:icon="@drawable/ic_info_black_24dp"
+        android:title="@string/debug_settings_general">
+
+        <SwitchPreferenceCompat
+            android:key="debug_settings_service_running"
+            android:defaultValue="true"
+            android:title="@string/debug_settings_service_running_title"
+            android:summary="@string/debug_settings_service_running_summary" />
+
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/debug_settings_location">
+
+        <fi.aalto.trafficsense.trafficsense.ui.SeekBarPreference
+            android:key="@string/debug_settings_location_interval_key"
+            android:title="@string/interval"
+            android:summary="@string/debug_settings_location_interval_summary"
+            android:defaultValue="10"
+            sbp:minValue="2"
+            sbp:maxValue="60"
+            sbp:unit="@string/seconds" />
+
+        <EditTextPreference
+            android:key="debug_settings_queue_location_accuracy"
+            android:defaultValue="50"
+            android:title="@string/debug_settings_queue_location_accuracy_title"
+            android:summary="@string/debug_settings_queue_location_accuracy_summary"
+            android:dialogTitle="@string/debug_settings_queue_location_accuracy_dialog" />
+
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/debug_settings_activity">
+
+        <fi.aalto.trafficsense.trafficsense.ui.SeekBarPreference
+            android:key="@string/debug_settings_activity_interval_key"
+            android:title="@string/interval"
+            android:summary="@string/debug_settings_activity_interval_summary"
+            android:defaultValue="10"
+            sbp:minValue="2"
+            sbp:maxValue="60"
+            sbp:unit="@string/seconds" />
+
+
+    </PreferenceCategory>
+
+
+    <ListPreference
+        android:defaultValue="popular"
+        android:entries="@array/categories"
+        android:entryValues="@array/categories_value"
+        android:summary="Select categories of movies"
+        android:title="Categories"
+        android:key="@string/preftest_categories_key" />
+
+</PreferenceScreen>

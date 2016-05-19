@@ -59,5 +59,7 @@ public class InternalBroadcasts {
     public static final String KEY_VIEW_PAUSED = "VIEW_PAUSED";
     public static final String KEY_VIEW_RESUMED = "VIEW_RESUMED";
 
+    public static final String KEY_SETTINGS_ACTIVITY_INTERVAL = "SETTINGS_ACTIVITY_INTERVAL";
+
 
 }

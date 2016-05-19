@@ -1,12 +1,11 @@
 package fi.aalto.trafficsense.trafficsense.backend.sensors;
 
 import android.Manifest;
-import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.location.Location;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.widget.Toast;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -14,11 +13,12 @@ import com.google.android.gms.location.LocationServices;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
 import fi.aalto.trafficsense.trafficsense.backend.TrafficSenseService;
-import fi.aalto.trafficsense.trafficsense.ui.MainActivity;
 import timber.log.Timber;
 
+import static android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences;
+
 /**
- * Created by rinnem2 on 09/04/16.
+ * Created by mikko.rinne@aalto.fi on 09/04/16.
  */
 public class LocationSensor implements LocationListener {
 
@@ -30,13 +30,19 @@ public class LocationSensor implements LocationListener {
 
     private GoogleApiClient mGoogleApiClient;
     private SensorFilter mSensorFilter;
+    private SharedPreferences mSettings;
+    private Resources mRes;
 
     /* Constructor */
     public LocationSensor(GoogleApiClient apiClient, SensorFilter controller) {
         mGoogleApiClient = apiClient;
         mSensorFilter = controller;
+        mRes = TrafficSenseService.getContext().getResources();
 
         locationRequest(interval,priority);
+
+        mSettings = getDefaultSharedPreferences(TrafficSenseService.getContext());
+
     }
 
     /* Public interface */
@@ -73,7 +79,7 @@ public class LocationSensor implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
         mSensorFilter.addLocation(location);
-//        Timber.d("Received location update");
+        Timber.d("Received location update, request interval: ", mSettings.getInt(mRes.getString(R.string.debug_settings_location_interval_key), -1));
     }
 
     public void disconnect() {

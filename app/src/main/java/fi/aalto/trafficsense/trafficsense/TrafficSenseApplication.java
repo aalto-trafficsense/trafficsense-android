@@ -3,14 +3,17 @@ package fi.aalto.trafficsense.trafficsense;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.*;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.preference.PreferenceManager;
 import fi.aalto.trafficsense.trafficsense.backend.TrafficSenseService;
 import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
 import fi.aalto.trafficsense.trafficsense.util.LocalBinderServiceConnection;
 import fi.aalto.trafficsense.trafficsense.util.TSServiceState;
 import timber.log.Timber;
 
+import static android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences;
 import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_STATE_INDEX;
 import static fi.aalto.trafficsense.trafficsense.util.TSServiceState.*;
 
@@ -25,6 +28,11 @@ public class TrafficSenseApplication extends Application {
     private BroadcastReceiver mBroadcastReceiver;
     private LocalBroadcastManager mLocalBroadcastManager;
 
+    private SharedPreferences mSettings;
+    private Resources mRes;
+
+
+
 
     @Override
     public void onCreate() {
@@ -34,6 +42,16 @@ public class TrafficSenseApplication extends Application {
         }
         super.onCreate();
         mContext = this;
+
+        mRes = getContext().getResources();
+        mSettings = getDefaultSharedPreferences(getContext());
+
+        Timber.d("--- TrafficSenseApplication pre-def sees activitysensor interval as: %d", mSettings.getInt(mRes.getString(R.string.debug_settings_activity_interval_key), -1));
+
+        // Load preferences from xml
+        PreferenceManager.setDefaultValues(this, R.xml.debug_settings, false);
+
+        Timber.d("--- TrafficSenseApplication post-def sees activitysensor interval as: %d", mSettings.getInt(mRes.getString(R.string.debug_settings_activity_interval_key), -1));
 
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
         initBroadcastReceiver();

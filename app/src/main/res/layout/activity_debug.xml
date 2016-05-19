@@ -22,7 +22,7 @@
               <!--android:orientation="horizontal"-->
               <!--android:layout_width="match_parent"-->
               <!--android:layout_height="match_parent">-->
-    <!--<fragment android:name="fi.aalto.trafficsense.trafficsense.ui.DebugSettingsFragment"-->
+    <!--<fragment android:name="fi.aalto.trafficsense.trafficsense.ui.DebugOldSettingsFragmentent"-->
               <!--android:id="@+id/ref_debug_settings"-->
               <!--android:layout_weight="1"-->
               <!--android:layout_width="0dp"-->

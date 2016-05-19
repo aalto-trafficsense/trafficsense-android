@@ -26,7 +26,7 @@ import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_S
 /**
  * Fragment to host debug setting switches
  */
-public class DebugSettingsFragment extends Fragment {
+public class DebugOldSettingsFragment extends Fragment {
 
     private BroadcastReceiver mBroadcastReceiver;
     private LocalBroadcastManager mLocalBroadcastManager;
@@ -39,7 +39,7 @@ public class DebugSettingsFragment extends Fragment {
     /* Display values */
 //    private TSServiceState DS_ServiceState;
 
-    public DebugSettingsFragment() {
+    public DebugOldSettingsFragment() {
         // Required empty public constructor
     }
 

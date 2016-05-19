@@ -1,6 +1,5 @@
 package fi.aalto.trafficsense.trafficsense.ui;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.*;
@@ -14,7 +13,7 @@ import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
 import timber.log.Timber;
 
 public class DebugActivity extends AppCompatActivity {
-    static final int NUM_TABS = 2;
+    static final int NUM_TABS = 3;
 
     DebugPager mAdapter;
     ViewPager mViewPager;
@@ -78,7 +77,10 @@ public class DebugActivity extends AppCompatActivity {
                     fragment = new DebugShowFragment();
                     break;
                 case 1:
-                    fragment = new DebugSettingsFragment();
+                    fragment = new DebugPreferenceFragment();
+                    break;
+                case 2:
+                    fragment = new DebugOldSettingsFragment();
                     break;
             }
             if (fragment == null) {
@@ -98,6 +100,9 @@ public class DebugActivity extends AppCompatActivity {
                     break;
                 case 1:
                     title = getString(R.string.debug_settings_page_title);
+                    break;
+                case 2:
+                    title = "OldSettings";
                     break;
                 default:
                     title = "Error";

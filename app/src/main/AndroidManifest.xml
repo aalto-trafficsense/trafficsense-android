@@ -67,10 +67,6 @@
                 android:value="fi.aalto.trafficsense.trafficsense.ui.MainActivity"/>
         </activity>
         <activity
-            android:name=".ui.MapsActivity"
-            android:label="@string/title_activity_maps">
-        </activity>
-        <activity
             android:name=".ui.AboutActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_about"
