@@ -15,7 +15,7 @@ import timber.log.Timber;
 /**
  * Created by mikko.rinne@aalto.fi on 17/05/16.
  */
-public class DebugPreferenceFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class DebugSettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private SharedPreferences mPref;
     private LocalBroadcastManager mLocalBroadcastManager;

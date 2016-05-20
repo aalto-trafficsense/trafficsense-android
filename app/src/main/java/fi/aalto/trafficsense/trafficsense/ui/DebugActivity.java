@@ -13,7 +13,7 @@ import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
 import timber.log.Timber;
 
 public class DebugActivity extends AppCompatActivity {
-    static final int NUM_TABS = 3;
+    static final int NUM_TABS = 2;
 
     DebugPager mAdapter;
     ViewPager mViewPager;
@@ -77,10 +77,7 @@ public class DebugActivity extends AppCompatActivity {
                     fragment = new DebugShowFragment();
                     break;
                 case 1:
-                    fragment = new DebugPreferenceFragment();
-                    break;
-                case 2:
-                    fragment = new DebugOldSettingsFragment();
+                    fragment = new DebugSettingsFragment();
                     break;
             }
             if (fragment == null) {
@@ -100,9 +97,6 @@ public class DebugActivity extends AppCompatActivity {
                     break;
                 case 1:
                     title = getString(R.string.debug_settings_page_title);
-                    break;
-                case 2:
-                    title = "OldSettings";
                     break;
                 default:
                     title = "Error";
