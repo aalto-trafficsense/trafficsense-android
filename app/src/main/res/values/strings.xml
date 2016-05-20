@@ -20,12 +20,11 @@
     <string name="service_state_label">Service State:</string>
 
     <string name="debug_settings_page_title">Settings</string>
-    <string name="debug_settings_initialServiceStatus">Off</string>
-    <string name="debug_settings_ToggleService">TrafficSense Service</string>
 
     <string name="debug_show_page_title">Trace</string>
     <string name="debug_show_activity_label">Activity:</string>
     <string name="debug_show_activitylist_prefix">Ranking:</string>
+    <string name="debug_show_client_number_label">Client number:</string>
 
     <string name="debug_show_location_label">Location:</string>
     <string name="debug_show_location_provider_label">Provider:</string>
@@ -147,70 +146,24 @@
     <string name="debug_settings_activity_interval_key">settings_activity_interval</string>
     <string name="debug_settings_activity_interval_summary">Requested activity recognition report interval.</string>
 
+    <string name="debug_settings_only_good_bypass_key">settings_only_good_bypass</string>
+    <string name="debug_settings_only_good_bypass_title">Only good bypass</string>
+    <string name="debug_settings_only_good_bypass_summary">Only good activities bypass the queue distance limit criteria (otherwise all).</string>
+
     <string name="debug_settings_sleep_threshold_key">settings_sleep_threshold</string>
     <string name="debug_settings_sleep_threshold_title">Sleep timeout: </string>
     <string name="debug_settings_sleep_threshold_summary">If activity remains STILL.</string>
+
+    <string name="debug_settings_upload">Upload</string>
+    <!--To be added-->
+
+    <string name="debug_settings_restore">Reset</string>
 
     <string name="debug_settings_restore_defaults_key">debug_settings_restore_defaults</string>
     <string name="debug_settings_restore_defaults_title">Restore defaults</string>
     <string name="debug_settings_restore_defaults_summary">Restore these settings to default values.</string>
 
 
-    <!-- Example General settings -->
-    <string name="pref_header_general">General</string>
-
-    <string name="pref_title_social_recommendations">Enable social recommendations</string>
-    <string name="pref_description_social_recommendations">Recommendations for people to contact based on your message
-        history
-    </string>
-
-    <string name="pref_title_display_name">Display name</string>
-    <string name="pref_default_display_name">John Smith</string>
-
-    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
-    <string-array name="pref_example_list_titles">
-        <item>Always</item>
-        <item>When possible</item>
-        <item>Never</item>
-    </string-array>
-    <string-array name="pref_example_list_values">
-        <item>1</item>
-        <item>0</item>
-        <item>-1</item>
-    </string-array>
-
-    <!-- Example settings for Data & Sync -->
-    <string name="pref_header_data_sync">Data &amp; sync</string>
-
-    <string name="pref_title_sync_frequency">Sync frequency</string>
-    <string-array name="pref_sync_frequency_titles">
-        <item>15 minutes</item>
-        <item>30 minutes</item>
-        <item>1 hour</item>
-        <item>3 hours</item>
-        <item>6 hours</item>
-        <item>Never</item>
-    </string-array>
-    <string-array name="pref_sync_frequency_values">
-        <item>15</item>
-        <item>30</item>
-        <item>60</item>
-        <item>180</item>
-        <item>360</item>
-        <item>-1</item>
-    </string-array>
-
-    <string name="pref_title_system_sync_settings">System sync settings</string>
-
-    <!-- Example settings for Notifications -->
-    <string name="pref_header_notifications">Notifications</string>
-
-    <string name="pref_title_new_message_notifications">New message notifications</string>
-
-    <string name="pref_title_ringtone">Ringtone</string>
-    <string name="pref_ringtone_silent">Silent</string>
-
-    <string name="pref_title_vibrate">Vibrate</string>
 
 
     <string name="upload_state_switchedoff">Switched off</string>
@@ -219,9 +172,11 @@
     <string name="upload_state_ready">Ready</string>
     <string name="upload_state_inprogress">In progress</string>
     <string name="upload_state_unknown">Unknown state</string>
+
     <string name="not_available">Not available</string>
+
     <string name="sleeping">Sleeping</string>
-    <string name="debug_show_client_number_label">Client number:</string>
+
     <string name="navigation_feedback">Send feedback</string>
     <string name="location_permission_persistently_refused">TrafficSense is based on location information. The background service will close now.</string>
     <string name="location_permission_refused">TrafficSense does not work meaningfully without location permissions.</string>

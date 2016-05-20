@@ -82,13 +82,21 @@ public class SensorFilter {
                 }
             }
         }
-        Timber.d("Queue accuracy threshold from settings: %s", mSettings.getString("debug_settings_queue_location_accuracy", "ei saatu"));
-        // Proceed if accuracy is <= location_accuracy m.
+
+        // Proceed if accuracy is <= location_accuracy limit m.
         if (lastReceivedLocation.getAccuracy() <= (float) mSettings.getInt(mRes.getString(R.string.debug_settings_location_accuracy_key), 50)) {
             // Queue if activity is different
             if (lastReceivedActType != lastQueuedActType) {
-                queueOutgoing();
-                return;
+                // Is bypass only for good activities on
+                if (mSettings.getBoolean(mRes.getString(R.string.debug_settings_only_good_bypass_key), true)) {
+                    if (ActivityType.getGood().contains(lastReceivedActType)) { // Did we get a good activity?
+                        queueOutgoing();
+                        return;
+                    }
+                } else { // No requirement - any change in activity qualifies
+                    queueOutgoing();
+                    return;
+                }
             }
             // Queue when distance to previously queued > lastAccuracy m.
             if (lastQueuedLocation == null) {

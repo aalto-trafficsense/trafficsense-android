@@ -2,13 +2,10 @@ package fi.aalto.trafficsense.trafficsense.ui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.preference.*;
-import android.widget.Toast;
 import fi.aalto.trafficsense.trafficsense.R;
-import fi.aalto.trafficsense.trafficsense.backend.TrafficSenseService;
 import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
 import timber.log.Timber;
 
@@ -17,7 +14,7 @@ import timber.log.Timber;
  */
 public class DebugSettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private SharedPreferences mPref;
+    private SharedPreferences mSettings;
     private LocalBroadcastManager mLocalBroadcastManager;
 
     @Override
@@ -27,7 +24,7 @@ public class DebugSettingsFragment extends PreferenceFragmentCompat implements S
 
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this.getContext());
 
-        mPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        mSettings = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         setRestoreButton();
 
@@ -39,7 +36,7 @@ public class DebugSettingsFragment extends PreferenceFragmentCompat implements S
         restoreButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                SharedPreferences.Editor editor = mPref.edit();
+                SharedPreferences.Editor editor = mSettings.edit();
                 editor.clear();
                 editor.commit();
                 setPreferenceScreen(null);
@@ -63,11 +60,9 @@ public class DebugSettingsFragment extends PreferenceFragmentCompat implements S
 
         // Service ON/OFF toggle
         if (key.equals(getString(R.string.debug_settings_service_running_key))) {
-            Preference pref = findPreference(key);
-            SwitchPreferenceCompat spc = (SwitchPreferenceCompat) pref;
-            if (spc.isChecked()) { // Service switched on
+            if (mSettings.getBoolean(key, true)) {
                 mLocalBroadcastManager.sendBroadcast(new Intent(InternalBroadcasts.KEY_SERVICE_START));
-            } else { // Service switched off
+            } else {
                 mLocalBroadcastManager.sendBroadcast(new Intent(InternalBroadcasts.KEY_SERVICE_STOP));
             }
         }

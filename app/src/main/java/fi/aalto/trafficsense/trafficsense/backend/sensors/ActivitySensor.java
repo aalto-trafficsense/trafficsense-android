@@ -77,6 +77,7 @@ public class ActivitySensor implements ResultCallback<Status> {
 
     public void disconnect() {
         stopActivityRecognitionUpdates();
+        mGoogleApiClient = null;
         Timber.d("ActivitySensor stopped");
     }
 

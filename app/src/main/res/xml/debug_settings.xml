@@ -29,6 +29,35 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        android:title="@string/debug_settings_activity">
+
+        <fi.aalto.trafficsense.trafficsense.ui.SeekBarPreference
+            android:key="@string/debug_settings_activity_interval_key"
+            android:title="@string/interval"
+            android:summary="@string/debug_settings_activity_interval_summary"
+            android:defaultValue="10"
+            sbp:minValue="2"
+            sbp:maxValue="60"
+            sbp:unit="@string/seconds" />
+
+        <CheckBoxPreference
+            android:key="@string/debug_settings_only_good_bypass_key"
+            android:defaultValue="true"
+            android:title="@string/debug_settings_only_good_bypass_title"
+            android:summary="@string/debug_settings_only_good_bypass_summary" />
+
+        <fi.aalto.trafficsense.trafficsense.ui.SeekBarPreference
+            android:key="@string/debug_settings_sleep_threshold_key"
+            android:title="@string/debug_settings_sleep_threshold_title"
+            android:summary="@string/debug_settings_sleep_threshold_summary"
+            android:defaultValue="40"
+            sbp:minValue="2"
+            sbp:maxValue="120"
+            sbp:unit="@string/seconds" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:title="@string/debug_settings_location">
 
         <fi.aalto.trafficsense.trafficsense.ui.SeekBarPreference
@@ -51,33 +80,23 @@
 
     </PreferenceCategory>
 
+    <!--<PreferenceCategory-->
+        <!--android:title="@string/debug_settings_upload">-->
+
+        <!--<Preference android:key="@string/debug_settings_restore_defaults_key"-->
+                    <!--android:title="@string/debug_settings_restore_defaults_title"-->
+                    <!--android:summary="@string/debug_settings_restore_defaults_summary"/>-->
+
+    <!--</PreferenceCategory>-->
+
     <PreferenceCategory
-        android:title="@string/debug_settings_activity">
-
-        <fi.aalto.trafficsense.trafficsense.ui.SeekBarPreference
-            android:key="@string/debug_settings_activity_interval_key"
-            android:title="@string/interval"
-            android:summary="@string/debug_settings_activity_interval_summary"
-            android:defaultValue="10"
-            sbp:minValue="2"
-            sbp:maxValue="60"
-            sbp:unit="@string/seconds" />
-
-        <fi.aalto.trafficsense.trafficsense.ui.SeekBarPreference
-            android:key="@string/debug_settings_sleep_threshold_key"
-            android:title="@string/debug_settings_sleep_threshold_title"
-            android:summary="@string/debug_settings_sleep_threshold_summary"
-            android:defaultValue="40"
-            sbp:minValue="2"
-            sbp:maxValue="120"
-            sbp:unit="@string/seconds" />
-
-    </PreferenceCategory>
+        android:title="@string/debug_settings_restore">
 
     <Preference android:key="@string/debug_settings_restore_defaults_key"
                 android:title="@string/debug_settings_restore_defaults_title"
                 android:summary="@string/debug_settings_restore_defaults_summary"/>
 
+    </PreferenceCategory>
 
     <!--<ListPreference-->
     <!--android:defaultValue="popular"-->

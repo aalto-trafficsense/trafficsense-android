@@ -70,7 +70,7 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
         super.onBindViewHolder(holder);
         mSeekBar = (SeekBar) holder.findViewById(R.id.preference_seekbar);
         mSeekBar.setMax(mMaxValue - mMinValue);
-        Timber.d("SeekBar onBindViewHolder");
+//        Timber.d("SeekBar onBindViewHolder");
         mSeekBar.setProgress(mCurrentValue - mMinValue);
         mSeekBar.setOnSeekBarChangeListener(this);
 
@@ -116,7 +116,7 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
     public void setValue(int value) {
         if (shouldPersist()) {
             persistInt(value);
-            Timber.d("SeekBar persistvalue: %d", value);
+//            Timber.d("SeekBar persistvalue: %d", value);
         }
         notifyChanged();
     }

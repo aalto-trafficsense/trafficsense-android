@@ -25,8 +25,8 @@ public class LocationSensor implements LocationListener {
     // Configurations //
     // private int interval = 10; // unit, seconds
     // private int fastestInterval = 5000; // milliseconds
-    private int priority = LocationRequest.PRIORITY_HIGH_ACCURACY;
-    private int sleep_priority = LocationRequest.PRIORITY_NO_POWER;
+    private final int AWAKE_PRIORITY = LocationRequest.PRIORITY_HIGH_ACCURACY;
+    private final int SLEEP_PRIORITY = LocationRequest.PRIORITY_NO_POWER;
 
     private GoogleApiClient mGoogleApiClient;
     private SensorFilter mSensorFilter;
@@ -38,38 +38,35 @@ public class LocationSensor implements LocationListener {
         mGoogleApiClient = apiClient;
         mSensorFilter = controller;
         mRes = TrafficSenseService.getContext().getResources();
-
-        locationRequest(priority);
-
         mSettings = getDefaultSharedPreferences(TrafficSenseService.getContext());
 
+        locationRequest(AWAKE_PRIORITY);
     }
 
     /* Public interface */
 
     public void setSleep(boolean state) {
-        if (state) locationRequest(sleep_priority);
-        else locationRequest(priority);
+        if (state) locationRequest(SLEEP_PRIORITY);
+        else locationRequest(AWAKE_PRIORITY);
     }
 
     /* Internal implementation */
 
     private void locationRequest(int priority) {
-        // Check whether we still have location permission!
-        if (ContextCompat.checkSelfPermission(TrafficSenseApplication.getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission to access the location is missing.
-            // MJR: Don't do anything - MainActivity will try to get permission.
-        } else {
-            // Set location request settings
-            LocationRequest mLocationRequest = LocationRequest.create();
-            int interval = mSettings.getInt(mRes.getString(R.string.debug_settings_location_interval_key), 10);
-            mLocationRequest.setInterval(interval);
-            mLocationRequest.setFastestInterval(interval*1000);
-            mLocationRequest.setPriority(priority);
+        if (mGoogleApiClient != null) {
+            // Confirm that location permission is still valid
+            if (ContextCompat.checkSelfPermission(TrafficSenseApplication.getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                // Set location request settings
+                LocationRequest mLocationRequest = LocationRequest.create();
+                int interval = mSettings.getInt(mRes.getString(R.string.debug_settings_location_interval_key), 10);
+                mLocationRequest.setInterval(interval);
+                mLocationRequest.setFastestInterval(interval*1000);
+                mLocationRequest.setPriority(priority);
 
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-            // Timber.i("Requested location updates with interval: " + interval);
+                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+                Timber.i("Requested location updates with interval: %d", interval);
+            }
         }
     }
 
@@ -82,8 +79,10 @@ public class LocationSensor implements LocationListener {
     }
 
     public void disconnect() {
-        if(mGoogleApiClient != null)
+        if(mGoogleApiClient != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+            mGoogleApiClient = null;
+        }
         Timber.d("LocationSensor stopped");
     }
 
