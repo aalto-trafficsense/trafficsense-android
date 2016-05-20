@@ -35,9 +35,9 @@
             sbp:unit="@string/seconds" />
 
         <fi.aalto.trafficsense.trafficsense.ui.SeekBarPreference
-            android:key="@string/debug_settings_queue_location_accuracy_key"
-            android:title="@string/debug_settings_queue_location_accuracy_title"
-            android:summary="@string/debug_settings_queue_location_accuracy_summary"
+            android:key="@string/debug_settings_location_accuracy_key"
+            android:title="@string/debug_settings_location_accuracy_title"
+            android:summary="@string/debug_settings_location_accuracy_summary"
             android:defaultValue="50"
             sbp:minValue="5"
             sbp:maxValue="1000"

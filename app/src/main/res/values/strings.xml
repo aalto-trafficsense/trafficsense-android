@@ -118,9 +118,9 @@
     <string name="debug_settings_location_interval_key">settings_location_interval</string>
     <string name="debug_settings_location_interval_summary">Location update request interval and max rate.</string>
 
-    <string name="debug_settings_queue_location_accuracy_key">debug_settings_queue_location_accuracy</string>
-    <string name="debug_settings_queue_location_accuracy_title">Accuracy: </string>
-    <string name="debug_settings_queue_location_accuracy_summary">Accuracy limit to push a new point (othern than ping) to queue.</string>
+    <string name="debug_settings_location_accuracy_key">debug_settings_location_accuracy_limit</string>
+    <string name="debug_settings_location_accuracy_title">Accuracy limit: </string>
+    <string name="debug_settings_location_accuracy_summary">Good fix threshold (queue filter, map circle etc.).</string>
 
     <string name="debug_settings_activity">Activity</string>
 

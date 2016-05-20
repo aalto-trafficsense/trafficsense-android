@@ -1,9 +1,6 @@
 package fi.aalto.trafficsense.trafficsense.ui;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.*;
 import android.content.res.Resources;
 import android.location.Location;
 import android.os.Bundle;
@@ -22,6 +19,7 @@ import fi.aalto.trafficsense.trafficsense.util.*;
 import java.text.DateFormat;
 import java.util.Date;
 
+import static android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences;
 import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_CLIENT_NUMBER;
 import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_STATE_INDEX;
 
@@ -32,6 +30,7 @@ public class DebugShowFragment extends Fragment {
 
     private BroadcastReceiver mBroadcastReceiver;
     private LocalBroadcastManager mLocalBroadcastManager;
+    private SharedPreferences mSettings; // Application settings
     private Resources mRes;
 
     private long activityIntervalTimer;
@@ -93,6 +92,7 @@ public class DebugShowFragment extends Fragment {
         super.onActivityCreated(bundle);
         initFields();
         mRes = this.getResources();
+        mSettings = getDefaultSharedPreferences(getActivity());
     }
 
     @Override
@@ -281,7 +281,7 @@ public class DebugShowFragment extends Fragment {
 
             float acc = l.getAccuracy();
             mLocationAccuracyTextField.setText(String.format("%.0fm", acc));
-            if (acc >= 50.0f) {
+            if (acc >= (float) mSettings.getInt(mRes.getString(R.string.debug_settings_location_accuracy_key), 50)) {
                 mLocationLabelTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
                 mLocationProviderTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
                 mLocationHeaderRow.setBackgroundColor(ContextCompat.getColor(this.getContext(), R.color.colorInVehicle));

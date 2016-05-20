@@ -617,7 +617,7 @@ public class MainActivity extends AppCompatActivity
                 } else {
                     mMarker.setPosition(latestPosition);
                 }
-                if (l.getAccuracy() > 50.0) {
+                if (l.getAccuracy() > (float) mSettings.getInt(mRes.getString(R.string.debug_settings_location_accuracy_key), 50)) {
                     if (mCircle == null) {
                         CircleOptions circleOptions = new CircleOptions()
                                 .center(latestPosition)

@@ -1,6 +1,7 @@
 package fi.aalto.trafficsense.trafficsense.backend.sensors;
 
 import android.content.*;
+import android.content.res.Resources;
 import android.location.Location;
 import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
@@ -21,6 +22,7 @@ public class SensorFilter {
     private LocalBroadcastManager mLocalBroadcastManager;
     private BroadcastReceiver mBroadcastReceiver;
     private PipelineThread mPipelineThread;
+    private Resources mRes;
     private SharedPreferences mSettings;
 
 
@@ -28,7 +30,7 @@ public class SensorFilter {
 
     private long stillLimitSeconds=40;
     private long queuePingThresholdMinutes=60;
-    private double queueAccuracyThreshold=1000.0; // meters
+    // private double queueAccuracyThreshold=1000.0; // meters
 
     private Location lastReceivedLocation;
     private ActivityData lastReceivedActivity = null;
@@ -46,6 +48,7 @@ public class SensorFilter {
     public SensorFilter(SensorController sCntrl) {
         // Pointer to instruct SensorController
         mSensorController = sCntrl;
+        mRes = TrafficSenseService.getContext().getResources();
 
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(TrafficSenseService.getContext());
         initBroadcastReceiver();
@@ -77,8 +80,8 @@ public class SensorFilter {
             }
         }
         Timber.d("Queue accuracy threshold from settings: %s", mSettings.getString("debug_settings_queue_location_accuracy", "ei saatu"));
-        // Proceed if accuracy is < queueAccuracyThreshold m.
-        if (lastReceivedLocation.getAccuracy() <= queueAccuracyThreshold) {
+        // Proceed if accuracy is <= location_accuracy m.
+        if (lastReceivedLocation.getAccuracy() <= (float) mSettings.getInt(mRes.getString(R.string.debug_settings_location_accuracy_key), 50)) {
             // Queue if activity is different
             if (lastReceivedActType != lastQueuedActType) {
                 queueOutgoing();
