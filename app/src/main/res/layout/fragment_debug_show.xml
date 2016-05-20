@@ -16,9 +16,9 @@
         <TableLayout android:layout_width="match_parent"
                      android:layout_height="wrap_content">
             <TableRow android:id="@+id/debug_show_service_header_row"
-                      android:background="@color/colorSubtitleBackground">
+                      android:background="@color/colorStill">
                 <TextView android:id="@+id/debug_show_service_label"
-                          android:textColor="@color/colorSubtitleText"
+                          android:textColor="@color/grayText"
                           android:layout_weight="1"
                           style="@android:style/TextAppearance.Large"
                           android:text="@string/service_state_label" />
@@ -26,7 +26,8 @@
                           android:layout_width="match_parent"
                           android:layout_height="match_parent"
                           style="@android:style/TextAppearance.Large"
-                          android:textColor="@color/colorSubtitleText"
+                          android:textColor="@color/grayText"
+                          android:text="@string/service_state_unknown"
                           android:layout_weight="2"
                           android:gravity="end"/>
             </TableRow>
@@ -56,9 +57,9 @@
         <TableLayout android:layout_width="match_parent"
                      android:layout_height="wrap_content">
             <TableRow android:id="@+id/debug_show_activity_header_row"
-                      android:background="@color/colorSubtitleBackground">
+                      android:background="@color/colorStill">
                 <TextView android:id="@+id/debug_show_activity_label"
-                          android:textColor="@color/colorSubtitleText"
+                          android:textColor="@color/grayText"
                           android:layout_weight="1"
                           style="@android:style/TextAppearance.Large"
                           android:text="@string/debug_show_activity_label" />
@@ -66,7 +67,7 @@
                           android:layout_width="match_parent"
                           android:layout_height="match_parent"
                           style="@android:style/TextAppearance.Large"
-                          android:textColor="@color/colorSubtitleText"
+                          android:textColor="@color/grayText"
                           android:layout_weight="2"
                           android:gravity="end"/>
 
@@ -106,9 +107,9 @@
                      android:layout_width="match_parent"
                      android:layout_height="wrap_content">
             <TableRow android:id="@+id/debug_show_location_header_row"
-                      android:background="@color/colorSubtitleBackground">
+                      android:background="@color/colorStill">
                 <TextView android:id="@+id/debug_show_location_label"
-                          android:textColor="@color/colorSubtitleText"
+                          android:textColor="@color/grayText"
                           android:layout_weight="1"
                           style="@android:style/TextAppearance.Large"
                           android:text="@string/debug_show_location_label" />
@@ -116,7 +117,7 @@
                           android:layout_width="match_parent"
                           android:layout_height="match_parent"
                           style="@android:style/TextAppearance.Large"
-                          android:textColor="@color/colorSubtitleText"
+                          android:textColor="@color/grayText"
                           android:layout_weight="2"
                           android:gravity="end"/>
             </TableRow>
@@ -157,9 +158,9 @@
                      android:layout_height="wrap_content">
 
             <TableRow android:id="@+id/debug_show_upload_header_row"
-                      android:background="@color/colorSubtitleBackground">
+                      android:background="@color/colorStill">
                 <TextView android:id="@+id/debug_show_upload_label"
-                          android:textColor="@color/colorSubtitleText"
+                          android:textColor="@color/grayText"
                           android:layout_weight="1"
                           style="@android:style/TextAppearance.Large"
                           android:text="@string/debug_show_upload_label" />
@@ -167,7 +168,7 @@
                           android:layout_width="match_parent"
                           android:layout_height="match_parent"
                           style="@android:style/TextAppearance.Large"
-                          android:textColor="@color/colorSubtitleText"
+                          android:textColor="@color/grayText"
                           android:layout_weight="2"
                           android:gravity="end"/>
             </TableRow>

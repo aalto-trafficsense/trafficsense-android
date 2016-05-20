@@ -22,18 +22,12 @@ import org.json.JSONObject;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-import retrofit.mime.TypedByteArray;
 import timber.log.Timber;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.KEY_UPLOAD_FAILED;
-import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.KEY_UPLOAD_SUCCEEDED;
 
 public class RestClient {
     private static final String THREAD_NAME_FORMAT = "rest-client";
@@ -173,6 +167,7 @@ public class RestClient {
 
         if (queue.isEmpty()) {
             Timber.d("skipping upload operation: Queue is empty");
+            notifyRestClientResults(InternalBroadcasts.KEY_UPLOAD_SUCCEEDED);
             return true;
         }
 
@@ -186,13 +181,13 @@ public class RestClient {
                 setUploading(false);
                 if (error != null) {
                     Timber.e(error, "Data upload failed");
-                    notifyRestClientResults(KEY_UPLOAD_FAILED);
+                    notifyRestClientResults(InternalBroadcasts.KEY_UPLOAD_FAILED);
                 } else {
                     queue.removeUntilSequence(body.mSequence);
                     Timber.d("Uploaded data up to sequence #%d", body.mSequence);
                     mLatestUploadTime = System.currentTimeMillis();
                     broadcastUploadTime();
-                    notifyRestClientResults(KEY_UPLOAD_SUCCEEDED);
+                    notifyRestClientResults(InternalBroadcasts.KEY_UPLOAD_SUCCEEDED);
                 }
             }
         });
@@ -561,7 +556,7 @@ public class RestClient {
                 }
                 // Some other upload error
                 queue.increaseThreshold();
-                notifyRestClientResults(KEY_UPLOAD_FAILED);
+                notifyRestClientResults(InternalBroadcasts.KEY_UPLOAD_FAILED);
                 callback.run(null, new RuntimeException("Data upload failed", error));
             }
         });
