@@ -23,8 +23,8 @@ import static android.support.v7.preference.PreferenceManager.getDefaultSharedPr
 public class LocationSensor implements LocationListener {
 
     // Configurations //
-    private int interval = 10; // unit, seconds
-    private int fastestInterval = 5000; // milliseconds
+    // private int interval = 10; // unit, seconds
+    // private int fastestInterval = 5000; // milliseconds
     private int priority = LocationRequest.PRIORITY_HIGH_ACCURACY;
     private int sleep_priority = LocationRequest.PRIORITY_NO_POWER;
 
@@ -39,7 +39,7 @@ public class LocationSensor implements LocationListener {
         mSensorFilter = controller;
         mRes = TrafficSenseService.getContext().getResources();
 
-        locationRequest(interval,priority);
+        locationRequest(priority);
 
         mSettings = getDefaultSharedPreferences(TrafficSenseService.getContext());
 
@@ -48,33 +48,32 @@ public class LocationSensor implements LocationListener {
     /* Public interface */
 
     public void setSleep(boolean state) {
-        if (state) locationRequest(interval,sleep_priority);
-        else locationRequest(interval,priority);
+        if (state) locationRequest(sleep_priority);
+        else locationRequest(priority);
     }
 
     /* Internal implementation */
 
-    private void locationRequest(int interval, int priority) {
+    private void locationRequest(int priority) {
         // Check whether we still have location permission!
         if (ContextCompat.checkSelfPermission(TrafficSenseApplication.getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             // Permission to access the location is missing.
             // MJR: Don't do anything - MainActivity will try to get permission.
-            // Context ctx = TrafficSenseApplication.getContext();
-            // Toast.makeText(ctx, ctx.getString(R.string.no_location_permission), Toast.LENGTH_SHORT).show();
         } else {
             // Set location request settings
             LocationRequest mLocationRequest = LocationRequest.create();
+            int interval = mSettings.getInt(mRes.getString(R.string.debug_settings_location_interval_key), 10);
             mLocationRequest.setInterval(interval);
-            mLocationRequest.setFastestInterval(fastestInterval);
+            mLocationRequest.setFastestInterval(interval*1000);
             mLocationRequest.setPriority(priority);
 
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
             // Timber.i("Requested location updates with interval: " + interval);
         }
-
     }
 
+// debug_settings_location_interval_key
 
     @Override
     public void onLocationChanged(Location location) {

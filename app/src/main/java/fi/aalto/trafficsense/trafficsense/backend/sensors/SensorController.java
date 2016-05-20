@@ -71,12 +71,16 @@ public class SensorController {
                     case InternalBroadcasts.KEY_SETTINGS_ACTIVITY_INTERVAL:
                         mActivitySensor.restartActivityRecognition();
                         break;
+                    case InternalBroadcasts.KEY_SETTINGS_LOCATION_INTERVAL:
+                        setSleep(false); // Re-configures interval
+                        break;
                 }
             }
         };
 
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(InternalBroadcasts.KEY_SETTINGS_ACTIVITY_INTERVAL);
+        intentFilter.addAction(InternalBroadcasts.KEY_SETTINGS_LOCATION_INTERVAL);
 
         if (mLocalBroadcastManager != null) {
             mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, intentFilter);

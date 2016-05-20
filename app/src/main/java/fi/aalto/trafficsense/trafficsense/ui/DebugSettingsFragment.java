@@ -72,9 +72,14 @@ public class DebugSettingsFragment extends PreferenceFragmentCompat implements S
             }
         }
 
+        // Location interval change
+        if (key.equals(getString(R.string.debug_settings_location_interval_key))) {
+            mLocalBroadcastManager.sendBroadcast(new Intent(InternalBroadcasts.KEY_SETTINGS_LOCATION_INTERVAL));
+        }
+
         // Activity interval change
         if (key.equals(getString(R.string.debug_settings_activity_interval_key))) {
-            Timber.d("Activity interval changed!!");
+//            Timber.d("Activity interval changed!!");
             mLocalBroadcastManager.sendBroadcast(new Intent(InternalBroadcasts.KEY_SETTINGS_ACTIVITY_INTERVAL));
         }
 
