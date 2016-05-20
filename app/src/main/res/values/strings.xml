@@ -3,7 +3,7 @@
     <string name="app_name">TrafficSense</string>
     <string name="title_activity_main">TrafficSense</string>
     <string name="title_activity_maps">Map</string>
-    <string name="title_activity_debugview">TrafficSense Debug</string>
+    <string name="title_activity_debugview">Debug</string>
     <string name="title_activity_login">Sign in</string>
     <string name="title_activity_about">About TrafficSense</string>
     <string name="title_activity_energy_certificate">Energy Certificate</string>
@@ -113,6 +113,26 @@
     <string name="debug_settings_debug_mode_title">Debug mode</string>
     <string name="debug_settings_debug_mode_summary">Are debug features accessible.</string>
 
+    <string name="debug_settings_ping_threshold_key">settings_ping_limit</string>
+    <string name="debug_settings_ping_threshold_title">Ping threshold</string>
+    <string name="debug_settings_ping_threshold_summary">Any point queued after threshold exceeded.</string>
+    <string-array name="debug_settings_ping_threshold_titles">
+        <item>No ping</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>8 hours</item>
+    </string-array>
+    <string-array name="debug_settings_ping_threshold_values">
+        <item>-1</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>480</item>
+    </string-array>
+
     <string name="debug_settings_location">Location</string>
 
     <string name="debug_settings_location_interval_key">settings_location_interval</string>
@@ -126,6 +146,10 @@
 
     <string name="debug_settings_activity_interval_key">settings_activity_interval</string>
     <string name="debug_settings_activity_interval_summary">Requested activity recognition report interval.</string>
+
+    <string name="debug_settings_sleep_threshold_key">settings_sleep_threshold</string>
+    <string name="debug_settings_sleep_threshold_title">Sleep timeout: </string>
+    <string name="debug_settings_sleep_threshold_summary">If activity remains STILL.</string>
 
     <string name="debug_settings_restore_defaults_key">debug_settings_restore_defaults</string>
     <string name="debug_settings_restore_defaults_title">Restore defaults</string>

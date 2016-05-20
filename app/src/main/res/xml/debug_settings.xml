@@ -18,6 +18,14 @@
             android:title="@string/debug_settings_debug_mode_title"
             android:summary="@string/debug_settings_debug_mode_summary" />
 
+        <ListPreference
+            android:key="@string/debug_settings_ping_threshold_key"
+            android:title="@string/debug_settings_ping_threshold_title"
+            android:summary="@string/debug_settings_ping_threshold_summary"
+            android:defaultValue="60"
+            android:entries="@array/debug_settings_ping_threshold_titles"
+            android:entryValues="@array/debug_settings_ping_threshold_values" />
+
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -55,6 +63,15 @@
             sbp:maxValue="60"
             sbp:unit="@string/seconds" />
 
+        <fi.aalto.trafficsense.trafficsense.ui.SeekBarPreference
+            android:key="@string/debug_settings_sleep_threshold_key"
+            android:title="@string/debug_settings_sleep_threshold_title"
+            android:summary="@string/debug_settings_sleep_threshold_summary"
+            android:defaultValue="40"
+            sbp:minValue="2"
+            sbp:maxValue="120"
+            sbp:unit="@string/seconds" />
+
     </PreferenceCategory>
 
     <Preference android:key="@string/debug_settings_restore_defaults_key"
@@ -63,11 +80,11 @@
 
 
     <!--<ListPreference-->
-        <!--android:defaultValue="popular"-->
-        <!--android:entries="@array/categories"-->
-        <!--android:entryValues="@array/categories_value"-->
-        <!--android:summary="Select categories of movies"-->
-        <!--android:title="Categories"-->
-        <!--android:key="@string/preftest_categories_key" />-->
+    <!--android:defaultValue="popular"-->
+    <!--android:entries="@array/categories"-->
+    <!--android:entryValues="@array/categories_value"-->
+    <!--android:summary="Select categories of movies"-->
+    <!--android:title="Categories"-->
+    <!--android:key="@string/preftest_categories_key" />-->
 
 </PreferenceScreen>

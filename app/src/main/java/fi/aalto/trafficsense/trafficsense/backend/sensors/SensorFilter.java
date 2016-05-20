@@ -28,8 +28,8 @@ public class SensorFilter {
 
     private SensorController mSensorController;
 
-    private long stillLimitSeconds=40;
-    private long queuePingThresholdMinutes=60;
+    // private long stillLimitSeconds=40;
+    // private long queuePingThresholdMinutes=60;
     // private double queueAccuracyThreshold=1000.0; // meters
 
     private Location lastReceivedLocation;
@@ -74,9 +74,12 @@ public class SensorFilter {
     private void filterOutgoing() {
         // Queue whatever, if time after last queued is > queuePingThresholdMinutes
         if (lastQueuedTime > 0) {
-            if (System.currentTimeMillis() - lastQueuedTime > queuePingThresholdMinutes*60000) {
-                queueOutgoing();
-                return;
+            int queuePingThresholdMinutes = Integer.valueOf(mSettings.getString(mRes.getString(R.string.debug_settings_ping_threshold_key), "60"));
+            if (queuePingThresholdMinutes > 0) { // -1 = no ping
+                if (System.currentTimeMillis() - lastQueuedTime > queuePingThresholdMinutes*60000) {
+                    queueOutgoing();
+                    return;
+                }
             }
         }
         Timber.d("Queue accuracy threshold from settings: %s", mSettings.getString("debug_settings_queue_location_accuracy", "ei saatu"));
@@ -138,7 +141,7 @@ public class SensorFilter {
     }
 
     private void checkSleep() {
-        if (System.currentTimeMillis()-inactivityTimer > stillLimitSeconds*1000) {
+        if (System.currentTimeMillis()-inactivityTimer > mSettings.getInt(mRes.getString(R.string.debug_settings_sleep_threshold_key), 40)*1000) {
             inactivityTimerRunning = false;
             mSensorController.setSleep(true);
             TrafficSenseService.setServiceState(TSServiceState.SLEEPING);
