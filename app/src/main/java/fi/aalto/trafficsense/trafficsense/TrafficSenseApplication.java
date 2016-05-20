@@ -22,17 +22,14 @@ import static fi.aalto.trafficsense.trafficsense.util.TSServiceState.*;
  */
 public class TrafficSenseApplication extends Application {
 
+    SharedPreferences mSettings;
+    Resources mRes;
+
     private static Context mContext;
     private static TrafficSenseService mTSService;
     private TSServiceState mTSServiceState; // Keep track of "STOPPED" state, since the service cannot respond to that
     private BroadcastReceiver mBroadcastReceiver;
     private LocalBroadcastManager mLocalBroadcastManager;
-
-    private SharedPreferences mSettings;
-    private Resources mRes;
-
-
-
 
     @Override
     public void onCreate() {
@@ -53,19 +50,24 @@ public class TrafficSenseApplication extends Application {
 
 //        Timber.d("--- TrafficSenseApplication post-def sees activitysensor interval as: %d", mSettings.getInt(mRes.getString(R.string.debug_settings_activity_interval_key), -1));
 
-        boolean serviceSetOn = mSettings.getBoolean(mRes.getString(R.string.debug_settings_service_running_key), false);
-
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
         initBroadcastReceiver();
 
-        // Start TrafficSenseService, if not already running
-        if (!isMyServiceRunning(TrafficSenseService.class)) {
-            startTSService();
-        } else {
-            // Already running - bind to it
-            Intent serviceIntent = new Intent(this, TrafficSenseService.class);
-            bindService(serviceIntent, mServiceConnection, BIND_AUTO_CREATE);
-            Timber.d("Application started - TSService already running.");
+        boolean serviceSwitchedOn = mSettings.getBoolean(mRes.getString(R.string.debug_settings_service_running_key), false);
+
+        if (isMyServiceRunning(TrafficSenseService.class)) {
+            // Already running
+            if (serviceSwitchedOn) { // Should be running - bind to it
+                Intent serviceIntent = new Intent(this, TrafficSenseService.class);
+                bindService(serviceIntent, mServiceConnection, BIND_AUTO_CREATE);
+                Timber.d("Application started - TSService already running.");
+            } else { // Switched off but running?!?! - not sure when this case could occur, but stop it
+                stopTSService();
+            }
+        } else { // Not yet running
+            if (serviceSwitchedOn) { // Does the user want it to run?
+                startTSService();
+            }
         }
     }
 

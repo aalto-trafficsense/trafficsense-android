@@ -27,6 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
+            android:longClickable="true"
             android:text="@string/str_ok" />
 
     <ScrollView
@@ -36,8 +37,8 @@
         android:layout_below="@id/about_appbarlayout"
         android:layout_above="@id/abt_ok_button"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_marginLeft="6dp"
-        android:layout_marginRight="6dp">
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin">
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
@@ -73,7 +74,8 @@
                     android:text="@string/str_legalNotice"/>
                 <TextView android:id="@+id/abt_legalNotice"
                           android:layout_width="match_parent"
-                          android:layout_height="wrap_content" />
+                          android:layout_height="wrap_content"
+                          android:clickable="true" />
             </LinearLayout>
             <!-- Contributions -->
             <LinearLayout

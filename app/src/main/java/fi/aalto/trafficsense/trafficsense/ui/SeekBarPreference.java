@@ -106,7 +106,7 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
     protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
 //        Timber.d("--- SeekBar onSetInitialValue called with restore: %b default: %d", restorePersistedValue, (Integer) defaultValue);
         if (restorePersistedValue) {
-            mCurrentValue = this.getPersistedInt(0);
+            mCurrentValue = getPersistedInt(0);
         } else {
             mCurrentValue = (Integer) defaultValue;
             persistInt(mCurrentValue);

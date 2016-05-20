@@ -64,6 +64,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import static android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences;
 import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_STATE_INDEX;
 
 public class MainActivity extends AppCompatActivity
@@ -78,11 +79,13 @@ public class MainActivity extends AppCompatActivity
     private Context mContext;
     private Resources mRes;
     private BackendStorage mStorage;
-    private SharedPreferences mPref;
+    private SharedPreferences mPref; // Local prefs in this activity
     private SharedPreferences.Editor mPrefEditor;
+    private SharedPreferences mSettings; // Application settings
 
     private MenuItem mStartupItem;
     private MenuItem mShutdownItem;
+    private MenuItem mDebugItem;
     private MenuItem mPathItem;
     private MenuItem mTrafficItem;
     private TextView mPathDate;
@@ -146,12 +149,10 @@ public class MainActivity extends AppCompatActivity
         Menu navMenu = navigationView.getMenu();
         mStartupItem = navMenu.findItem(R.id.nav_startup);
         mShutdownItem = navMenu.findItem(R.id.nav_shutdown);
+        mDebugItem = navMenu.findItem(R.id.nav_debug);
 
         mPathDate = (TextView) findViewById(R.id.main_path_date);
         mPathDateLayout = (FrameLayout) findViewById(R.id.main_path_date_layout);
-
-        // Hide items not implemented yet:
-        navMenu.findItem(R.id.nav_settings).setVisible(false);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -164,6 +165,8 @@ public class MainActivity extends AppCompatActivity
 
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
         mStorage = BackendStorage.create(mContext);
+
+        mSettings = getDefaultSharedPreferences(this);
 
         // Initialize shared preferences access for persistent storage of values
         mPref = this.getPreferences(Context.MODE_PRIVATE);
@@ -190,6 +193,8 @@ public class MainActivity extends AppCompatActivity
         BroadcastHelper.broadcastViewResumed(mLocalBroadcastManager, true);
         BroadcastHelper.simpleBroadcast(mLocalBroadcastManager, InternalBroadcasts.KEY_MAIN_ACTIVITY_REQ);
         checkLocationPermission(); // Check the dynamic location permissions
+        serviceRunningToDrawer(mSettings.getBoolean(mRes.getString(R.string.debug_settings_service_running_key), true));
+        mDebugItem.setVisible(mSettings.getBoolean(mRes.getString(R.string.debug_settings_debug_mode_key), false));
     }
 
     /**
@@ -275,7 +280,7 @@ public class MainActivity extends AppCompatActivity
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
                 // Permission persistently refused by the user
                 Toast.makeText(this, mRes.getString(R.string.location_permission_persistently_refused), Toast.LENGTH_LONG).show();
-                requestServiceShutdown();
+                setServiceRunning(false);
             } else {
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(MainActivity.this,
@@ -298,7 +303,7 @@ public class MainActivity extends AppCompatActivity
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                     Toast.makeText(this, mRes.getString(R.string.location_permission_persistently_refused), Toast.LENGTH_LONG).show();
-                    requestServiceShutdown();
+                    setServiceRunning(false);
                 }
                 return;
             }
@@ -437,11 +442,10 @@ public class MainActivity extends AppCompatActivity
                 openActivity(SettingsActivity.class);
                 break;
             case R.id.nav_shutdown:
-                requestServiceShutdown();
+                setServiceRunning(false);
                 break;
             case R.id.nav_startup:
-                BroadcastHelper.simpleBroadcast(mLocalBroadcastManager, InternalBroadcasts.KEY_SERVICE_START);
-                fixServiceStateToMenu(true);
+                setServiceRunning(true);
                 break;
             case R.id.nav_debug:
                 openActivity(DebugActivity.class);
@@ -458,20 +462,28 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
-    private void requestServiceShutdown() {
-        BroadcastHelper.simpleBroadcast(mLocalBroadcastManager, InternalBroadcasts.KEY_SERVICE_STOP);
-        fixServiceStateToMenu(false);
+    // Carry out all service start/stop request tasks
+    private void setServiceRunning(boolean running) {
+        serviceRunningToDrawer(running);
+        if (running) {
+            BroadcastHelper.simpleBroadcast(mLocalBroadcastManager, InternalBroadcasts.KEY_SERVICE_START);
+        } else {
+            BroadcastHelper.simpleBroadcast(mLocalBroadcastManager, InternalBroadcasts.KEY_SERVICE_STOP);
+        }
+        if (mMarker != null) mMarker.setVisible(running);
+        SharedPreferences.Editor edit = mSettings.edit();
+        edit.putBoolean(getResources().getString(R.string.debug_settings_service_running_key), running);
+        edit.apply();
     }
 
-    private void fixServiceStateToMenu(boolean running) {
+    // Align drawer menu items with current service state
+    private void serviceRunningToDrawer(boolean running) {
         if (running) {
             mShutdownItem.setVisible(true);
             mStartupItem.setVisible(false);
-            if (mMarker != null) mMarker.setVisible(true);
         } else {
             mStartupItem.setVisible(true);
             mShutdownItem.setVisible(false);
-            if (mMarker != null) mMarker.setVisible(false);
         }
     }
 
@@ -653,8 +665,8 @@ public class MainActivity extends AppCompatActivity
 
     private void updateServiceState (Intent i) {
         TSServiceState newState = TSServiceState.values()[i.getIntExtra(LABEL_STATE_INDEX,0)];
-        if (newState == TSServiceState.STOPPED) fixServiceStateToMenu(false);
-        else fixServiceStateToMenu(true);
+        if (newState == TSServiceState.STOPPED) serviceRunningToDrawer(false);
+        else serviceRunningToDrawer(true);
     }
 
     /**********************************

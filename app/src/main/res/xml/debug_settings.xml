@@ -14,6 +14,11 @@
             android:title="@string/debug_settings_service_running_title"
             android:summary="@string/debug_settings_service_running_summary" />
 
+        <SwitchPreferenceCompat
+            android:key="@string/debug_settings_debug_mode_key"
+            android:defaultValue="false"
+            android:title="@string/debug_settings_debug_mode_title"
+            android:summary="@string/debug_settings_debug_mode_summary" />
 
     </PreferenceCategory>
 
@@ -29,13 +34,14 @@
             sbp:maxValue="60"
             sbp:unit="@string/seconds" />
 
-        <EditTextPreference
-            android:key="debug_settings_queue_location_accuracy"
-            android:defaultValue="50"
+        <fi.aalto.trafficsense.trafficsense.ui.SeekBarPreference
+            android:key="@string/debug_settings_queue_location_accuracy_key"
             android:title="@string/debug_settings_queue_location_accuracy_title"
             android:summary="@string/debug_settings_queue_location_accuracy_summary"
-            android:dialogTitle="@string/debug_settings_queue_location_accuracy_dialog" />
-
+            android:defaultValue="50"
+            sbp:minValue="5"
+            sbp:maxValue="1000"
+            sbp:unit="@string/meters" />
 
     </PreferenceCategory>
 

@@ -109,13 +109,17 @@
     <string name="debug_settings_service_running_title">Service running</string>
     <string name="debug_settings_service_running_summary">TrafficSense service on/off.</string>
 
+    <string name="debug_settings_debug_mode_key">debug_settings_debug_mode</string>
+    <string name="debug_settings_debug_mode_title">Debug mode</string>
+    <string name="debug_settings_debug_mode_summary">Are debug features accessible.</string>
+
     <string name="debug_settings_location">Location</string>
 
     <string name="debug_settings_location_interval_key">settings_location_interval</string>
     <string name="debug_settings_location_interval_summary">Location update request interval and max rate.</string>
 
-    <string name="debug_settings_queue_location_accuracy_title">Accuracy</string>
-    <string name="debug_settings_queue_location_accuracy_dialog">Queue location accuracy</string>
+    <string name="debug_settings_queue_location_accuracy_key">debug_settings_queue_location_accuracy</string>
+    <string name="debug_settings_queue_location_accuracy_title">Accuracy: </string>
     <string name="debug_settings_queue_location_accuracy_summary">Accuracy limit to push a new point (othern than ping) to queue.</string>
 
     <string name="debug_settings_activity">Activity</string>
@@ -213,6 +217,7 @@
     <string name="certificate_url_broken">Certificate URL broken.</string>
     <string name="today">Today</string>
     <string name="preftest_categories_key">testiavain</string>
+    <string name="debug_mode_open">Debug mode open.</string>
 
 
 </resources>

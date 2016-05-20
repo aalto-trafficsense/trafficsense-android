@@ -27,11 +27,13 @@
             <item
                 android:id="@+id/nav_settings"
                 android:icon="@drawable/ic_settings_24dp"
-                android:title="@string/navigation_settings"/>
+                android:title="@string/navigation_settings"
+                android:visible="false"/>
             <item
                 android:id="@+id/nav_startup"
                 android:icon="@drawable/ic_cloud_queue_24dp"
-                android:title="@string/navigation_startservice"/>
+                android:title="@string/navigation_startservice"
+                android:visible="false"/>
             <item
                 android:id="@+id/nav_shutdown"
                 android:icon="@drawable/ic_cloud_off_24dp"
@@ -39,7 +41,8 @@
             <item
                 android:id="@+id/nav_debug"
                 android:icon="@drawable/ic_bug_report_24dp"
-                android:title="@string/navigation_debug"/>
+                android:title="@string/navigation_debug"
+                android:visible="false"/>
         </menu>
     </item>
 
