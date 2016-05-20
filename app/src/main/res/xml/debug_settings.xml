@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:sbp="http://schemas.android.com/apk/lib/fi.aalto.trafficsense.trafficsense.ui.SeekBarPreference"
-                  xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:sbp="http://schemas.android.com/apk/lib/fi.aalto.trafficsense.trafficsense.ui.SeekBarPreference">
 
     <PreferenceCategory
-        android:icon="@drawable/ic_info_black_24dp"
         android:title="@string/debug_settings_general">
 
         <SwitchPreferenceCompat

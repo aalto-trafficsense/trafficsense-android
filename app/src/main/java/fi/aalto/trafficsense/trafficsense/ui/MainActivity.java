@@ -439,7 +439,8 @@ public class MainActivity extends AppCompatActivity
                 openActivity(LoginActivity.class);
                 break;
             case R.id.nav_settings:
-                openActivity(SettingsActivity.class);
+                // Even the menu item should currently be invisible
+                Toast.makeText(this, "Not implemented yet.", Toast.LENGTH_LONG).show();
                 break;
             case R.id.nav_shutdown:
                 setServiceRunning(false);
