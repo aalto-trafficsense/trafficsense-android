@@ -60,10 +60,25 @@ public class DebugPreferenceFragment extends PreferenceFragmentCompat implements
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+
+        // Service ON/OFF toggle
+        if (key.equals(getString(R.string.debug_settings_service_running_key))) {
+            Preference pref = findPreference(key);
+            SwitchPreferenceCompat spc = (SwitchPreferenceCompat) pref;
+            if (spc.isChecked()) { // Service switched on
+                mLocalBroadcastManager.sendBroadcast(new Intent(InternalBroadcasts.KEY_SERVICE_START));
+            } else { // Service switched off
+                mLocalBroadcastManager.sendBroadcast(new Intent(InternalBroadcasts.KEY_SERVICE_STOP));
+            }
+        }
+
+        // Activity interval change
         if (key.equals(getString(R.string.debug_settings_activity_interval_key))) {
             Timber.d("Activity interval changed!!");
             mLocalBroadcastManager.sendBroadcast(new Intent(InternalBroadcasts.KEY_SETTINGS_ACTIVITY_INTERVAL));
         }
+
+
 
 //        Preference preference = findPreference(key);
 //        if (preference instanceof CheckBoxPreference) {

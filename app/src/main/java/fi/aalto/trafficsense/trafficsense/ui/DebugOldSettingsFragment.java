@@ -31,7 +31,6 @@ public class DebugOldSettingsFragment extends Fragment {
     private BroadcastReceiver mBroadcastReceiver;
     private LocalBroadcastManager mLocalBroadcastManager;
 
-
     /* UI Components */
     private Switch mToggleServiceSwitch;
     private TextView mServiceStatusTextField;
