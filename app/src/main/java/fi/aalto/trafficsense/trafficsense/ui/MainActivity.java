@@ -635,8 +635,8 @@ public class MainActivity extends AppCompatActivity
                         mCircle = null;
                     }
                 }
-                // Only adjust camera position when the path is not shown
-                if (!mPref.getBoolean(SharedPrefs.KEY_SHOW_PATH, false)) {
+                // Only adjust camera position when the path is not shown or path is for today
+                if (!mPref.getBoolean(SharedPrefs.KEY_SHOW_PATH, false) || isTodaysPath()) {
                     if (mBounds == null) {
                         //This is the current user-viewable region of the map
                         mBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
