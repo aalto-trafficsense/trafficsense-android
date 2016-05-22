@@ -102,4 +102,12 @@ public class RegularRoutesPipeline {
         return true;
     }
 
+    public boolean isUploadEnabled() {
+        PipelineThread pipeline = sPipeline.get();
+        if (pipeline == null)
+            return false;
+
+        return pipeline.getUploadEnabledState();
+    }
+
 }

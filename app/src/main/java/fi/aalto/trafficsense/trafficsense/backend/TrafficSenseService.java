@@ -278,6 +278,7 @@ public class TrafficSenseService extends Service {
     // Update upload state
     private static void updateUploadState(TSUploadState newState) {
         mUploadState = newState;
+        if (!mPipeline.isUploadEnabled()) mUploadState = DISABLED;
         if (mLocalBroadcastManager!=null && isViewActive())
         {
             Bundle args = new Bundle();

@@ -178,6 +178,8 @@
     <string name="upload_state_noclientnumber">No client number obtained</string>
     <string name="upload_state_ready">Ready</string>
     <string name="upload_state_inprogress">In progress</string>
+    <string name="upload_state_failed">Failed</string>
+    <string name="upload_state_disabled">Disabled</string>
     <string name="upload_state_unknown">Unknown state</string>
 
     <string name="not_available">Not available</string>
@@ -189,7 +191,6 @@
     <string name="location_permission_refused">TrafficSense does not work meaningfully without location permissions.</string>
     <string name="no_location_permission">No location permission.</string>
     <string name="accounts_permission_persistently_refused">Cannot login to service without permission to access accounts.</string>
-    <string name="upload_state_failed">Failed</string>
     <string name="accounts_permission_explanation">TrafficSense needs access to your Google account to log you in. It will not access any of your contacts.</string>
     <string name="navigation_transport">Register transport</string>
     <string name="main_toolbar_traffic_label">Traffic</string>

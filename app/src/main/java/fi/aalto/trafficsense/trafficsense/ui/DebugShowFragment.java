@@ -252,6 +252,10 @@ public class DebugShowFragment extends Fragment {
                 headerTextColor = R.color.normalText;
                 headerBackgroundColor = R.color.colorRunning;
                 break;
+            case DISABLED:
+                headerTextColor = R.color.colorSubtitleText;
+                headerBackgroundColor = R.color.colorTilting;
+                break;
             default:
                 headerTextColor = R.color.colorSubtitleText;
                 headerBackgroundColor = R.color.colorWalking;

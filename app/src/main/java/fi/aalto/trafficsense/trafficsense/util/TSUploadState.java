@@ -8,7 +8,7 @@ import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
  * Created by mikko.rinne@aalto.fi on 17/04/16.
  */
 public enum TSUploadState {
-    SWITCHEDOFF, SIGNEDOUT, NOCLIENTNUMBER, READY, INPROGRESS, FAILED;
+    SWITCHEDOFF, SIGNEDOUT, NOCLIENTNUMBER, READY, INPROGRESS, FAILED, DISABLED;
 
     public static String getUploadStateString(TSUploadState state) {
         Resources res = TrafficSenseApplication.getContext().getResources();
@@ -25,6 +25,8 @@ public enum TSUploadState {
                 return res.getString(R.string.upload_state_inprogress);
             case FAILED:
                 return res.getString(R.string.upload_state_failed);
+            case DISABLED:
+                return res.getString(R.string.upload_state_disabled);
             default:
                 return res.getString(R.string.upload_state_unknown);
         }
