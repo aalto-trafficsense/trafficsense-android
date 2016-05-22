@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.preference.*;
 import fi.aalto.trafficsense.trafficsense.R;
+import fi.aalto.trafficsense.trafficsense.backend.uploader.RegularRoutesPipeline;
 import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
 import timber.log.Timber;
 
@@ -78,7 +79,10 @@ public class DebugSettingsFragment extends PreferenceFragmentCompat implements S
             mLocalBroadcastManager.sendBroadcast(new Intent(InternalBroadcasts.KEY_SETTINGS_ACTIVITY_INTERVAL));
         }
 
-
+        // Upload enabled change
+        if (key.equals(getString(R.string.debug_settings_upload_enabled_key))) {
+            RegularRoutesPipeline.setUploadEnabledState(mSettings.getBoolean(key, true));
+        }
 
 //        Preference preference = findPreference(key);
 //        if (preference instanceof CheckBoxPreference) {

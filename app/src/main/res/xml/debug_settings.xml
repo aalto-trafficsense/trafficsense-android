@@ -12,7 +12,7 @@
             android:title="@string/debug_settings_service_running_title"
             android:summary="@string/debug_settings_service_running_summary" />
 
-        <SwitchPreferenceCompat
+        <CheckBoxPreference
             android:key="@string/debug_settings_debug_mode_key"
             android:defaultValue="false"
             android:title="@string/debug_settings_debug_mode_title"
@@ -82,6 +82,12 @@
 
     <PreferenceCategory
         android:title="@string/debug_settings_upload">
+
+        <CheckBoxPreference
+            android:key="@string/debug_settings_upload_threshold_key"
+            android:defaultValue="true"
+            android:title="@string/debug_settings_upload_threshold_title"
+            android:summary="@string/debug_settings_upload_threshold_summary" />
 
         <fi.aalto.trafficsense.trafficsense.ui.SeekBarPreference
             android:key="@string/debug_settings_upload_threshold_key"

@@ -100,9 +100,8 @@
     <string name="play_services_error">Google Play services is not available.  This application will close.</string>
     <string name="title_activity_settings">Settings</string>
 
-    <!-- Strings related to Settings -->
+    <!-- Settings -->
 
-    <!-- The new real settings -->
     <string name="debug_settings_general">General</string>
 
     <string name="debug_settings_service_running_key">debug_settings_service_running</string>
@@ -156,6 +155,10 @@
     <string name="debug_settings_sleep_threshold_summary">If activity remains STILL.</string>
 
     <string name="debug_settings_upload">Upload</string>
+
+    <string name="debug_settings_upload_enabled_key">settings_upload_enabled</string>
+    <string name="debug_settings_upload_enabled_title">Upload enabled</string>
+    <string name="debug_settings_upload_enabled_summary">Passing threshold sends points.</string>
 
     <string name="debug_settings_upload_threshold_key">settings_sleep_threshold</string>
     <string name="debug_settings_upload_threshold_title">Queue threshold: </string>
