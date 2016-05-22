@@ -59,6 +59,7 @@
     <string name="seconds">s.</string>
     <string name="minutes">min.</string>
     <string name="meters">meters</string>
+    <string name="points">points</string>
     <string name="str_clientVersionPrefix">Version:</string>
     <string name="str_legalNotice">Legal notice:</string>
     <string name="str_contributions">Contributions:</string>
@@ -155,7 +156,10 @@
     <string name="debug_settings_sleep_threshold_summary">If activity remains STILL.</string>
 
     <string name="debug_settings_upload">Upload</string>
-    <!--To be added-->
+
+    <string name="debug_settings_upload_threshold_key">settings_sleep_threshold</string>
+    <string name="debug_settings_upload_threshold_title">Queue threshold: </string>
+    <string name="debug_settings_upload_threshold_summary">Limit for trying to upload.</string>
 
     <string name="debug_settings_restore">Reset</string>
 

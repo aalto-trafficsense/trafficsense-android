@@ -1,12 +1,11 @@
 package fi.aalto.trafficsense.trafficsense.backend.uploader;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.*;
+import android.content.res.Resources;
 import android.support.v4.content.LocalBroadcastManager;
 import com.google.common.collect.EvictingQueue;
 import com.google.common.collect.ImmutableList;
+import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.backend.TrafficSenseService;
 import fi.aalto.trafficsense.trafficsense.util.DataPacket;
 import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
@@ -15,25 +14,32 @@ import timber.log.Timber;
 import java.util.Iterator;
 import java.util.Queue;
 
+import static android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences;
+
 public class DataQueue {
     private final Queue<DataPoint> mDeque;
-    private final int flushThreshold;
+//    private final int flushThreshold;
     private final int mMaxSize;
     private int activeThreshold;
 
     private LocalBroadcastManager mLocalBroadcastManager;
     private BroadcastReceiver mBroadcastReceiver;
+    private Resources mRes;
+    private SharedPreferences mSettings;
 
     private long mNextSequence;
 
-    public DataQueue(int maxSize, int flushThreshold) {
+    // debug_settings_upload_threshold_key
+
+    public DataQueue(int maxSize) {
+        mRes = TrafficSenseService.getContext().getResources();
+        mSettings = getDefaultSharedPreferences(TrafficSenseService.getContext());
+
         mMaxSize = maxSize;
         this.mDeque = EvictingQueue.create(mMaxSize);
-        this.flushThreshold = flushThreshold;
         initThreshold();
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(TrafficSenseService.getContext());
         initBroadcastReceiver();
-        Timber.d("DataQueue: constructor called with maxSize: "+maxSize+" flushThreshold: "+flushThreshold);
     }
 
     public void onDataReady(DataPacket data) {
@@ -76,6 +82,7 @@ public class DataQueue {
     }
 
     public boolean increaseThreshold() {
+        int flushThreshold = mSettings.getInt(mRes.getString(R.string.debug_settings_upload_threshold_key), 24);
         if (activeThreshold + flushThreshold < mMaxSize) {
             activeThreshold += flushThreshold;
             return true;
@@ -85,7 +92,7 @@ public class DataQueue {
     }
 
     public void initThreshold() {
-        activeThreshold = this.flushThreshold;
+        activeThreshold = mSettings.getInt(mRes.getString(R.string.debug_settings_upload_threshold_key), 24);
     }
 
     public boolean shouldBeFlushed() {

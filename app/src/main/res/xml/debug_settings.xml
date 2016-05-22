@@ -80,14 +80,19 @@
 
     </PreferenceCategory>
 
-    <!--<PreferenceCategory-->
-        <!--android:title="@string/debug_settings_upload">-->
+    <PreferenceCategory
+        android:title="@string/debug_settings_upload">
 
-        <!--<Preference android:key="@string/debug_settings_restore_defaults_key"-->
-                    <!--android:title="@string/debug_settings_restore_defaults_title"-->
-                    <!--android:summary="@string/debug_settings_restore_defaults_summary"/>-->
+        <fi.aalto.trafficsense.trafficsense.ui.SeekBarPreference
+            android:key="@string/debug_settings_upload_threshold_key"
+            android:title="@string/debug_settings_upload_threshold_title"
+            android:summary="@string/debug_settings_upload_threshold_summary"
+            android:defaultValue="24"
+            sbp:minValue="2"
+            sbp:maxValue="100"
+            sbp:unit="@string/points" />
 
-    <!--</PreferenceCategory>-->
+    </PreferenceCategory>
 
     <PreferenceCategory
         android:title="@string/debug_settings_restore">
