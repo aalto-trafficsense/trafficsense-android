@@ -37,16 +37,29 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="5.6.2016"
                     android:id="@+id/main_path_date"
                     android:background="@color/white"
                     android:textColor="@color/black"
                     android:onClick="pathDateClick"
                     android:singleLine="true"/>
-
-
         </FrameLayout>
 
-
+        <FrameLayout
+            android:id="@+id/main_service_off_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:background="@drawable/border"
+            android:backgroundTint="@color/colorInVehicle"
+            android:layout_centerInParent="true"
+            android:visibility="gone">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="@string/service_off"
+                    android:textColor="@color/white"
+                    android:singleLine="true"/>
+        </FrameLayout>
 
 </RelativeLayout>

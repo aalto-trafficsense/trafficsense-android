@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity
     private MenuItem mTrafficItem;
     private TextView mPathDate;
     private FrameLayout mPathDateLayout;
+    private FrameLayout mServiceOffLayout;
     // private FloatingActionButton mFab;
 
     private GoogleMap mMap;
@@ -153,6 +154,7 @@ public class MainActivity extends AppCompatActivity
 
         mPathDate = (TextView) findViewById(R.id.main_path_date);
         mPathDateLayout = (FrameLayout) findViewById(R.id.main_path_date_layout);
+        mServiceOffLayout = (FrameLayout) findViewById(R.id.main_service_off_layout);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -482,9 +484,11 @@ public class MainActivity extends AppCompatActivity
         if (running) {
             mShutdownItem.setVisible(true);
             mStartupItem.setVisible(false);
+            mServiceOffLayout.setVisibility(View.GONE);
         } else {
             mStartupItem.setVisible(true);
             mShutdownItem.setVisible(false);
+            mServiceOffLayout.setVisibility(View.VISIBLE);
         }
     }
 
