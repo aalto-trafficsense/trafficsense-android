@@ -50,7 +50,6 @@
             android:layout_height="wrap_content"
             android:padding="8dp"
             android:background="@drawable/border"
-            android:backgroundTint="@color/colorInVehicle"
             android:layout_centerInParent="true"
             android:visibility="gone">
                 <TextView
@@ -59,6 +58,7 @@
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/service_off"
                     android:textColor="@color/white"
+                    android:background="@color/colorInVehicle"
                     android:singleLine="true"/>
         </FrameLayout>
 

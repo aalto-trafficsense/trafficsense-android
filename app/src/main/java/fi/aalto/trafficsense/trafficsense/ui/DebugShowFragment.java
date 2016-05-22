@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +50,7 @@ public class DebugShowFragment extends Fragment {
 
     private TableRow mLocationHeaderRow;
     private TextView mLocationLabelTextField;
-    private TextView mLocationProviderTextField;
+    private TextView mLocationStatusTextField;
     private TextView mLocationAccuracyLabelTextField;
     private TextView mLocationAccuracyTextField;
     private TextView mLocationTimeTextField;
@@ -133,7 +132,7 @@ public class DebugShowFragment extends Fragment {
 
         mLocationHeaderRow = (TableRow) getActivity().findViewById(R.id.debug_show_location_header_row);
         mLocationLabelTextField = (TextView) getActivity().findViewById(R.id.debug_show_location_label);
-        mLocationProviderTextField = (TextView) getActivity().findViewById(R.id.debug_show_location_provider);
+        mLocationStatusTextField = (TextView) getActivity().findViewById(R.id.debug_show_location_provider);
         mLocationTimeTextField = (TextView) getActivity().findViewById(R.id.debug_show_location_time);
         mLocationAccuracyLabelTextField = (TextView) getActivity().findViewById(R.id.debug_show_location_accuracy_label);
         mLocationAccuracyTextField = (TextView) getActivity().findViewById(R.id.debug_show_location_accuracy);
@@ -208,15 +207,17 @@ public class DebugShowFragment extends Fragment {
             case STOPPED:
                 headerTextColor = R.color.grayText;
                 headerBackgroundColor = R.color.colorStill;
+                mLocationStatusTextField.setText(R.string.location_state_off);
                 break;
             case SLEEPING:
                 headerTextColor = R.color.colorSubtitleText;
                 headerBackgroundColor = R.color.colorTilting;
+                mLocationStatusTextField.setText(R.string.location_state_nopower);
                 break;
             default:
                 headerTextColor = R.color.normalText;
                 headerBackgroundColor = R.color.colorRunning;
-
+                mLocationStatusTextField.setText(R.string.location_state_high);
                 break;
         }
 
@@ -273,7 +274,6 @@ public class DebugShowFragment extends Fragment {
     private void updateLocation (Intent i) {
         if (i.hasExtra(InternalBroadcasts.KEY_LOCATION_UPDATE)) {
             Location l = i.getParcelableExtra(InternalBroadcasts.KEY_LOCATION_UPDATE);
-            mLocationProviderTextField.setText(l.getProvider());
 
             Date locationDate = new Date(l.getTime());
             String locTime = DateFormat.getTimeInstance().format(locationDate);
@@ -287,16 +287,16 @@ public class DebugShowFragment extends Fragment {
             mLocationAccuracyTextField.setText(String.format("%.0fm", acc));
             if (acc >= (float) mSettings.getInt(mRes.getString(R.string.debug_settings_location_accuracy_key), 50)) {
                 mLocationLabelTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
-                mLocationProviderTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
+                mLocationStatusTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
                 mLocationHeaderRow.setBackgroundColor(ContextCompat.getColor(this.getContext(), R.color.colorInVehicle));
             } else {
                 mLocationLabelTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
-                mLocationProviderTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
+                mLocationStatusTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
                 mLocationHeaderRow.setBackgroundColor(ContextCompat.getColor(this.getContext(), R.color.colorWalking));
             }
         }
 
-//        mLocationProviderTextField.setGravity(Gravity.END);
+//        mLocationStatusTextField.setGravity(Gravity.END);
 //        mLocationAccuracyTextField.setGravity(Gravity.END);
     }
 

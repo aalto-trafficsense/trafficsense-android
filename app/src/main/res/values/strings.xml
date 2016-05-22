@@ -163,6 +163,7 @@
     <string name="debug_settings_upload_threshold_key">settings_sleep_threshold</string>
     <string name="debug_settings_upload_threshold_title">Queue threshold: </string>
     <string name="debug_settings_upload_threshold_summary">Limit for trying to upload.</string>
+    <string name="upload_threshold_change">Change applied after next upload.</string>
 
     <string name="debug_settings_restore">Reset</string>
 
@@ -181,6 +182,10 @@
     <string name="upload_state_failed">Failed</string>
     <string name="upload_state_disabled">Disabled</string>
     <string name="upload_state_unknown">Unknown state</string>
+
+    <string name="location_state_off">Off</string>
+    <string name="location_state_nopower">No Power</string>
+    <string name="location_state_high">High accuracy</string>
 
     <string name="not_available">Not available</string>
 
