@@ -3,8 +3,7 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:orientation="vertical"
-              tools:context="fi.aalto.trafficsense.trafficsense.ui.DebugShowFragment"
-              android:background="@android:color/transparent">
+              tools:context="fi.aalto.trafficsense.trafficsense.ui.DebugShowFragment">
 
     <!-- Service State -->
     <RelativeLayout
@@ -131,7 +130,6 @@
                           android:layout_width="match_parent"
                           android:layout_height="match_parent"
                           android:textColor="@color/black"
-                          android:background="@color/white"
                           android:layout_weight="2"
                           android:gravity="end"/>
             </TableRow>
@@ -139,8 +137,7 @@
                 <TextView android:id="@+id/debug_show_location_time"
                           android:layout_width="match_parent"
                           android:layout_height="match_parent"
-                          android:textColor="@color/black"
-                          android:background="@color/white"/>
+                          android:textColor="@color/black"/>
             </TableRow>
 
         </TableLayout>

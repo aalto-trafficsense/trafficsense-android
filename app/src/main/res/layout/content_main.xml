@@ -19,30 +19,36 @@
                   xmlns:tools="http://schemas.android.com/tools"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
-                  tools:context=".ui.MainActivity"/>
+                  tools:context=".ui.MainActivity"
+                  android:layout_alignParentTop="true"
+                  android:layout_toRightOf="@+id/main_service_off_layout"
+                  android:layout_toEndOf="@+id/main_service_off_layout"/>
 
         <FrameLayout
             android:id="@+id/main_path_date_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="3dp"
-            android:background="@drawable/border"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="16dp"
             android:layout_marginRight="16dp"
             android:visibility="gone">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:id="@+id/main_path_date"
-                    android:background="@color/white"
-                    android:textColor="@color/black"
-                    android:onClick="pathDateClick"
-                    android:singleLine="true"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorSubtitleText"
+                android:background="@drawable/date_button"
+                android:textAllCaps="false"
+                android:id="@+id/main_path_date"
+                android:onClick="pathDateClick"
+                android:elevation="4dp"
+                android:theme="@style/AppTheme"/>
+
         </FrameLayout>
+
+
 
         <FrameLayout
             android:id="@+id/main_service_off_layout"
@@ -61,5 +67,6 @@
                     android:background="@color/colorInVehicle"
                     android:singleLine="true"/>
         </FrameLayout>
+
 
 </RelativeLayout>

@@ -210,7 +210,7 @@
     <string name="today">Today</string>
     <string name="preftest_categories_key">testiavain</string>
     <string name="debug_mode_open">Debug mode open.</string>
-    <string name="service_off">Service off.</string>
+    <string name="service_off">Service off</string>
 
 
 </resources>

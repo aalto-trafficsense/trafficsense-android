@@ -197,7 +197,6 @@ public class TrafficSenseService extends Service {
                 switch (action) {
                     case InternalBroadcasts.KEY_DEBUG_SHOW_REQ:
                         updateUploadState(mUploadState);
-                    case InternalBroadcasts.KEY_DEBUG_SETTINGS_REQ:
                     case InternalBroadcasts.KEY_MAIN_ACTIVITY_REQ:
                         updateServiceState(mServiceState);
                         break;
@@ -240,7 +239,6 @@ public class TrafficSenseService extends Service {
         };
 
         final IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(InternalBroadcasts.KEY_DEBUG_SETTINGS_REQ);
         intentFilter.addAction(InternalBroadcasts.KEY_DEBUG_SHOW_REQ);
         intentFilter.addAction(InternalBroadcasts.KEY_MAIN_ACTIVITY_REQ);
         intentFilter.addAction(InternalBroadcasts.KEY_VIEW_RESUMED);
@@ -282,7 +280,7 @@ public class TrafficSenseService extends Service {
         if (mLocalBroadcastManager!=null && isViewActive())
         {
             Bundle args = new Bundle();
-            args.putInt(LABEL_STATE_INDEX,newState.ordinal());
+            args.putInt(LABEL_STATE_INDEX,mUploadState.ordinal());
             broadcastNewState(InternalBroadcasts.KEY_UPLOAD_STATE_UPDATE, args);
 
         }
