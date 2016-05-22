@@ -162,7 +162,7 @@ public class BackendStorage {
         }
     }
 
-    public static int getQueueSize() { return mRes.getInteger(R.integer.queue_size); }
+//    public static int getQueueSize() { return mRes.getInteger(R.integer.queue_size); }
 
     public static String getServerName() {
         if (mRes.getBoolean(R.bool.use_test_server)) return mRes.getString(R.string.server_address_test);

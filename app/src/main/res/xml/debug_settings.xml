@@ -84,10 +84,10 @@
         android:title="@string/debug_settings_upload">
 
         <CheckBoxPreference
-            android:key="@string/debug_settings_upload_threshold_key"
+            android:key="@string/debug_settings_upload_enabled_key"
             android:defaultValue="true"
-            android:title="@string/debug_settings_upload_threshold_title"
-            android:summary="@string/debug_settings_upload_threshold_summary" />
+            android:title="@string/debug_settings_upload_enabled_title"
+            android:summary="@string/debug_settings_upload_enabled_summary" />
 
         <fi.aalto.trafficsense.trafficsense.ui.SeekBarPreference
             android:key="@string/debug_settings_upload_threshold_key"

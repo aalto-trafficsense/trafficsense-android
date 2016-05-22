@@ -75,7 +75,7 @@ public class LocationSensor implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
         mSensorFilter.addLocation(location);
-        Timber.d("Received location update, request interval: ", mSettings.getInt(mRes.getString(R.string.debug_settings_location_interval_key), -1));
+        Timber.d("Received location update, request interval: %d", mSettings.getInt(mRes.getString(R.string.debug_settings_location_interval_key), -1));
     }
 
     public void disconnect() {
