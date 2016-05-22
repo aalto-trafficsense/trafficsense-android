@@ -160,7 +160,7 @@
     <string name="debug_settings_upload_enabled_title">Upload enabled</string>
     <string name="debug_settings_upload_enabled_summary">Passing threshold sends points.</string>
 
-    <string name="debug_settings_upload_threshold_key">settings_sleep_threshold</string>
+    <string name="debug_settings_upload_threshold_key">settings_upload_threshold</string>
     <string name="debug_settings_upload_threshold_title">Queue threshold: </string>
     <string name="debug_settings_upload_threshold_summary">Limit for trying to upload.</string>
     <string name="upload_threshold_change">Change applied after next upload.</string>
