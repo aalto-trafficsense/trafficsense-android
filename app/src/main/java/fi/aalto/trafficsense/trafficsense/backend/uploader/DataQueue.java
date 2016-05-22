@@ -31,11 +31,11 @@ public class DataQueue {
 
     // debug_settings_upload_threshold_key
 
-    public DataQueue(int maxSize) {
+    public DataQueue() {
         mRes = TrafficSenseService.getContext().getResources();
         mSettings = getDefaultSharedPreferences(TrafficSenseService.getContext());
 
-        mMaxSize = maxSize;
+        mMaxSize = mRes.getInteger(R.integer.queue_size);
         this.mDeque = EvictingQueue.create(mMaxSize);
         initThreshold();
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(TrafficSenseService.getContext());
