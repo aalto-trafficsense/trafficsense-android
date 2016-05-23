@@ -95,19 +95,19 @@ public enum ActivityType {
     public static int getActivityIcon(ActivityType type) {
         switch(type) {
             case IN_VEHICLE:
-                return R.drawable.md_activity_vehicle_24dp;
+                return R.drawable.map_activity_vehicle;
             case ON_BICYCLE:
-                return R.drawable.md_activity_bicycle_24dp1;
+                return R.drawable.map_activity_bicycle;
             case RUNNING:
-                return R.drawable.md_activity_running_24dp;
+                return R.drawable.map_activity_running;
             case STILL:
-                return R.drawable.md_activity_still;
+                return R.drawable.map_activity_still;
             case TILTING:
                 return R.drawable.md_activity_tilting_24dp;
             case UNKNOWN:
                 return R.drawable.md_activity_unknown_24dp;
             case WALKING:
-                return R.drawable.md_activity_walking_24dp;
+                return R.drawable.map_activity_walking;
             default:
                 return R.drawable.md_activity_unknown_24dp;
         }
