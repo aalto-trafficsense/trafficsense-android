@@ -184,7 +184,7 @@
     <string name="upload_state_unknown">Unknown state</string>
 
     <string name="location_state_off">Off</string>
-    <string name="location_state_nopower">No Power</string>
+    <string name="location_state_nopower">No power</string>
     <string name="location_state_high">High accuracy</string>
 
     <string name="not_available">Not available</string>

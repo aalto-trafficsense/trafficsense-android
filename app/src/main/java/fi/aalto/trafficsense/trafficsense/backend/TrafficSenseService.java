@@ -20,6 +20,7 @@ import fi.aalto.trafficsense.trafficsense.backend.backend_util.PlayServiceInterf
 import fi.aalto.trafficsense.trafficsense.backend.uploader.RegularRoutesPipeline;
 import fi.aalto.trafficsense.trafficsense.ui.MainActivity;
 import fi.aalto.trafficsense.trafficsense.util.*;
+import timber.log.Timber;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -276,11 +277,11 @@ public class TrafficSenseService extends Service {
     // Update upload state
     private static void updateUploadState(TSUploadState newState) {
         mUploadState = newState;
-        if (!mPipeline.isUploadEnabled()) mUploadState = DISABLED;
+        if (!mPipeline.isUploadEnabled()) newState = DISABLED;
         if (mLocalBroadcastManager!=null && isViewActive())
         {
             Bundle args = new Bundle();
-            args.putInt(LABEL_STATE_INDEX,mUploadState.ordinal());
+            args.putInt(LABEL_STATE_INDEX,newState.ordinal());
             broadcastNewState(InternalBroadcasts.KEY_UPLOAD_STATE_UPDATE, args);
 
         }

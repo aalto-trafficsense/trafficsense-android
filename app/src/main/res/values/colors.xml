@@ -16,7 +16,7 @@
     <color name="colorTrain">#f7f700</color>
     <color name="colorSubway">#f6bd00</color>
     <color name="colorBus">#e66313</color>
-    <color name="colorTilting">#0000ff</color>
+    <color name="colorTilting">@color/colorPrimary</color>
     <color name="colorStill">#ffffff</color>
     <color name="colorUnknown">#808080</color>
 

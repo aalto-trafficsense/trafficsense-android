@@ -104,11 +104,6 @@ public class PipelineThread {
         );
     }
 
-    // getter for Pipeline to get Handler needed for instantiation of archive, update and upload actions
-    public Handler getHandler() {
-        return mHandler;
-    }
-
     /**
      * Try sending all data in data queue to server and wait for it to finish.
      *
@@ -202,10 +197,6 @@ public class PipelineThread {
         mThreadGlue.verify();
         mRestClient.destroy();
         mHandlerThread.quit();
-    }
-
-    public int queueSize() {
-        return mDataQueue.size();
     }
 
 }

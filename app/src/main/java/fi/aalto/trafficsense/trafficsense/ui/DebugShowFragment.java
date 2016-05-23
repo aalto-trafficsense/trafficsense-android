@@ -14,6 +14,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.util.*;
+import timber.log.Timber;
 
 import java.text.DateFormat;
 import java.util.Date;

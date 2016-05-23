@@ -39,7 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorSubtitleText"
-                android:background="@drawable/date_button"
+                android:background="@drawable/ts_button1"
                 android:textAllCaps="false"
                 android:id="@+id/main_path_date"
                 android:onClick="pathDateClick"
