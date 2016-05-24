@@ -595,7 +595,7 @@ public class MainActivity extends AppCompatActivity
 
     // MJR: The following two methods circumvent a bug in Lollipop, which is causing the
     // Application to crash when drawing vector icons.
-    // Original marker add was: mMarker = mMap.addMarker(new MarkerOptions().position(myPos).icon(BitmapDescriptorFactory.fromResource(ActivityType.getActivityIcon(topActivity)));
+    // Original marker add was: mMarker = mMap.addMarker(new MarkerOptions().position(myPos).icon(BitmapDescriptorFactory.fromResource(ActivityType.getMapActivityIcon(topActivity)));
     // Same issue found in activity change.
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -633,7 +633,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 latestPosition = nextPosition;
                 if (mMarker == null) {
-                    Bitmap bitmap = getBitmap(mContext, ActivityType.getActivityIcon(latestActivityType));
+                    Bitmap bitmap = getBitmap(mContext, ActivityType.getMapActivityIcon(latestActivityType));
                     mMarker = mMap.addMarker(new MarkerOptions()
                             .position(latestPosition)
                             .icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
@@ -678,8 +678,8 @@ public class MainActivity extends AppCompatActivity
             ActivityType topActivity=a.getFirst().Type;
             if ((mMarker != null) && (topActivity != latestActivityType)) {
                 // This one works with everything earlier than Lollipop
-                // mMarker.setIcon(BitmapDescriptorFactory.fromResource(ActivityType.getActivityIcon(topActivity)));
-                Bitmap bitmap = getBitmap(mContext, ActivityType.getActivityIcon(topActivity));
+                // mMarker.setIcon(BitmapDescriptorFactory.fromResource(ActivityType.getMapActivityIcon(topActivity)));
+                Bitmap bitmap = getBitmap(mContext, ActivityType.getMapActivityIcon(topActivity));
                 mMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
                 latestActivityType = topActivity;
             }
