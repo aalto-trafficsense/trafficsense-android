@@ -854,6 +854,7 @@ public class MainActivity extends AppCompatActivity
         LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
         boolean boundsOk = false; // Only build the new bounds if there is some content
         List<LatLng> coordinates;
+        Set<GeoJsonFeature> newFeatures = new HashSet<>();
         for (GeoJsonFeature feature : pathLayer.getFeatures()) {
             coordinates = null;
             if (feature.hasGeometry()) {
@@ -866,8 +867,8 @@ public class MainActivity extends AppCompatActivity
                 mStyle.setColor(ContextCompat.getColor(mContext, getActivityColorByString(activity)));
                 feature.setLineStringStyle(mStyle);
                 if (publicTransport.contains(activity)) { // Special marker for public transport
-                    // Find mid-coordinates of the trip
                     if (coordinates != null) {
+                        // Find mid-coordinates of the trip
                         LatLng pos = coordinates.get(coordinates.size()/2);
                         GeoJsonFeature transportIconFeature = new GeoJsonFeature(new GeoJsonPoint(pos), null, null, null);
                         GeoJsonPointStyle pointStyle = pathLayer.getDefaultPointStyle();
@@ -883,7 +884,7 @@ public class MainActivity extends AppCompatActivity
                         Bitmap bitmap = getBitmap(mContext, getTransportIcon(activity));
                         pointStyle.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
                         transportIconFeature.setPointStyle(pointStyle);
-                        pathLayer.addFeature(transportIconFeature);
+                        newFeatures.add(transportIconFeature);
                     }
                 }
             }
@@ -894,6 +895,11 @@ public class MainActivity extends AppCompatActivity
                 for (LatLng pos : coordinates) {
                     boundsBuilder.include(pos);
                 }
+            }
+        } // for-loop
+        if (!newFeatures.isEmpty()) { // Add any route icons we may have accumulated
+            for (GeoJsonFeature feature : newFeatures) {
+                pathLayer.addFeature(feature);
             }
         }
         if (isTodaysPath() && latestPosition!=null) {
