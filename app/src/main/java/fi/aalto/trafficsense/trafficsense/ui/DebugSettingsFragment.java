@@ -23,14 +23,10 @@ public class DebugSettingsFragment extends PreferenceFragmentCompat implements S
     public void onCreatePreferences(Bundle bundle, String s) {
         //add xml
         addPreferencesFromResource(R.xml.debug_settings);
-
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this.getContext());
-
         mSettings = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         setRestoreButton();
-
-        // onSharedPreferenceChanged(sharedPreferences, getString(R.string.preftest_categories_key));
     }
 
     private void setRestoreButton() {

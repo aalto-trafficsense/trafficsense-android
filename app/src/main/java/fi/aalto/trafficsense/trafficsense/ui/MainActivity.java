@@ -477,6 +477,11 @@ public class MainActivity extends AppCompatActivity
 
     private void selectStadi(boolean stadi) {
         TrafficSenseApplication.setStadi(stadi);
+        if (stadi) {
+            Toast.makeText(this, R.string.lang_select_stadi, Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, R.string.lang_select_default, Toast.LENGTH_LONG).show();
+        }
         this.recreate();
     }
 

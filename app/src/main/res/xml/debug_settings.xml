@@ -109,12 +109,4 @@
 
     </PreferenceCategory>
 
-    <!--<ListPreference-->
-    <!--android:defaultValue="popular"-->
-    <!--android:entries="@array/categories"-->
-    <!--android:entryValues="@array/categories_value"-->
-    <!--android:summary="Select categories of movies"-->
-    <!--android:title="Categories"-->
-    <!--android:key="@string/preftest_categories_key" />-->
-
 </PreferenceScreen>
