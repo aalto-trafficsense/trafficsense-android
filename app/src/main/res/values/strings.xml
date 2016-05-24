@@ -177,7 +177,7 @@
     <string name="debug_settings_restore_defaults_title">Restore defaults</string>
     <string name="debug_settings_restore_defaults_summary">Restore these settings to default values.</string>
 
-
+    <string name="settings_locale_stadi_key">settings_locale_stadi</string>
 
 
     <string name="upload_state_switchedoff">Switched off</string>
@@ -217,6 +217,8 @@
     <string name="preftest_categories_key">testiavain</string>
     <string name="debug_mode_open">Debug mode open.</string>
     <string name="service_off">Service off</string>
+    <string name="navigation_lang_default">Default language</string>
+    <string name="navigation_lang_stadi">Stadi</string>
 
 
 </resources>

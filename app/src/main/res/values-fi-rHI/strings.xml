@@ -3,8 +3,9 @@
     <string name="app_name">TrafficSense</string>
 
     <string name="service_state_label">Sörviisi:</string>
-    <string name="service_state_running">Sprinttaa</string>
+    <string name="service_state_running">Futaa</string>
     <string name="service_state_sleeping">Elbaa</string>
 
+    <string name="navigation_energy_certificate">Päästöspettari</string>
 
 </resources>

@@ -3,6 +3,7 @@ package fi.aalto.trafficsense.trafficsense;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.*;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
@@ -13,6 +14,8 @@ import fi.aalto.trafficsense.trafficsense.util.LocalBinderServiceConnection;
 import fi.aalto.trafficsense.trafficsense.util.TSServiceState;
 import timber.log.Timber;
 
+import java.util.Locale;
+
 import static android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences;
 import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_STATE_INDEX;
 import static fi.aalto.trafficsense.trafficsense.util.TSServiceState.*;
@@ -22,14 +25,17 @@ import static fi.aalto.trafficsense.trafficsense.util.TSServiceState.*;
  */
 public class TrafficSenseApplication extends Application {
 
-    SharedPreferences mSettings;
-    Resources mRes;
+    private static SharedPreferences mSettings;
+    private static Resources mRes;
 
     private static Context mContext;
     private static TrafficSenseService mTSService;
     private TSServiceState mTSServiceState; // Keep track of "STOPPED" state, since the service cannot respond to that
     private BroadcastReceiver mBroadcastReceiver;
     private LocalBroadcastManager mLocalBroadcastManager;
+
+    private static Configuration configDefault = new Configuration();
+    private static Configuration configStadi = new Configuration();
 
     @Override
     public void onCreate() {
@@ -69,12 +75,28 @@ public class TrafficSenseApplication extends Application {
                 startTSService();
             }
         }
+
+        // Configure locales
+        configDefault.locale = Locale.getDefault();
+        configStadi.locale = new Locale("fi", "HI");
+
+        setStadi(mSettings.getBoolean(mRes.getString(R.string.settings_locale_stadi_key), false));
     }
 
     public static Context getContext() {
         return mContext;
     }
 
+    public static void setStadi(boolean b) {
+        if (b) {
+            mContext.getResources().updateConfiguration(configStadi, null);
+       } else {
+            mContext.getResources().updateConfiguration(configDefault, null);
+        }
+        SharedPreferences.Editor editor = mSettings.edit();
+        editor.putBoolean(mRes.getString(R.string.settings_locale_stadi_key), b);
+        editor.apply();
+    }
     /******************************
      * TrafficSense Service Handler
      ******************************/

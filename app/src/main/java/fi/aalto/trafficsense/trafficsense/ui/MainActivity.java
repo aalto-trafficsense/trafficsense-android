@@ -44,6 +44,7 @@ import com.google.android.gms.maps.model.*;
 import com.google.common.base.Optional;
 import com.google.maps.android.geojson.*;
 import fi.aalto.trafficsense.trafficsense.R;
+import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
 import fi.aalto.trafficsense.trafficsense.util.*;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -84,6 +85,8 @@ public class MainActivity extends AppCompatActivity
     private MenuItem mDebugItem;
     private MenuItem mPathItem;
     private MenuItem mTrafficItem;
+    private MenuItem mLangDefaultItem;
+    private MenuItem mLangStadiItem;
     private TextView mPathDate;
     private FrameLayout mPathDateLayout;
     private FrameLayout mServiceOffLayout;
@@ -149,6 +152,8 @@ public class MainActivity extends AppCompatActivity
         mStartupItem = navMenu.findItem(R.id.nav_startup);
         mShutdownItem = navMenu.findItem(R.id.nav_shutdown);
         mDebugItem = navMenu.findItem(R.id.nav_debug);
+        mLangDefaultItem = navMenu.findItem(R.id.nav_lang_default);
+        mLangStadiItem = navMenu.findItem(R.id.nav_lang_stadi);
 
         mPathDate = (TextView) findViewById(R.id.main_path_date);
         mPathDateLayout = (FrameLayout) findViewById(R.id.main_path_date_layout);
@@ -183,6 +188,7 @@ public class MainActivity extends AppCompatActivity
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
+        setDrawerLanguage(mSettings.getBoolean(mRes.getString(R.string.settings_locale_stadi_key), false));
     }
 
     @Override
@@ -435,6 +441,12 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_feedback:
                 openFeedbackForm();
                 break;
+            case R.id.nav_lang_default:
+                selectStadi(false);
+                break;
+            case R.id.nav_lang_stadi:
+                selectStadi(true);
+                break;
             case R.id.nav_login:
                 openActivity(LoginActivity.class);
                 break;
@@ -463,6 +475,16 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    private void selectStadi(boolean stadi) {
+        TrafficSenseApplication.setStadi(stadi);
+        this.recreate();
+    }
+
+    private void setDrawerLanguage(boolean stadi) {
+        mLangStadiItem.setVisible(!stadi);
+        mLangDefaultItem.setVisible(stadi);
+    }
+
     // Carry out all service start/stop request tasks
     private void setServiceRunning(boolean running) {
         serviceRunningToDrawer(running);
@@ -479,13 +501,11 @@ public class MainActivity extends AppCompatActivity
 
     // Align drawer menu items with current service state
     private void serviceRunningToDrawer(boolean running) {
+        mShutdownItem.setVisible(running);
+        mStartupItem.setVisible(!running);
         if (running) {
-            mShutdownItem.setVisible(true);
-            mStartupItem.setVisible(false);
             mServiceOffLayout.setVisibility(View.GONE);
         } else {
-            mStartupItem.setVisible(true);
-            mShutdownItem.setVisible(false);
             mServiceOffLayout.setVisibility(View.VISIBLE);
         }
     }
