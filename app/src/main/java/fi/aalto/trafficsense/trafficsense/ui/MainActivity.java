@@ -42,10 +42,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.*;
 import com.google.common.base.Optional;
-import com.google.maps.android.geojson.GeoJsonFeature;
-import com.google.maps.android.geojson.GeoJsonLayer;
-import com.google.maps.android.geojson.GeoJsonLineString;
-import com.google.maps.android.geojson.GeoJsonLineStringStyle;
+import com.google.maps.android.geojson.*;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.util.*;
 import org.json.JSONArray;
@@ -61,8 +58,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.*;
 
 import static android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences;
 import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_STATE_INDEX;
@@ -102,6 +98,8 @@ public class MainActivity extends AppCompatActivity
     private LatLng pathEnd;
     private static Calendar pathCal = Calendar.getInstance();
     private final SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private Set<String> publicTransport = new HashSet<>(Arrays.asList(new String[]
+            {"BUS", "TRAIN", "TRAM", "SUBWAY", "FERRY", "ON_BICYCLE"}));
 
     private GeoJsonLayer pathLayer=null;
 
@@ -829,24 +827,51 @@ public class MainActivity extends AppCompatActivity
     /**
      * Adds the appropriate color to each linestring based on the activity
      * Construct new bounds for the window
-     * Modified from "addColorsToMarkers" from: https://github.com/googlemaps/android-maps-utils/blob/master/demo/src/com/google/maps/android/utils/demo/GeoJsonDemoActivity.java
+     * Add icons for identified public transport
      */
     private void processPath() {
         // Iterate over all the features stored in the layer
         LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
         boolean boundsOk = false; // Only build the new bounds if there is some content
+        List<LatLng> coordinates;
         for (GeoJsonFeature feature : pathLayer.getFeatures()) {
+            coordinates = null;
+            if (feature.hasGeometry()) {
+                coordinates = ((GeoJsonLineString) feature.getGeometry()).getCoordinates();
+            }
             // Check if the activity property exists
             if (feature.hasProperty("activity")) {
                 String activity = feature.getProperty("activity");
                 GeoJsonLineStringStyle mStyle = new GeoJsonLineStringStyle();
                 mStyle.setColor(ContextCompat.getColor(mContext, getActivityColorByString(activity)));
                 feature.setLineStringStyle(mStyle);
+                if (publicTransport.contains(activity)) { // Special marker for public transport
+                    // Find mid-coordinates of the trip
+                    if (coordinates != null) {
+                        LatLng pos = coordinates.get(coordinates.size()/2);
+                        GeoJsonFeature transportIconFeature = new GeoJsonFeature(new GeoJsonPoint(pos), null, null, null);
+                        GeoJsonPointStyle pointStyle = pathLayer.getDefaultPointStyle();
+                        StringBuilder title = new StringBuilder();
+                        title.append(getTransportString(activity));
+                        if (feature.hasProperty("line_name")) {
+                            String lineName = feature.getProperty("line_name");
+                            if (!lineName.equals("null")) {
+                                title.append(": ").append(feature.getProperty("line_name"));
+                            }
+                        }
+                        pointStyle.setTitle(title.toString());
+                        Bitmap bitmap = getBitmap(mContext, getTransportIcon(activity));
+                        pointStyle.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
+                        transportIconFeature.setPointStyle(pointStyle);
+                        pathLayer.addFeature(transportIconFeature);
+                    }
+                }
             }
-            if (feature.hasGeometry()) {
+            // Check that our route is included in the bounds
+            if (coordinates != null) {
                 boundsOk = true; // A LineString will always contain at least two points
-                GeoJsonLineString ls = (GeoJsonLineString)feature.getGeometry();
-                for (LatLng pos : ls.getCoordinates()) {
+//                GeoJsonLineString ls = (GeoJsonLineString)feature.getGeometry();
+                for (LatLng pos : coordinates) {
                     boundsBuilder.include(pos);
                 }
             }
@@ -885,6 +910,43 @@ public class MainActivity extends AppCompatActivity
                 return R.color.colorBus;
             default:
                 return R.color.colorUnknown;
+        }
+    }
+
+    private int getTransportIcon(String activity) {
+        switch(activity) {
+            case "TRAIN":
+                return R.drawable.map_vehicle_train;
+            case "TRAM":
+            case "SUBWAY":
+                return R.drawable.map_vehicle_subway;
+            case "BUS":
+                return R.drawable.map_vehicle_bus;
+            case "FERRY":
+                return R.drawable.md_activity_ferry_24dp;
+            case "ON_BICYCLE":
+                return R.drawable.map_activity_bicycle;
+            default:
+                return R.drawable.md_activity_unknown_24dp;
+        }
+    }
+
+    private String getTransportString(String activity) {
+        switch(activity) {
+            case "TRAIN":
+                return mRes.getString(R.string.train);
+            case "TRAM":
+                return mRes.getString(R.string.tram);
+            case "SUBWAY":
+                return mRes.getString(R.string.subway);
+            case "BUS":
+                return mRes.getString(R.string.bus);
+            case "FERRY":
+                return mRes.getString(R.string.ferry);
+            case "ON_BICYCLE":
+                return mRes.getString(R.string.on_bicycle);
+            default:
+                return mRes.getString(R.string.unknown);
         }
     }
 

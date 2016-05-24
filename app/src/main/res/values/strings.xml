@@ -48,6 +48,12 @@
     <string name="walking">Walking</string>
     <string name="unidentifiable_activity">Unidentified: %1$d</string>
 
+    <string name="train">Train</string>
+    <string name="tram">Tram</string>
+    <string name="subway">Subway</string>
+    <string name="bus">Bus</string>
+    <string name="ferry">Ferry</string>
+
     <string name="service_state_starting">Starting</string>
     <string name="service_state_running">Running</string>
     <string name="service_state_sleeping">Sleeping</string>
