@@ -120,6 +120,8 @@ public class MainActivity extends AppCompatActivity
         mContext = this;
         mRes = this.getResources();
         setContentView(R.layout.activity_main);
+        new ConsentDialog(this).show(); // Only asks for consent if not agreed before
+
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
 
 //        mFab = (FloatingActionButton) findViewById(R.id.fab);

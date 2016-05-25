@@ -127,6 +127,9 @@ public class TrafficSenseApplication extends Application {
                         editor.clear(); // Erase settings
                         editor.commit();
                         PreferenceManager.setDefaultValues(this, R.xml.debug_settings, true); // Set defaults
+                        // Exception: Don't show the research consent again
+                        editor.putBoolean(mRes.getString(R.string.settings_eula_shown_key), true);
+                        // (editor.apply() coming up below - add here if something changes)
                     }
                 }
 

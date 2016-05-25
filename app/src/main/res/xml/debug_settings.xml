@@ -8,7 +8,7 @@
 
         <SwitchPreferenceCompat
             android:key="@string/debug_settings_service_running_key"
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:title="@string/debug_settings_service_running_title"
             android:summary="@string/debug_settings_service_running_summary" />
 

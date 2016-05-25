@@ -180,6 +180,7 @@
 
     <string name="settings_last_version_key">settings_last_version</string>
 
+    <string name="settings_eula_shown_key">settings_eula_shown</string>
 
     <string name="upload_state_switchedoff">Switched off</string>
     <string name="upload_state_signedout">Signed out</string>
@@ -218,5 +219,14 @@
     <string name="debug_mode_open">Debug mode open.</string>
     <string name="service_off">Service off</string>
     <string name="upload_button">Upload</string>
+
+    <string name="research_consent_title">Research Consent</string>
+    <string name="research_consent">
+        Everything I say after this can be used against me in the court of law.\n
+        Here is a second sentence.
+    </string>
+    <string name="research_consent_agree_button">I agree</string>
+    <string name="research_consent_disagree_button">Not acceptable</string>
+    <string name="research_consent_dismissed">Sorry, but this application can only be used if the research consent has been agreed.</string>
 
 </resources>
