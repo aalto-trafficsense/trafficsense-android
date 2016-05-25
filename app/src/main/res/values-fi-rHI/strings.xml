@@ -1,11 +1,220 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">TrafficSense</string>
+    <!--<string name="title_activity_main">TrafficSense</string>-->
+    <string name="title_activity_debugview">Dresaus</string>
+    <string name="title_activity_login">Kirjaudu</string>
+    <string name="title_activity_about">Infot</string>
+    <string name="title_activity_energy_certificate">Päästöspettari</string>
 
-    <string name="service_state_label">Sörviisi:</string>
-    <string name="service_state_running">Futaa</string>
-    <string name="service_state_sleeping">Elbaa</string>
+    <string name="text_close">Sulje</string>
+    <string name="text_continue">Jatka</string>
 
+    <!--<string name="navigation_header_name">TrafficSense</string>-->
+    <!--<string name="navigation_header_email">trafficsense.aalto@gmail.com</string>-->
+
+    <string name="navigation_about">Infot</string>
     <string name="navigation_energy_certificate">Päästöspettari</string>
+
+    <string name="navigation_group2_title">Säädöt</string>
+    <string name="navigation_login">Kirjautuminen</string>
+    <string name="navigation_settings">Säädöt</string>
+    <string name="navigation_startservice">Jeesi pydeen</string>
+    <string name="navigation_shutdown">Jeesi poseen</string>
+    <string name="navigation_debug">Dresaus</string>
+    <string name="navigation_feedback">Paa kommenttia</string>
+    <string name="navigation_transport">Mis dösäs</string>
+    <!--<string name="navigation_lang_default">Default language</string>-->
+    <!--<string name="navigation_lang_stadi">Stadin slangi</string>-->
+    <!--<string name="lang_select_stadi">Bamlaan stadia.</string>-->
+    <!--<string name="lang_select_default">Switching to default language.</string>-->
+
+    <string name="navigation_drawer_open">Loota auki</string>
+    <string name="navigation_drawer_close">Loota poseen</string>
+
+    <string name="main_toolbar_traffic_label">Liikenne</string>
+    <string name="main_toolbar_path_label">Missä mentiin</string>
+
+    <string name="service_state_label">Jeesi:</string>
+
+    <string name="debug_settings_page_title">Hoonaa</string>
+
+    <string name="debug_show_page_title">Kyylää</string>
+    <string name="debug_show_activity_label">Duuni:</string>
+    <string name="debug_show_activitylist_prefix">Rankkaus:</string>
+    <string name="debug_show_client_number_label">Sun numero:</string>
+
+    <string name="debug_show_location_label">Mesta:</string>
+    <string name="debug_show_location_time_label">Viimeks:</string>
+    <string name="debug_show_location_accuracy_label">Tarkkuus:</string>
+
+    <string name="debug_show_upload_label">Lähetys:</string>
+    <string name="debug_show_upload_queue_length_label">Jonoa:</string>
+    <string name="debug_show_upload_latest_upload_label">Viimeks:</string>
+
+    <string name="in_vehicle">Tsöraa</string>
+    <string name="on_bicycle">Fillaroi</string>
+    <string name="running">Sprinttaa</string>
+    <string name="still">Möllöttää</string>
+    <string name="tilting">Huojuu</string>
+    <string name="unknown">Ei hajuu</string>
+    <string name="walking">Dallaa</string>
+    <string name="unidentifiable_activity">Ei tajuu: %1$d</string>
+
+    <string name="train">Stoge</string>
+    <string name="tram">Spora</string>
+    <string name="subway">Tuubi</string>
+    <string name="bus">Dösä</string>
+    <string name="ferry">Lautta</string>
+
+    <string name="service_state_starting">Heräilee</string>
+    <string name="service_state_running">Skulaa</string>
+    <string name="service_state_sleeping">Elbaa</string>
+    <string name="service_state_stopping">Kohta posessa</string>
+    <string name="service_state_stopped">Posessa</string>
+    <string name="service_state_unknown">Ei hajuu</string>
+
+    <string name="interval">Väli:</string>
+    <string name="seconds">sekkaa</string>
+    <string name="minutes">minaa</string>
+    <string name="meters">metriä</string>
+    <string name="points">mestaa</string>
+    <string name="str_clientVersionPrefix">Versio:</string>
+    <string name="str_legalNotice">Pykälät:</string>
+    <string name="str_contributions">Tyypit:</string>
+    <string name="str_ok">Jes</string>
+
+    <string name="login_headerText">Kirjaudu Google-tilillä</string>
+    <string name="action_signIn">Kirjaudu</string>
+    <string name="action_sign_in">Kirjaudu tai rekisteröidy</string>
+    <string name="action_sign_in_short">Kirjaudu</string>
+    <string name="plus_sign_out">Kirjaudu ulos</string>
+    <string name="plus_disconnect">Irrota tili</string>
+    <string name="status_text">Tila: </string>
+    <string name="connection_status_text">Viime yhteyden tila: </string>
+    <string name="status_signing_in">Kirjaudun Googleen…</string>
+    <string name="status_signed_out">Kirjautunut ulos</string>
+    <string name="status_signed_in">Kirjautunut Google-tilille</string>
+    <string name="connection_status_unknown">Ei hajuu</string>
+    <string name="connection_status_connected">Päällä</string>
+    <string name="connection_status_connection_failed">Yhteys kanitti</string>
+    <string name="status_fetch_auth_tokens">Haen kirjaustietoa</string>
+    <string name="status_connecting_to_server">Otan yhteyttä palvelimeen</string>
+    <string name="status_authenticated">Kirjauduttu</string>
+    <string name="status_authentication_failed">Kirjauduminen kanitti</string>
+    <string name="play_services_error">Google Play services ei saatavilla. Ohjelma sulkeutuu.</string>
+
+    <!-- Settings -->
+
+    <string name="debug_settings_general">Yleiset</string>
+
+    <!--<string name="debug_settings_service_running_key">debug_settings_service_running</string>-->
+    <string name="debug_settings_service_running_title">Jeesi pydes</string>
+    <string name="debug_settings_service_running_summary">Jeesii vai ei.</string>
+
+    <!--<string name="debug_settings_debug_mode_key">debug_settings_debug_mode</string>-->
+    <string name="debug_settings_debug_mode_title">Dresaus</string>
+    <string name="debug_settings_debug_mode_summary">Voiks dresaa?</string>
+
+    <!--<string name="debug_settings_ping_threshold_key">settings_ping_limit</string>-->
+    <string name="debug_settings_ping_threshold_title">Huutoraja</string>
+    <string name="debug_settings_ping_threshold_summary">Mikä vaan lähtee, jos menee kauemmin.</string>
+    <string-array name="debug_settings_ping_threshold_titles">
+        <item>Ei huudella</item>
+        <item>Puol tuntii</item>
+        <item>Tunti</item>
+        <item>3 tuntii</item>
+        <item>6 tuntii</item>
+        <item>8 tuntii</item>
+    </string-array>
+    <string-array name="debug_settings_ping_threshold_values">
+        <item>-1</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>480</item>
+    </string-array>
+
+    <string name="debug_settings_location">Mesta</string>
+
+    <!--<string name="debug_settings_location_interval_key">settings_location_interval</string>-->
+    <string name="debug_settings_location_interval_summary">Mestankyselyväli.</string>
+
+    <!--<string name="debug_settings_location_accuracy_key">debug_settings_location_accuracy_limit</string>-->
+    <string name="debug_settings_location_accuracy_title">Tarkkuusraja: </string>
+    <string name="debug_settings_location_accuracy_summary">Hyvän mestan raja (jonoon, ympyrä kartalle ja sillai).</string>
+
+    <string name="debug_settings_activity">Duuni</string>
+
+    <!--<string name="debug_settings_activity_interval_key">settings_activity_interval</string>-->
+    <string name="debug_settings_activity_interval_summary">Duunikyselyväli.</string>
+
+    <!--<string name="debug_settings_only_good_bypass_key">settings_only_good_bypass</string>-->
+    <string name="debug_settings_only_good_bypass_title">Vaan buenot ohittaa</string>
+    <string name="debug_settings_only_good_bypass_summary">Vaan hyvät duunit menee ohi matkaleikkurista.</string>
+
+    <!--<string name="debug_settings_sleep_threshold_key">settings_sleep_threshold</string>-->
+    <string name="debug_settings_sleep_threshold_title">Nukkukello: </string>
+    <string name="debug_settings_sleep_threshold_summary">Kauaks pitää venaa ennen ku voi elbata.</string>
+
+    <string name="debug_settings_upload">Lähetys</string>
+
+    <!--<string name="debug_settings_upload_enabled_key">settings_upload_enabled</string>-->
+    <string name="debug_settings_upload_enabled_title">Lähetys pydessä</string>
+    <string name="debug_settings_upload_enabled_summary">Mestat lähtee ku raja ylittyy.</string>
+
+    <!--<string name="debug_settings_upload_threshold_key">settings_upload_threshold</string>-->
+    <string name="debug_settings_upload_threshold_title">Jonoraja: </string>
+    <string name="debug_settings_upload_threshold_summary">Yli tän pannaan meneen.</string>
+    <string name="upload_threshold_change">Säätyy kun seuraavat on menny.</string>
+
+    <string name="debug_settings_restore">Nollaus</string>
+
+    <!--<string name="debug_settings_restore_defaults_key">debug_settings_restore_defaults</string>-->
+    <string name="debug_settings_restore_defaults_title">Palauta oletukset</string>
+    <string name="debug_settings_restore_defaults_summary">Heivaa sun säädöt.</string>
+
+    <!--<string name="settings_locale_stadi_key">settings_locale_stadi</string>-->
+
+
+    <string name="upload_state_switchedoff">Posessa</string>
+    <string name="upload_state_signedout">Pihalla</string>
+    <string name="upload_state_noclientnumber">Sun numero uupuu</string>
+    <string name="upload_state_ready">Pydessä</string>
+    <string name="upload_state_inprogress">Duunaa</string>
+    <string name="upload_state_failed">Tökkäs</string>
+    <string name="upload_state_disabled">Ei pydes</string>
+    <string name="upload_state_unknown">EI hajuu</string>
+
+    <string name="location_state_off">Poses</string>
+    <string name="location_state_nopower">Halpa</string>
+    <string name="location_state_high">Hyvä</string>
+
+    <string name="not_available">En tiiä</string>
+
+    <string name="sleeping">Vetää zetaa</string>
+
+    <!--<string name="location_permission_persistently_refused">TrafficSense is based on location information. The background service will close now.</string>-->
+    <!--<string name="location_permission_refused">TrafficSense does not work meaningfully without location permissions.</string>-->
+    <!--<string name="no_location_permission">No location permission.</string>-->
+
+    <!--<string name="accounts_permission_persistently_refused">Cannot login to service without permission to access accounts.</string>-->
+    <!--<string name="accounts_permission_explanation">TrafficSense needs access to your Google account to log you in. It will not access any of your contacts.</string>-->
+
+    <string name="today">Tänään</string>
+    <!--<string name="path_future_date_request">Your future path is unknown to me.</string>-->
+    <string name="error_creating_map">Ei tu karttaa!</string>
+    <string name="path_no_data_for_date">En snaijaa mitä duunasit.</string>
+    <string name="path_no_public_transport">Dösät ja muut jengihärpättimet tsekataan huomiseks.</string>
+
+    <string name="not_signed_in">Ooks kirjautunu?</string>
+    <!--<string name="path_url_broken">Path URL broken.</string>-->
+    <!--<string name="certificate_url_broken">Certificate URL broken.</string>-->
+
+    <string name="debug_mode_open">Ny voi dresata.</string>
+    <string name="service_off">Pelit seis</string>
+    <string name="upload_button">Paa meneen</string>
 
 </resources>

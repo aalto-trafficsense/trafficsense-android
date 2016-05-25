@@ -203,7 +203,7 @@
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="Upload"
+                    android:text="@string/upload_button"
                     android:textAllCaps="false"
                     android:id="@+id/debug_show_upload_button"
                     android:onClick="uploadButton"
