@@ -123,6 +123,7 @@ public class TrafficSenseApplication extends Application {
             } else { // Both lastVersion and thisVersion have values
                 if (!mSettings.getBoolean(mRes.getString(R.string.debug_settings_debug_mode_key), false)) { // Not in debug-mode
                     if (!lastVersion.equals(thisVersion)) { // Version changing
+                        Timber.d("End-user client upgrade detected - wiping settings.");
                         editor.clear(); // Erase settings
                         editor.commit();
                         PreferenceManager.setDefaultValues(this, R.xml.debug_settings, true); // Set defaults

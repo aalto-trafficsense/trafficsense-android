@@ -32,6 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:text="@string/text_continue"
+                android:textAllCaps="false"
             android:layout_marginTop="20dp"
             android:background="@color/green"
             android:visibility="visible"
@@ -72,6 +73,7 @@
                 android:layout_weight="1" android:text="@string/plus_sign_out"
                 android:background="#D8D8D8"
                 android:textColor="@color/black"
+                    android:textAllCaps="false"
                 android:layout_margin="5dp" />
 
             <Button android:id="@+id/plus_disconnect_button"
@@ -79,6 +81,7 @@
                 android:layout_height="match_parent" android:layout_weight="1"
                 android:text="@string/plus_disconnect"
                 android:background="#D8D8D8"
+                    android:textAllCaps="false"
                 android:textColor="@color/black"
                 android:layout_margin="5dp" />
 
@@ -91,6 +94,7 @@
             android:layout_marginTop="32dp"
             android:background="#EFEFEF"
             android:textColor="@color/black"
+                android:textAllCaps="false"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp" />
 
