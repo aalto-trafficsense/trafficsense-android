@@ -23,7 +23,7 @@
     <string name="navigation_startservice">Jeesi pydeen</string>
     <string name="navigation_shutdown">Jeesi poseen</string>
     <string name="navigation_debug">Dresaus</string>
-    <string name="navigation_feedback">Paa kommenttia</string>
+    <string name="navigation_feedback">Paa kuittii</string>
     <string name="navigation_transport">Mis dösäs</string>
     <!--<string name="navigation_lang_default">Default language</string>-->
     <!--<string name="navigation_lang_stadi">Stadin slangi</string>-->
@@ -115,7 +115,7 @@
 
     <!--<string name="debug_settings_debug_mode_key">debug_settings_debug_mode</string>-->
     <string name="debug_settings_debug_mode_title">Dresaus</string>
-    <string name="debug_settings_debug_mode_summary">Voiks dresaa?</string>
+    <string name="debug_settings_debug_mode_summary">Voiks dresata?</string>
 
     <!--<string name="debug_settings_ping_threshold_key">settings_ping_limit</string>-->
     <string name="debug_settings_ping_threshold_title">Huutoraja</string>
@@ -157,7 +157,7 @@
 
     <!--<string name="debug_settings_sleep_threshold_key">settings_sleep_threshold</string>-->
     <string name="debug_settings_sleep_threshold_title">Nukkukello: </string>
-    <string name="debug_settings_sleep_threshold_summary">Kauaks pitää venaa ennen ku voi elbata.</string>
+    <string name="debug_settings_sleep_threshold_summary">Kauaks pitää venaa ennen ku saa elbata.</string>
 
     <string name="debug_settings_upload">Lähetys</string>
 
@@ -186,7 +186,7 @@
     <string name="upload_state_inprogress">Duunaa</string>
     <string name="upload_state_failed">Tökkäs</string>
     <string name="upload_state_disabled">Ei pydes</string>
-    <string name="upload_state_unknown">EI hajuu</string>
+    <string name="upload_state_unknown">Ei hajuu</string>
 
     <string name="location_state_off">Poses</string>
     <string name="location_state_nopower">Halpa</string>

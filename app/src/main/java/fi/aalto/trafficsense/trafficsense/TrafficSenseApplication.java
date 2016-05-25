@@ -3,6 +3,7 @@ package fi.aalto.trafficsense.trafficsense;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.*;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -49,10 +50,10 @@ public class TrafficSenseApplication extends Application {
         mRes = getContext().getResources();
         mSettings = getDefaultSharedPreferences(getContext());
 
+        initializeDefaultSettings();
+
 //        Timber.d("--- TrafficSenseApplication pre-def sees activitysensor interval as: %d", mSettings.getInt(mRes.getString(R.string.debug_settings_activity_interval_key), -1));
 
-        // Load preferences from xml on the first execution
-        PreferenceManager.setDefaultValues(this, R.xml.debug_settings, false);
 
 //        Timber.d("--- TrafficSenseApplication post-def sees activitysensor interval as: %d", mSettings.getInt(mRes.getString(R.string.debug_settings_activity_interval_key), -1));
 
@@ -97,6 +98,44 @@ public class TrafficSenseApplication extends Application {
         editor.putBoolean(mRes.getString(R.string.settings_locale_stadi_key), b);
         editor.apply();
     }
+
+    /* Do the following:
+    1) If no previous version has been saved to settings, load defaults
+    2) If client version has changed since the saved one and debug is not enabled, clear and reload settings
+    3) Save the current version string to defaults
+     */
+    private void initializeDefaultSettings() {
+        SharedPreferences.Editor editor = mSettings.edit();
+        String lastVersion = mSettings.getString(mRes.getString(R.string.settings_last_version_key), null);
+        String thisVersion = null;
+        try {
+            thisVersion = getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            Timber.e("Client version not obtained.");
+        }
+
+        if (lastVersion == null) { // No last version saved to settings
+            // Load preferences from xml on the first execution
+            PreferenceManager.setDefaultValues(this, R.xml.debug_settings, false);
+        } else {
+            if (thisVersion == null) { // Something weird going on - load the defaults anyway
+                PreferenceManager.setDefaultValues(this, R.xml.debug_settings, false);
+            } else { // Both lastVersion and thisVersion have values
+                if (!mSettings.getBoolean(mRes.getString(R.string.debug_settings_debug_mode_key), false)) { // Not in debug-mode
+                    if (!lastVersion.equals(thisVersion)) { // Version changing
+                        editor.clear(); // Erase settings
+                        editor.commit();
+                        PreferenceManager.setDefaultValues(this, R.xml.debug_settings, true); // Set defaults
+                    }
+                }
+
+            }
+
+        }
+        editor.putString(mRes.getString(R.string.settings_last_version_key), thisVersion);
+        editor.apply();
+   }
+
     /******************************
      * TrafficSense Service Handler
      ******************************/

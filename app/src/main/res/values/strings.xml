@@ -178,6 +178,8 @@
 
     <string name="settings_locale_stadi_key">settings_locale_stadi</string>
 
+    <string name="settings_last_version_key">settings_last_version</string>
+
 
     <string name="upload_state_switchedoff">Switched off</string>
     <string name="upload_state_signedout">Signed out</string>

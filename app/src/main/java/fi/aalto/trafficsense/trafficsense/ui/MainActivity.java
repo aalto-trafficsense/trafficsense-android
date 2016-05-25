@@ -87,6 +87,7 @@ public class MainActivity extends AppCompatActivity
     private MenuItem mTrafficItem;
     private MenuItem mLangDefaultItem;
     private MenuItem mLangStadiItem;
+    private MenuItem mTransportReportItem;
     private TextView mPathDate;
     private FrameLayout mPathDateLayout;
     private FrameLayout mServiceOffLayout;
@@ -154,6 +155,7 @@ public class MainActivity extends AppCompatActivity
         mDebugItem = navMenu.findItem(R.id.nav_debug);
         mLangDefaultItem = navMenu.findItem(R.id.nav_lang_default);
         mLangStadiItem = navMenu.findItem(R.id.nav_lang_stadi);
+        mTransportReportItem = navMenu.findItem(R.id.nav_transport);
 
         mPathDate = (TextView) findViewById(R.id.main_path_date);
         mPathDateLayout = (FrameLayout) findViewById(R.id.main_path_date_layout);
@@ -200,7 +202,9 @@ public class MainActivity extends AppCompatActivity
         BroadcastHelper.simpleBroadcast(mLocalBroadcastManager, InternalBroadcasts.KEY_MAIN_ACTIVITY_REQ);
         checkLocationPermission(); // Check the dynamic location permissions
         serviceRunningToDrawer(mSettings.getBoolean(mRes.getString(R.string.debug_settings_service_running_key), true));
-        mDebugItem.setVisible(mSettings.getBoolean(mRes.getString(R.string.debug_settings_debug_mode_key), false));
+        Boolean dbg = mSettings.getBoolean(mRes.getString(R.string.debug_settings_debug_mode_key), false);
+        mDebugItem.setVisible(dbg);
+        mTransportReportItem.setVisible(dbg);
     }
 
     /**
