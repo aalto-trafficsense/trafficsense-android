@@ -118,6 +118,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        TrafficSenseApplication.refreshStadi();
         mContext = this;
         mRes = this.getResources();
         setContentView(R.layout.activity_main);

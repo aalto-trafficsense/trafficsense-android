@@ -35,6 +35,7 @@ public class AboutActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        TrafficSenseApplication.refreshStadi();
         mContext = this;
 
         setContentView(R.layout.activity_about);

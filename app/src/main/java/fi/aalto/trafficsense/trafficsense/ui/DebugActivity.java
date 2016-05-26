@@ -29,6 +29,7 @@ public class DebugActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        TrafficSenseApplication.refreshStadi();
         setContentView(R.layout.activity_debug);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.debug_toolbar);
         setSupportActionBar(myToolbar);

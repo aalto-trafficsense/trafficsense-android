@@ -31,12 +31,6 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        TrafficSenseApplication.refreshStadi();
-        super.onConfigurationChanged(newConfig);
-    }
-
-    @Override
     public void onDestroy() {
         mLocalBroadcastManager.unregisterReceiver(mBroadcastReceiver);
         super.onDestroy();

@@ -34,6 +34,7 @@ public class EnergyCertificateActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        TrafficSenseApplication.refreshStadi();
         setContentView(R.layout.activity_energy_certificate);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.energy_certificate_toolbar);
         setSupportActionBar(myToolbar);
