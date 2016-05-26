@@ -861,6 +861,7 @@ public class MainActivity extends AppCompatActivity
      * Add icons for identified public transport
      */
     private void processPath() {
+        Boolean today = isTodaysPath();
         // Iterate over all the features stored in the layer
         LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
         boolean boundsOk = false; // Only build the new bounds if there is some content
@@ -877,25 +878,27 @@ public class MainActivity extends AppCompatActivity
                 GeoJsonLineStringStyle mStyle = new GeoJsonLineStringStyle();
                 mStyle.setColor(ContextCompat.getColor(mContext, getActivityColorByString(activity)));
                 feature.setLineStringStyle(mStyle);
-                if (publicTransport.contains(activity)) { // Special marker for public transport
-                    if (coordinates != null) {
-                        // Find mid-coordinates of the trip
-                        LatLng pos = coordinates.get(coordinates.size()/2);
-                        GeoJsonFeature transportIconFeature = new GeoJsonFeature(new GeoJsonPoint(pos), null, null, null);
-                        GeoJsonPointStyle pointStyle = pathLayer.getDefaultPointStyle();
-                        StringBuilder title = new StringBuilder();
-                        title.append(getTransportString(activity));
-                        if (feature.hasProperty("line_name")) {
-                            String lineName = feature.getProperty("line_name");
-                            if (!lineName.equals("null")) {
-                                title.append(": ").append(feature.getProperty("line_name"));
+                if (!today) {
+                    if (publicTransport.contains(activity)) { // Special marker for public transport
+                        if (coordinates != null) {
+                            // Find mid-coordinates of the trip
+                            LatLng pos = coordinates.get(coordinates.size()/2);
+                            GeoJsonFeature transportIconFeature = new GeoJsonFeature(new GeoJsonPoint(pos), null, null, null);
+                            GeoJsonPointStyle pointStyle = pathLayer.getDefaultPointStyle();
+                            StringBuilder title = new StringBuilder();
+                            title.append(getTransportString(activity));
+                            if (feature.hasProperty("line_name")) {
+                                String lineName = feature.getProperty("line_name");
+                                if (!lineName.equals("null")) {
+                                    title.append(": ").append(feature.getProperty("line_name"));
+                                }
                             }
+                            pointStyle.setTitle(title.toString());
+                            Bitmap bitmap = getBitmap(mContext, getTransportIcon(activity));
+                            pointStyle.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
+                            transportIconFeature.setPointStyle(pointStyle);
+                            newFeatures.add(transportIconFeature);
                         }
-                        pointStyle.setTitle(title.toString());
-                        Bitmap bitmap = getBitmap(mContext, getTransportIcon(activity));
-                        pointStyle.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
-                        transportIconFeature.setPointStyle(pointStyle);
-                        newFeatures.add(transportIconFeature);
                     }
                 }
             }
@@ -913,7 +916,7 @@ public class MainActivity extends AppCompatActivity
                 pathLayer.addFeature(feature);
             }
         }
-        if (isTodaysPath() && latestPosition!=null) {
+        if (today && latestPosition!=null) {
             boundsBuilder.include(latestPosition);
             // Quick-n-dirty solution to bypass all the queued points with one line
             if (pathEnd!=null) addLine(pathEnd, latestPosition, ActivityType.getActivityColor(latestActivityType));

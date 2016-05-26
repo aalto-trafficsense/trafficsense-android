@@ -185,7 +185,7 @@
     <string name="upload_state_ready">Pydessä</string>
     <string name="upload_state_inprogress">Duunaa</string>
     <string name="upload_state_failed">Tökkäs</string>
-    <string name="upload_state_disabled">Ei pydes</string>
+    <string name="upload_state_disabled">Blokattu</string>
     <string name="upload_state_unknown">Ei hajuu</string>
 
     <string name="location_state_off">Posessa</string>

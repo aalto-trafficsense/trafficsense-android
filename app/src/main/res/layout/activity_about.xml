@@ -22,14 +22,15 @@
     </android.support.design.widget.AppBarLayout>
 
     <Button android:id="@+id/abt_ok_button"
-            style="?metaButtonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:longClickable="true"
             android:text="@string/str_ok"
-            android:textAllCaps="false"/>
+            android:textAllCaps="false"
+            android:textColor="@color/colorSubtitleText"
+            android:background="@drawable/ts_button1"/>
 
     <ScrollView
         android:id="@+id/about_scrollview"
