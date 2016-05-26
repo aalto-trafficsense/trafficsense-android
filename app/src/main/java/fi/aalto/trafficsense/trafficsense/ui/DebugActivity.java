@@ -9,6 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
 import fi.aalto.trafficsense.trafficsense.util.BroadcastHelper;
@@ -22,6 +23,7 @@ public class DebugActivity extends AppCompatActivity {
     ViewPager mViewPager;
 
     private LocalBroadcastManager mLocalBroadcastManager;
+
 
 
     @Override
@@ -50,6 +52,7 @@ public class DebugActivity extends AppCompatActivity {
     {
         super.onResume();
         BroadcastHelper.broadcastViewResumed(mLocalBroadcastManager, true);
+
     }
 
     @Override

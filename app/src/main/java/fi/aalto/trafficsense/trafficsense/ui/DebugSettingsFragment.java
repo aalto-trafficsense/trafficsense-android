@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.preference.*;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.backend.uploader.RegularRoutesPipeline;
@@ -78,8 +80,16 @@ public class DebugSettingsFragment extends PreferenceFragmentCompat implements S
 
         // Upload enabled change
         if (key.equals(getString(R.string.debug_settings_upload_enabled_key))) {
-            RegularRoutesPipeline.setUploadEnabledState(mSettings.getBoolean(key, true));
-            // Update status for this view
+            Boolean enabled = mSettings.getBoolean(key, true);
+            RegularRoutesPipeline.setUploadEnabledState(enabled);
+
+            Button mUploadButton = (Button) getActivity().findViewById(R.id.debug_show_upload_button);
+
+            // Don't show the button on the dash
+            if (enabled) mUploadButton.setVisibility(View.VISIBLE);
+            else mUploadButton.setVisibility(View.INVISIBLE);
+
+            // Request view update
             mLocalBroadcastManager.sendBroadcast(new Intent(InternalBroadcasts.KEY_DEBUG_SHOW_REQ));
         }
 

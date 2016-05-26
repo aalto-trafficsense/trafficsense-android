@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <bool name="use_test_server">true</bool>
-    <integer name="queue_size">1000</integer>
+    <integer name="queue_size">4096</integer>
 </resources>

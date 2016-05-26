@@ -11,13 +11,15 @@ import fi.aalto.trafficsense.trafficsense.util.DataPacket;
 import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
 import timber.log.Timber;
 
+import java.util.Deque;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Queue;
 
 import static android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class DataQueue {
-    private final Queue<DataPoint> mDeque;
+    private final Deque<DataPoint> mDeque;
 //    private final int flushThreshold;
     private final int mMaxSize;
     private int activeThreshold;
@@ -36,15 +38,17 @@ public class DataQueue {
         mSettings = getDefaultSharedPreferences(TrafficSenseService.getContext());
 
         mMaxSize = mRes.getInteger(R.integer.queue_size);
-        this.mDeque = EvictingQueue.create(mMaxSize);
+        // Evictingqueue automatically allocates the full size!!
+//        this.mDeque = EvictingQueue.create(mMaxSize);
+        this.mDeque = new LinkedList<>();
         initThreshold();
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(TrafficSenseService.getContext());
         initBroadcastReceiver();
     }
 
     public void onDataReady(DataPacket data) {
-
         DataPoint dataPoint = new DataPoint(System.currentTimeMillis(), mNextSequence++, data.getLocationData(), data.getActivityData());
+        if (size() >= mMaxSize) this.mDeque.removeFirst();
         this.mDeque.add(dataPoint);
         broadcastQueueStatus();
     }

@@ -10,6 +10,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TableRow;
 import android.widget.TextView;
 import fi.aalto.trafficsense.trafficsense.R;
@@ -61,6 +62,7 @@ public class DebugShowFragment extends Fragment {
     private TextView mUploadStatusTextField;
     private TextView mUploadQueueLengthTextField;
     private TextView mUploadTimeTextField;
+    private Button mUploadButton;
 
     /* Display values */
     private TSServiceState DS_ServiceState;
@@ -76,7 +78,9 @@ public class DebugShowFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+        mUploadButton = (Button) getActivity().findViewById(R.id.debug_show_upload_button);
     }
 
     @Override
@@ -104,6 +108,10 @@ public class DebugShowFragment extends Fragment {
         BroadcastHelper.simpleBroadcast(mLocalBroadcastManager, InternalBroadcasts.KEY_DEBUG_SHOW_REQ);
         activityIntervalTimer = 0;
         locationIntervalTimer = 0;
+
+        // Align button status
+        if (mSettings.getBoolean(getString(R.string.debug_settings_upload_enabled_key), true)) mUploadButton.setVisibility(View.VISIBLE);
+        else mUploadButton.setVisibility(View.INVISIBLE);
     }
 
     @Override
