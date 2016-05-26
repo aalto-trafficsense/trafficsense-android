@@ -151,8 +151,12 @@ public class TrafficSenseService extends Service {
         if (newState != mServiceState) {
             updateServiceState(newState);
             if (newState==SLEEPING) {
+                // Set sleep notification
                 NotificationManager nM = (NotificationManager) TrafficSenseService.getContext().getSystemService(NOTIFICATION_SERVICE);
                 nM.notify(ONGOING_NOTIFICATION_ID, buildServiceStateNotification());
+                // Tidy up
+                mPipeline.requestUploadThread();
+                System.gc();
             }
         }
     }

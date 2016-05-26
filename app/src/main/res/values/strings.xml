@@ -13,6 +13,8 @@
 
     <string name="navigation_header_name">TrafficSense</string>
     <string name="navigation_header_email">trafficsense.aalto@gmail.com</string>
+    <string name="email_subject">Sent from client</string>
+    <string name="email_startactivity_text">Preparing to send email...</string>
 
     <string name="navigation_about">About</string>
     <string name="navigation_energy_certificate">Energy certificate</string>

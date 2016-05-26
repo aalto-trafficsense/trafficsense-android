@@ -78,9 +78,7 @@ public class DebugShowFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-        mUploadButton = (Button) getActivity().findViewById(R.id.debug_show_upload_button);
     }
 
     @Override
@@ -97,6 +95,7 @@ public class DebugShowFragment extends Fragment {
         initFields();
         mRes = this.getResources();
         mSettings = getDefaultSharedPreferences(getActivity());
+
     }
 
     @Override
@@ -151,6 +150,8 @@ public class DebugShowFragment extends Fragment {
         mUploadStatusTextField = (TextView) getActivity().findViewById(R.id.debug_show_upload_state);
         mUploadQueueLengthTextField = (TextView) getActivity().findViewById(R.id.debug_show_queue_length);
         mUploadTimeTextField = (TextView) getActivity().findViewById(R.id.debug_show_latest_upload);
+
+        mUploadButton = (Button) getActivity().findViewById(R.id.debug_show_upload_button);
 
     }
 

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools"
+           tools:ignore="MissingTranslation">
     <bool name="use_test_server">true</bool>
     <integer name="queue_size">4096</integer>
+    <string name="trafficsense_web_page">http://aef.aalto.fi/en/research/trafficsense/</string>
 </resources>

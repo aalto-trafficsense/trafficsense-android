@@ -165,14 +165,6 @@ public class MainActivity extends AppCompatActivity
         mPathDateLayout = (FrameLayout) findViewById(R.id.main_path_date_layout);
         mServiceOffLayout = (FrameLayout) findViewById(R.id.main_service_off_layout);
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        if (mapFragment != null) {
-            mapFragment.getMapAsync(this);
-        } else {
-            Toast.makeText(this, R.string.error_creating_map, Toast.LENGTH_SHORT).show();
-        }
 
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
         mStorage = BackendStorage.create(mContext);
@@ -188,6 +180,17 @@ public class MainActivity extends AppCompatActivity
             pathCal.set(Calendar.MONTH, mPref.getInt(SharedPrefs.KEY_PATH_MONTH, pathCal.get(Calendar.MONTH)));
             pathCal.set(Calendar.DAY_OF_MONTH, mPref.getInt(SharedPrefs.KEY_PATH_DAY, pathCal.get(Calendar.DAY_OF_MONTH)));
         }
+
+            // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.map);
+            if (mapFragment != null) {
+                Timber.d("Requesting new map");
+                    mapFragment.getMapAsync(this);
+            } else {
+                Toast.makeText(this, R.string.error_creating_map, Toast.LENGTH_SHORT).show();
+            }
+
     }
 
     @Override
@@ -228,7 +231,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onMapLoaded() {
         if (mMap != null) {
-
             if (getSharedBoolean(SharedPrefs.KEY_SHOW_PATH)) { // Redraw current path, if displayed.
                 String geoJsonString = mPref.getString(SharedPrefs.KEY_PATH_OBJECT, null);
                 // Timber.d("GeoJsonString: " + geoJsonString);
@@ -572,6 +574,42 @@ public class MainActivity extends AppCompatActivity
         startActivity(browserIntent);
     }
 
+    /*************************
+     *
+     * Send email
+     *
+     * onClick of project title and email fields in the main drawer
+     *************************/
+
+    public void sendEmail(View view) {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        }
+        final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+
+        emailIntent.setType("plain/text");
+        emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{getString(R.string.navigation_header_email)});
+        emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.email_subject));
+//        emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, "Text");
+
+        startActivity(Intent.createChooser(emailIntent, getString(R.string.email_startactivity_text)));
+    }
+
+    /*************************
+     *
+     * Open TrafficSense web
+     *
+     * onClick of project logo in main drawer
+     *************************/
+
+    public void openTrafficSenseWeb(View view) {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        }
+        launchBrowser(getString(R.string.trafficsense_web_page));
+    }
 
     /*************************
      *

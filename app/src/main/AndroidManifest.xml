@@ -36,6 +36,7 @@
         <activity
             android:name=".ui.SplashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|locale"
+            android:launchMode="singleTask"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -46,6 +47,7 @@
         <activity
             android:name=".ui.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|locale"
+            android:launchMode="singleTask"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme">
         </activity>
@@ -63,6 +65,7 @@
         <activity
             android:name=".ui.DebugActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|locale"
+            android:launchMode="singleTask"
             android:label="@string/title_activity_debugview"
             android:parentActivityName=".ui.MainActivity"
             android:theme="@style/AppTheme">
@@ -73,6 +76,7 @@
         <activity
             android:name=".ui.AboutActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|locale"
+            android:launchMode="singleTask"
             android:label="@string/title_activity_about"
             android:parentActivityName=".ui.MainActivity"
             android:theme="@style/AppTheme">
@@ -83,6 +87,7 @@
         <activity
             android:name=".ui.EnergyCertificateActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|locale"
+            android:launchMode="singleTask"
             android:label="@string/title_activity_energy_certificate"
             android:parentActivityName=".ui.MainActivity"
             android:theme="@style/AppTheme">
