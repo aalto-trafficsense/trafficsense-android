@@ -6,8 +6,8 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
-
 public class ErrorDialogFragment extends DialogFragment {
+
     public static final String KEY_MESSAGE = "MESSAGE";
 
 
@@ -35,6 +35,7 @@ public class ErrorDialogFragment extends DialogFragment {
 
         return dlg;
     }
+
 
 
     /* Static Methods */

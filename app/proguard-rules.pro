@@ -6,6 +6,8 @@
 #
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
+# Katso tämäkin:
+# https://developer.android.com/studio/build/shrink-code.html
 
 # Add any project specific keep options here:
 
@@ -30,6 +32,11 @@
 -keep class fi.aalto.trafficsense.** { *; }
 
 -dontobfuscate
+
+# These were tried for proguard-android-optimize, but they failed
+#-keep class android.support.design.widget.** { *; }
+#-keep class com.android.dx.cf.code.** { *; }
+#-keep class com.android.build.api.transform.** { *; }
 
 # If your project uses WebView with JS, uncomment the following
 # and specify the fully qualified class name to the JavaScript interface

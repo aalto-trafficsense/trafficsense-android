@@ -3,6 +3,7 @@ package fi.aalto.trafficsense.trafficsense.ui;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import com.caverock.androidsvg.SVGImageView;
 import com.caverock.androidsvg.SVGParseException;
 import com.google.common.base.Optional;
 import fi.aalto.trafficsense.trafficsense.R;
+import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
 import fi.aalto.trafficsense.trafficsense.util.BackendStorage;
 
 import java.io.BufferedInputStream;
@@ -56,6 +58,13 @@ public class EnergyCertificateActivity extends AppCompatActivity {
         super.onResume();
         fetchCertificate();
     }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        TrafficSenseApplication.refreshStadi();
+        super.onConfigurationChanged(newConfig);
+    }
+
 
     private void fetchCertificate() {
         Optional<String> token = mStorage.readSessionToken();

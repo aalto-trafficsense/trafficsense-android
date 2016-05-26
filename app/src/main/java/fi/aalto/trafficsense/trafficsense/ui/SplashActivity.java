@@ -4,9 +4,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
 import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
 
 /**
@@ -26,6 +28,12 @@ public class SplashActivity extends AppCompatActivity {
         initBroadcastReceiver();
 
         openActivity(MainActivity.class);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        TrafficSenseApplication.refreshStadi();
+        super.onConfigurationChanged(newConfig);
     }
 
     @Override

@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.*;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -250,6 +251,12 @@ public class MainActivity extends AppCompatActivity
             }
 
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        TrafficSenseApplication.refreshStadi();
+        super.onConfigurationChanged(newConfig);
     }
 
     @Override
@@ -822,7 +829,7 @@ public class MainActivity extends AppCompatActivity
                     if (isTodaysPath()) {
                         setPathOn(); // Today can be on even without content
                     } else {
-                        // No content - uncheck the menu item
+                        // No content, not today
                         Toast.makeText(mContext, R.string.path_no_data_for_date, Toast.LENGTH_SHORT).show();
                     }
                 }

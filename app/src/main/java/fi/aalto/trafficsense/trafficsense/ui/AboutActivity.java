@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import fi.aalto.trafficsense.trafficsense.R;
+import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
 import timber.log.Timber;
 
 import java.io.IOException;
@@ -95,6 +97,13 @@ public class AboutActivity extends AppCompatActivity {
         super.onResume();
         mClickCounter = 0;
     }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        TrafficSenseApplication.refreshStadi();
+        super.onConfigurationChanged(newConfig);
+    }
+
 
 //    /**
 //     * Set up the {@link android.app.ActionBar}, if the API is available.

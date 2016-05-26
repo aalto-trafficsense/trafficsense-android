@@ -3,6 +3,7 @@ package fi.aalto.trafficsense.trafficsense.ui;
 import android.Manifest;
 import android.content.*;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +21,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
 import fi.aalto.trafficsense.trafficsense.R;
+import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
 import fi.aalto.trafficsense.trafficsense.backend.uploader.RegularRoutesPipeline;
 import fi.aalto.trafficsense.trafficsense.util.BackendStorage;
 import fi.aalto.trafficsense.trafficsense.util.Callback;
@@ -177,6 +179,13 @@ public class LoginActivity extends AppCompatActivity
             checkAccountPermission();
         }
     }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        TrafficSenseApplication.refreshStadi();
+        super.onConfigurationChanged(newConfig);
+    }
+
 
     private void checkAccountPermission() {
         if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.GET_ACCOUNTS)

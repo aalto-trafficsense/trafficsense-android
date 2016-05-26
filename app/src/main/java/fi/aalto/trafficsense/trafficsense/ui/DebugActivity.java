@@ -1,5 +1,6 @@
 package fi.aalto.trafficsense.trafficsense.ui;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.*;
@@ -9,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import fi.aalto.trafficsense.trafficsense.R;
+import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
 import fi.aalto.trafficsense.trafficsense.util.BroadcastHelper;
 import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
 import timber.log.Timber;
@@ -48,6 +50,12 @@ public class DebugActivity extends AppCompatActivity {
     {
         super.onResume();
         BroadcastHelper.broadcastViewResumed(mLocalBroadcastManager, true);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        TrafficSenseApplication.refreshStadi();
+        super.onConfigurationChanged(newConfig);
     }
 
     @Override

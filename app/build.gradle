@@ -10,13 +10,15 @@ android {
         targetSdkVersion 23
         versionCode 8
         versionName "0.1.6"
+        resConfigs "en", "fi-rHI"
     }
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
         }
         release {
-            minifyEnabled false
+            shrinkResources true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

@@ -81,7 +81,7 @@ public class TrafficSenseApplication extends Application {
         configDefault.locale = Locale.getDefault();
         configStadi.locale = new Locale("fi", "HI");
 
-        setStadi(mSettings.getBoolean(mRes.getString(R.string.settings_locale_stadi_key), false));
+        refreshStadi();
     }
 
     public static Context getContext() {
@@ -91,13 +91,22 @@ public class TrafficSenseApplication extends Application {
     public static void setStadi(boolean b) {
         if (b) {
             mContext.getResources().updateConfiguration(configStadi, null);
-       } else {
+        } else {
             mContext.getResources().updateConfiguration(configDefault, null);
         }
         SharedPreferences.Editor editor = mSettings.edit();
         editor.putBoolean(mRes.getString(R.string.settings_locale_stadi_key), b);
         editor.apply();
     }
+
+    public static void refreshStadi() {
+        if (mSettings.getBoolean(mRes.getString(R.string.settings_locale_stadi_key), false)) {
+            mContext.getResources().updateConfiguration(configStadi, null);
+        } else {
+            mContext.getResources().updateConfiguration(configDefault, null);
+        }
+    }
+
 
     /* Do the following:
     1) If no previous version has been saved to settings, load defaults
