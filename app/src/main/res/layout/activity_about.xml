@@ -28,7 +28,8 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:longClickable="true"
-            android:text="@string/str_ok" />
+            android:text="@string/str_ok"
+            android:textAllCaps="false"/>
 
     <ScrollView
         android:id="@+id/about_scrollview"

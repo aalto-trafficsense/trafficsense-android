@@ -277,12 +277,14 @@ public class DebugShowFragment extends Fragment {
             Location l = i.getParcelableExtra(InternalBroadcasts.KEY_LOCATION_UPDATE);
 
             Date locationDate = new Date(l.getTime());
-            String locTime = DateFormat.getTimeInstance().format(locationDate);
+            StringBuilder locTime = new StringBuilder(DateFormat.getTimeInstance().format(locationDate));
             if (locationIntervalTimer > 0) {
-                locTime = locTime.concat(" "+mRes.getString(R.string.interval)+" "+((System.currentTimeMillis()-locationIntervalTimer)/1000)+mRes.getString(R.string.seconds));
+                locTime.append(" ").append(mRes.getString(R.string.interval))
+                        .append(" ").append(((System.currentTimeMillis()-locationIntervalTimer)/1000))
+                        .append(" ").append(mRes.getString(R.string.seconds));
             }
             locationIntervalTimer = System.currentTimeMillis();
-            mLocationTimeTextField.setText(locTime);
+            mLocationTimeTextField.setText(locTime.toString());
 
             float acc = l.getAccuracy();
             mLocationAccuracyTextField.setText(String.format("%.0fm", acc));
@@ -308,12 +310,14 @@ public class DebugShowFragment extends Fragment {
             ActivityType topActivity=a.getFirst().Type;
             mLatestActivitiesTextField.setText(a.toString());
 
-            String actTime = a.timeString();
+            StringBuilder actTime = new StringBuilder(a.timeString());
             if (activityIntervalTimer > 0) {
-                actTime = actTime.concat(" "+mRes.getString(R.string.interval)+" "+((System.currentTimeMillis()-activityIntervalTimer)/1000)+mRes.getString(R.string.seconds));
+                actTime.append(" ").append(mRes.getString(R.string.interval))
+                        .append(" ").append((System.currentTimeMillis()-activityIntervalTimer)/1000)
+                        .append(" ").append(mRes.getString(R.string.seconds));
             }
             activityIntervalTimer = System.currentTimeMillis();
-            mActivityTimeTextField.setText(actTime);
+            mActivityTimeTextField.setText(actTime.toString());
             int headerTextColor;
             int headerBackgroundColor;
             switch (topActivity) {

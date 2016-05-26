@@ -75,13 +75,13 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
         mSeekBar.setOnSeekBarChangeListener(this);
 
         if (mUnit!=null) {
-            ((TextView) holder.findViewById(R.id.preference_seekbar_unit)).setText(mUnit);
+            ((TextView) holder.findViewById(R.id.preference_seekbar_unit)).setText(" " + mUnit);
         }
         ((TextView) holder.findViewById(R.id.preference_seekbar_min)).setText(Integer.toString(mMinValue));
         ((TextView) holder.findViewById(R.id.preference_seekbar_max)).setText(Integer.toString(mMaxValue));
 
         mCurrentText = (TextView) holder.findViewById(R.id.preference_seekbar_current);
-        mCurrentText.setText(Integer.toString(mCurrentValue));
+        mCurrentText.setText(" " + Integer.toString(mCurrentValue));
     }
 
     @Override
@@ -89,7 +89,7 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
         if (!fromUser)
             return;
         mCurrentValue = progress + mMinValue;
-        mCurrentText.setText(Integer.toString(mCurrentValue));
+        mCurrentText.setText(" " + Integer.toString(mCurrentValue));
     }
 
     @Override

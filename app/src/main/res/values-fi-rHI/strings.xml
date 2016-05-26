@@ -19,7 +19,7 @@
 
     <string name="navigation_group2_title">Säädöt</string>
     <string name="navigation_login">Kirjautuminen</string>
-    <string name="navigation_settings">Säädöt</string>
+    <string name="navigation_settings">Säädä</string>
     <string name="navigation_startservice">Jeesi pydeen</string>
     <string name="navigation_shutdown">Jeesi poseen</string>
     <string name="navigation_debug">Dresaus</string>
@@ -49,8 +49,8 @@
     <string name="debug_show_location_time_label">Viimeks:</string>
     <string name="debug_show_location_accuracy_label">Tarkkuus:</string>
 
-    <string name="debug_show_upload_label">Lähetys:</string>
-    <string name="debug_show_upload_queue_length_label">Jonoa:</string>
+    <string name="debug_show_upload_label">Tsuppaus:</string>
+    <string name="debug_show_upload_queue_length_label">Venaa:</string>
     <string name="debug_show_upload_latest_upload_label">Viimeks:</string>
 
     <string name="in_vehicle">Tsöraa</string>
@@ -75,7 +75,7 @@
     <string name="service_state_stopped">Posessa</string>
     <string name="service_state_unknown">Ei hajuu</string>
 
-    <string name="interval">Väli:</string>
+    <string name="interval">väli</string>
     <string name="seconds">sekkaa</string>
     <string name="minutes">minaa</string>
     <string name="meters">metriä</string>
@@ -159,16 +159,16 @@
     <string name="debug_settings_sleep_threshold_title">Nukkukello: </string>
     <string name="debug_settings_sleep_threshold_summary">Kauaks pitää venaa ennen ku saa elbata.</string>
 
-    <string name="debug_settings_upload">Lähetys</string>
+    <string name="debug_settings_upload">Tsuppaus</string>
 
     <!--<string name="debug_settings_upload_enabled_key">settings_upload_enabled</string>-->
-    <string name="debug_settings_upload_enabled_title">Lähetys pydessä</string>
+    <string name="debug_settings_upload_enabled_title">Tsuppaus pydessä</string>
     <string name="debug_settings_upload_enabled_summary">Mestat lähtee ku raja ylittyy.</string>
 
     <!--<string name="debug_settings_upload_threshold_key">settings_upload_threshold</string>-->
-    <string name="debug_settings_upload_threshold_title">Jonoraja: </string>
+    <string name="debug_settings_upload_threshold_title">Venaa: </string>
     <string name="debug_settings_upload_threshold_summary">Yli tän pannaan meneen.</string>
-    <string name="upload_threshold_change">Säätyy kun seuraavat on menny.</string>
+    <string name="upload_threshold_change">Säädetään, kun seuraavat on tsupattu.</string>
 
     <string name="debug_settings_restore">Nollaus</string>
 
@@ -188,11 +188,11 @@
     <string name="upload_state_disabled">Ei pydes</string>
     <string name="upload_state_unknown">Ei hajuu</string>
 
-    <string name="location_state_off">Poses</string>
+    <string name="location_state_off">Posessa</string>
     <string name="location_state_nopower">Halpa</string>
-    <string name="location_state_high">Hyvä</string>
+    <string name="location_state_high">Bueno</string>
 
-    <string name="not_available">En tiiä</string>
+    <string name="not_available">Kun tietäs</string>
 
     <string name="sleeping">Vetää zetaa</string>
 

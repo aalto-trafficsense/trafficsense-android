@@ -222,8 +222,27 @@
 
     <string name="research_consent_title">Research Consent</string>
     <string name="research_consent">
-        Everything I say after this can be used against me in the court of law.\n
-        Here is a second sentence.
+        Hyväksymällä tämän suostumuksen vahvistan, että osallistun vapaaehtoisesti TrafficSense-
+        projektiin liittyvään tutkimukseen ja annan suostumukseni siihen, että minusta kertynyttä
+        tutkimusaineistoa käsitellään tutkimusselosteessa kuvatulla tavalla.\n
+        Olen lukenut ja ymmärtänyt TrafficSense-projektin tutkimusselosteen ja vahvistan, että minulle on
+        annettu riittävästi tietoja tutkimuksen kulusta. Olen ymmärtänyt, että osallistumiseni tutkimukseen
+        on täysin vapaaehtoista ja että voin missä tutkimuksen vaiheessa tahansa keskeyttää tutkimuksen
+        ilman mitään seuraamuksia. Ymmärrän, että halutessani saan alla nimetyltä tutkijalta lisätietoja
+        tutkimuksen yleisistä periaatteista ja edistymisestä.\n
+        Tutkimustulokseni ovat vain TrafficSense-projektin tutkijoiden käytettävissä. Tutkimuksesta
+        vastaava tutkija voi kuitenkin antaa muiden yhteistyökumppaniensa analysoida tutkimustuloksiani
+        tieteellisiä tarkoituksia varten ilman erillistä lupaa. Tällöin on huolehdittava siitä, että tulosten
+        anonymiteetti on varmistettu. Tutkimusdatan kaikenlainen kaupallinen hyödyntäminen on kielletty.\n
+        Tutkimustuloksiani voidaan käyttää ilman erillistä uutta suostumusta saman tutkijan Aalto-
+        yliopistossa harjoittamaan muuhun tutkimukseen, joka liittyy samaan tutkimusalueeseen.
+        Ymmärrän, että jatkamalla TrafficSense-sovelluksen käyttöä osallistun tutkimukseen ja että voin
+        keskeyttää tutkimuksen osaltani poistamalla sovelluksen älypuhelimestani. Ennen keskeyttämistä
+        kertynyttä tutkimusdataani voidaan kuitenkin käyttää tutkimuksessa.
+        Tiedossani ei ole terveydellistä seikkaa, joka estäisi tutkimukseen osallistumisen.
+        Mikäli haluat tutkimuksesta lisää tietoa tai sinulla on muuta kysyttävää, voit ottaa yhteyttä:\n
+        Lisätietoja:\n
+        YHTEYSTIEDOT
     </string>
     <string name="research_consent_agree_button">I agree</string>
     <string name="research_consent_disagree_button">Not acceptable</string>
