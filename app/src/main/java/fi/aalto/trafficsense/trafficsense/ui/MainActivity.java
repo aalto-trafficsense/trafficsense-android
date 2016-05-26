@@ -234,7 +234,14 @@ public class MainActivity extends AppCompatActivity
                     // Path on but no cached path (probably today) - fetch a fresh path from the server
                     fetchPath();
                 } else {
-                    cachedPath(geoJsonString);
+                    try {
+                        pathToMap(new JSONObject(geoJsonString));
+                    }
+                    catch (JSONException e) {
+                        Timber.e("Cached path GeoJson conversion returned an exception: " + e.toString());
+                        setPathOff();
+                    }
+
                 }
             }
 
@@ -810,10 +817,7 @@ public class MainActivity extends AppCompatActivity
                     Timber.e("JSONException: " + e.toString());
                 }
                 if (l>0) { // received one or more lines
-                    pathLayer = new GeoJsonLayer(mMap, geoJson);
-                    processPath();
-                    pathLayer.addLayerToMap();
-                    setPathOn();
+                    pathToMap(geoJson);
                 } else {
                     if (isTodaysPath()) {
                         setPathOn(); // Today can be on even without content
@@ -861,7 +865,7 @@ public class MainActivity extends AppCompatActivity
      * Add icons for identified public transport
      */
     private void processPath() {
-        Boolean today = isTodaysPath();
+        Boolean today = isTodaysPath(); // optimise a bit = no lookup for every feature
         // Iterate over all the features stored in the layer
         LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
         boolean boundsOk = false; // Only build the new bounds if there is some content
@@ -1017,19 +1021,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void cachedPath(String geoJsonString) {
-        try {
-            JSONObject geoJson = new JSONObject(geoJsonString);
+    public void pathToMap(JSONObject geoJson) {
             pathLayer = new GeoJsonLayer(mMap, geoJson);
             processPath();
             pathLayer.addLayerToMap();
             setPathOn();
-        }
-        catch (JSONException e) {
-            Timber.e("Cached path GeoJson conversion returned an exception: " + e.toString());
-            setPathOff();
-        }
-
     }
 
 }
