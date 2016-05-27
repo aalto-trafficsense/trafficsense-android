@@ -21,7 +21,7 @@
     <string name="navigation_login">Kirjautuminen</string>
     <string name="navigation_settings">Säädä</string>
     <string name="navigation_startservice">Jeesi pydeen</string>
-    <string name="navigation_shutdown">Jeesi poseen</string>
+    <string name="navigation_stopservice">Jeesi poseen</string>
     <string name="navigation_debug">Dresaus</string>
     <string name="navigation_feedback">Paa kuittii</string>
     <string name="navigation_transport">Mis dösäs</string>
@@ -75,10 +75,10 @@
     <string name="service_state_stopped">Posessa</string>
     <string name="service_state_unknown">Ei hajuu</string>
 
-    <string name="interval">väli</string>
+    <string name="interval">Väli</string>
     <string name="seconds">sekkaa</string>
     <string name="minutes">minaa</string>
-    <string name="meters">metriä</string>
+    <string name="meters">metrii</string>
     <string name="points">mestaa</string>
     <string name="str_clientVersionPrefix">Versio:</string>
     <string name="str_legalNotice">Pykälät:</string>

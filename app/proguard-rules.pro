@@ -31,6 +31,8 @@
 
 -keep class fi.aalto.trafficsense.** { *; }
 
+-optimizations !code/simplification/arithmetic,!field/*,!class/merging/*,!code/allocation/variable
+
 -dontobfuscate
 
 # These were tried for proguard-android-optimize, but they failed

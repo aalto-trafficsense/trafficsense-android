@@ -47,7 +47,7 @@
             <item
                 android:id="@+id/nav_shutdown"
                 android:icon="@drawable/ic_cloud_off_24dp"
-                android:title="@string/navigation_shutdown"/>
+                android:title="@string/navigation_stopservice"/>
             <item
                 android:id="@+id/nav_debug"
                 android:icon="@drawable/ic_bug_report_24dp"

@@ -181,15 +181,14 @@ public class MainActivity extends AppCompatActivity
             pathCal.set(Calendar.DAY_OF_MONTH, mPref.getInt(SharedPrefs.KEY_PATH_DAY, pathCal.get(Calendar.DAY_OF_MONTH)));
         }
 
-            // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.map);
-            if (mapFragment != null) {
-                Timber.d("Requesting new map");
-                    mapFragment.getMapAsync(this);
-            } else {
-                Toast.makeText(this, R.string.error_creating_map, Toast.LENGTH_SHORT).show();
-            }
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        } else {
+            Toast.makeText(this, R.string.error_creating_map, Toast.LENGTH_SHORT).show();
+        }
 
     }
 

@@ -293,10 +293,12 @@ public class DebugShowFragment extends Fragment {
                         .append(" ").append(mRes.getString(R.string.seconds));
             }
             locationIntervalTimer = System.currentTimeMillis();
-            mLocationTimeTextField.setText(locTime.toString());
+            mLocationTimeTextField.setText(locTime);
 
             float acc = l.getAccuracy();
-            mLocationAccuracyTextField.setText(String.format("%.0fm", acc));
+            StringBuilder accuracy = new StringBuilder(String.format("%.0f ", acc));
+            accuracy.append(getString(R.string.meters));
+            mLocationAccuracyTextField.setText(accuracy);
             if (acc >= (float) mSettings.getInt(mRes.getString(R.string.debug_settings_location_accuracy_key), 50)) {
                 mLocationLabelTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
                 mLocationStatusTextField.setTextColor(ContextCompat.getColor(this.getContext(), R.color.colorSubtitleText));
