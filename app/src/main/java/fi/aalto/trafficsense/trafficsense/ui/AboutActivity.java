@@ -105,49 +105,11 @@ public class AboutActivity extends AppCompatActivity {
         super.onConfigurationChanged(newConfig);
     }
 
-
-//    /**
-//     * Set up the {@link android.app.ActionBar}, if the API is available.
-//     */
-//    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-//    private void setupActionBar() {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-//            // Show the Up button in the action bar.
-//            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        }
-//    }
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        int id = item.getItemId();
-//        if (id == android.R.id.home) {
-//            // This ID represents the Home or Up button. In the case of this
-//            // activity, the Up button is shown. Use NavUtils to allow users
-//            // to navigate up one level in the application structure. For
-//            // more details, see the Navigation pattern on Android Design:
-//            //
-//            // http://developer.android.com/design/patterns/navigation.html#up-vs-back
-//            //
-//            // TODO: If Settings has multiple levels, Up should navigate up
-//            // that hierarchy.
-//            NavUtils.navigateUpFromSameTask(this);
-//            return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
-//
-//    /**
-//     * Touch listener to use for in-layout UI controls to delay hiding the
-//     * system UI. This is to prevent the jarring behavior of controls going away
-//     * while interacting with activity UI.
-//     */
-//    View.OnTouchListener mTouchListener = new View.OnTouchListener() {
-//        @Override
-//        public boolean onTouch(View view, MotionEvent motionEvent) {
-//            Timber.d("About onTouchListener touched.");
-//            return false;
-//        }
-//    };
+    @Override
+    protected void onDestroy() {
+        mContext = null;
+        super.onDestroy();
+    }
 
     private void initFields() {
         final TextView clientVersionField = (TextView) findViewById(R.id.abt_clientVersionField);

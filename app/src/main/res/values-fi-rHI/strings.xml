@@ -47,10 +47,10 @@
 
     <string name="debug_show_location_label">Mesta:</string>
     <string name="debug_show_location_time_label">Viimeks:</string>
-    <string name="debug_show_location_accuracy_label">Tarkkuus:</string>
+    <string name="debug_show_location_accuracy_label">Hehtaari:</string>
 
     <string name="debug_show_upload_label">Tsuppaus:</string>
-    <string name="debug_show_upload_queue_length_label">Venaa:</string>
+    <string name="debug_show_upload_queue_length_label">Venailee:</string>
     <string name="debug_show_upload_latest_upload_label">Viimeks:</string>
 
     <string name="in_vehicle">Tsöraa</string>
@@ -110,7 +110,7 @@
     <string name="debug_settings_general">Yleiset</string>
 
     <!--<string name="debug_settings_service_running_key">debug_settings_service_running</string>-->
-    <string name="debug_settings_service_running_title">Jeesi pydes</string>
+    <string name="debug_settings_service_running_title">Jeesi pydessä</string>
     <string name="debug_settings_service_running_summary">Jeesii vai ei.</string>
 
     <!--<string name="debug_settings_debug_mode_key">debug_settings_debug_mode</string>-->
