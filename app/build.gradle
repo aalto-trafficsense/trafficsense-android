@@ -10,7 +10,7 @@ android {
         targetSdkVersion 23
         versionCode 8
         versionName "0.1.6"
-        resConfigs "en", "fi-rHI"
+        resConfigs "en", "fi", "fi-rHI"
     }
     buildTypes {
         debug {

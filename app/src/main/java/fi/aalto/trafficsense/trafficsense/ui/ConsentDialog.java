@@ -7,11 +7,19 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
+import android.text.Html;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.util.BroadcastHelper;
 import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
 
+import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 import static android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences;
 
 /**
@@ -35,12 +43,16 @@ public class ConsentDialog {
             // Show the Eula
             String title = mActivity.getString(R.string.research_consent_title);
 
-            //Includes the updates as well so users know what changed.
-            String message = mActivity.getString(R.string.research_consent);
+            LayoutInflater inflater = (LayoutInflater) mActivity.getSystemService(LAYOUT_INFLATER_SERVICE);
+            View layout = inflater.inflate(R.layout.dialog_consent, null);
+
+            TextView text = (TextView) layout.findViewById(R.id.consent_text);
+            text.setText(R.string.research_consent);
+            text.setMovementMethod(LinkMovementMethod.getInstance());
 
             AlertDialog.Builder builder = new AlertDialog.Builder(mActivity)
                     .setTitle(title)
-                    .setMessage(message)
+                    .setView(layout)
                     .setPositiveButton(R.string.research_consent_agree_button, new Dialog.OnClickListener() {
 
                         @Override
@@ -67,8 +79,6 @@ public class ConsentDialog {
 
                     });
             builder.create().show();
-
-
         }
 
     }

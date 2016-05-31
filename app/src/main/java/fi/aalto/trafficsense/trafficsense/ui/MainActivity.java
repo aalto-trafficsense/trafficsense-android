@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity
     private static Calendar pathCal = Calendar.getInstance();
     private final SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private Set<String> publicTransport = new HashSet<>(Arrays.asList(new String[]
-            {"BUS", "TRAIN", "TRAM", "SUBWAY", "FERRY", "ON_BICYCLE"}));
+            {"BUS", "TRAIN", "TRAM", "SUBWAY", "FERRY"}));
 
     private GeoJsonLayer pathLayer=null;
 

@@ -2,7 +2,7 @@
            tools:ignore="MissingTranslation">
 
     <string name="app_name">TrafficSense</string>
-    <string name="title_activity_main">TrafficSense</string>
+    <string name="title_activity_main" translatable="false">TrafficSense</string>
     <string name="title_activity_debugview">Debug</string>
     <string name="title_activity_login">Sign in</string>
     <string name="title_activity_about">About TrafficSense</string>
@@ -11,8 +11,8 @@
     <string name="text_close">Close</string>
     <string name="text_continue">Continue</string>
 
-    <string name="navigation_header_name">TrafficSense</string>
-    <string name="navigation_header_email">trafficsense.aalto@gmail.com</string>
+    <string name="navigation_header_name" translatable="false">TrafficSense</string>
+    <string name="navigation_header_email" translatable="false">trafficsense.aalto@gmail.com</string>
     <string name="email_subject">Sent from client</string>
     <string name="email_startactivity_text">Preparing to send email...</string>
 
@@ -111,15 +111,15 @@
 
     <string name="debug_settings_general">General</string>
 
-    <string name="debug_settings_service_running_key">debug_settings_service_running</string>
+    <string name="debug_settings_service_running_key" translatable="false">debug_settings_service_running</string>
     <string name="debug_settings_service_running_title">Service running</string>
     <string name="debug_settings_service_running_summary">TrafficSense service on/off.</string>
 
-    <string name="debug_settings_debug_mode_key">debug_settings_debug_mode</string>
+    <string name="debug_settings_debug_mode_key" translatable="false">debug_settings_debug_mode</string>
     <string name="debug_settings_debug_mode_title">Debug mode</string>
     <string name="debug_settings_debug_mode_summary">Are debug features accessible.</string>
 
-    <string name="debug_settings_ping_threshold_key">settings_ping_limit</string>
+    <string name="debug_settings_ping_threshold_key" translatable="false">settings_ping_limit</string>
     <string name="debug_settings_ping_threshold_title">Ping threshold</string>
     <string name="debug_settings_ping_threshold_summary">Any point queued after threshold exceeded.</string>
     <string-array name="debug_settings_ping_threshold_titles">
@@ -141,48 +141,48 @@
 
     <string name="debug_settings_location">Location</string>
 
-    <string name="debug_settings_location_interval_key">settings_location_interval</string>
+    <string name="debug_settings_location_interval_key" translatable="false">settings_location_interval</string>
     <string name="debug_settings_location_interval_summary">Location update request interval and max rate.</string>
 
-    <string name="debug_settings_location_accuracy_key">debug_settings_location_accuracy_limit</string>
+    <string name="debug_settings_location_accuracy_key" translatable="false">debug_settings_location_accuracy_limit</string>
     <string name="debug_settings_location_accuracy_title">Accuracy limit: </string>
     <string name="debug_settings_location_accuracy_summary">Good fix threshold (queue filter, map circle etc.).</string>
 
     <string name="debug_settings_activity">Activity</string>
 
-    <string name="debug_settings_activity_interval_key">settings_activity_interval</string>
+    <string name="debug_settings_activity_interval_key" translatable="false">settings_activity_interval</string>
     <string name="debug_settings_activity_interval_summary">Requested activity recognition report interval.</string>
 
-    <string name="debug_settings_only_good_bypass_key">settings_only_good_bypass</string>
+    <string name="debug_settings_only_good_bypass_key" translatable="false">settings_only_good_bypass</string>
     <string name="debug_settings_only_good_bypass_title">Only good bypass</string>
     <string name="debug_settings_only_good_bypass_summary">Only good activities bypass the queue distance limit criteria (otherwise all).</string>
 
-    <string name="debug_settings_sleep_threshold_key">settings_sleep_threshold</string>
+    <string name="debug_settings_sleep_threshold_key" translatable="false">settings_sleep_threshold</string>
     <string name="debug_settings_sleep_threshold_title">Sleep timeout: </string>
     <string name="debug_settings_sleep_threshold_summary">If activity remains STILL.</string>
 
     <string name="debug_settings_upload">Upload</string>
 
-    <string name="debug_settings_upload_enabled_key">settings_upload_enabled</string>
+    <string name="debug_settings_upload_enabled_key" translatable="false">settings_upload_enabled</string>
     <string name="debug_settings_upload_enabled_title">Upload enabled</string>
     <string name="debug_settings_upload_enabled_summary">Passing threshold sends points.</string>
 
-    <string name="debug_settings_upload_threshold_key">settings_upload_threshold</string>
+    <string name="debug_settings_upload_threshold_key" translatable="false">settings_upload_threshold</string>
     <string name="debug_settings_upload_threshold_title">Queue threshold: </string>
     <string name="debug_settings_upload_threshold_summary">Limit for trying to upload.</string>
     <string name="upload_threshold_change">Change applied after next upload.</string>
 
     <string name="debug_settings_restore">Reset</string>
 
-    <string name="debug_settings_restore_defaults_key">debug_settings_restore_defaults</string>
+    <string name="debug_settings_restore_defaults_key" translatable="false">debug_settings_restore_defaults</string>
     <string name="debug_settings_restore_defaults_title">Restore defaults</string>
     <string name="debug_settings_restore_defaults_summary">Restore these settings to default values.</string>
 
-    <string name="settings_locale_stadi_key">settings_locale_stadi</string>
+    <string name="settings_locale_stadi_key" translatable="false">settings_locale_stadi</string>
 
-    <string name="settings_last_version_key">settings_last_version</string>
+    <string name="settings_last_version_key" translatable="false">settings_last_version</string>
 
-    <string name="settings_eula_shown_key">settings_eula_shown</string>
+    <string name="settings_eula_shown_key" translatable="false">settings_eula_shown</string>
 
     <string name="upload_state_switchedoff">Switched off</string>
     <string name="upload_state_signedout">Signed out</string>
@@ -226,24 +226,26 @@
     <string name="research_consent">
         Hyväksymällä tämän suostumuksen vahvistan, että osallistun vapaaehtoisesti TrafficSense-
         projektiin liittyvään tutkimukseen ja annan suostumukseni siihen, että minusta kertynyttä
-        tutkimusaineistoa käsitellään tutkimusselosteessa kuvatulla tavalla.\n
+        tutkimusaineistoa käsitellään <a href="https://drive.google.com/file/d/0BxXOJCBPJX5sdV9EZ0RST0ZRcDQ/view">tutkimusselosteessa</a> kuvatulla tavalla.\n\n
         Olen lukenut ja ymmärtänyt TrafficSense-projektin tutkimusselosteen ja vahvistan, että minulle on
         annettu riittävästi tietoja tutkimuksen kulusta. Olen ymmärtänyt, että osallistumiseni tutkimukseen
         on täysin vapaaehtoista ja että voin missä tutkimuksen vaiheessa tahansa keskeyttää tutkimuksen
         ilman mitään seuraamuksia. Ymmärrän, että halutessani saan alla nimetyltä tutkijalta lisätietoja
-        tutkimuksen yleisistä periaatteista ja edistymisestä.\n
+        tutkimuksen yleisistä periaatteista ja edistymisestä.\n\n\n
         Tutkimustulokseni ovat vain TrafficSense-projektin tutkijoiden käytettävissä. Tutkimuksesta
         vastaava tutkija voi kuitenkin antaa muiden yhteistyökumppaniensa analysoida tutkimustuloksiani
         tieteellisiä tarkoituksia varten ilman erillistä lupaa. Tällöin on huolehdittava siitä, että tulosten
-        anonymiteetti on varmistettu. Tutkimusdatan kaikenlainen kaupallinen hyödyntäminen on kielletty.\n
+        anonymiteetti on varmistettu. Tutkimusdatan kaikenlainen kaupallinen hyödyntäminen on kielletty.
         Tutkimustuloksiani voidaan käyttää ilman erillistä uutta suostumusta saman tutkijan Aalto-
-        yliopistossa harjoittamaan muuhun tutkimukseen, joka liittyy samaan tutkimusalueeseen.
+        yliopistossa harjoittamaan muuhun tutkimukseen, joka liittyy samaan tutkimusalueeseen.\n\n
         Ymmärrän, että jatkamalla TrafficSense-sovelluksen käyttöä osallistun tutkimukseen ja että voin
         keskeyttää tutkimuksen osaltani poistamalla sovelluksen älypuhelimestani. Ennen keskeyttämistä
-        kertynyttä tutkimusdataani voidaan kuitenkin käyttää tutkimuksessa.
-        Tiedossani ei ole terveydellistä seikkaa, joka estäisi tutkimukseen osallistumisen.
-        Mikäli haluat tutkimuksesta lisää tietoa tai sinulla on muuta kysyttävää, voit ottaa yhteyttä:\n
-        Lisätietoja:\n
+        kertynyttä tutkimusdataani voidaan kuitenkin käyttää tutkimuksessa.\n
+        Tiedossani ei ole terveydellistä seikkaa, joka estäisi tutkimukseen osallistumisen.\n\n
+        Mikäli haluat tutkimuksesta lisää tietoa tai sinulla on muuta kysyttävää, voit ottaa yhteyttä:\n\n
+        Lisätietoja:\n\n
+
+        <a href="http://aef.aalto.fi/en/research/trafficsense/">TrafficSense-projekti</a>\n
         YHTEYSTIEDOT
     </string>
     <string name="research_consent_agree_button">I agree</string>

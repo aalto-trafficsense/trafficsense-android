@@ -102,7 +102,7 @@
     <string name="status_fetch_auth_tokens">Haen kirjaustietoa</string>
     <string name="status_connecting_to_server">Otan yhteyttä palvelimeen</string>
     <string name="status_authenticated">Kirjauduttu</string>
-    <string name="status_authentication_failed">Kirjauduminen kanitti</string>
+    <string name="status_authentication_failed">Kirjautuminen kanitti</string>
     <string name="play_services_error">Google Play services ei saatavilla. Ohjelma sulkeutuu.</string>
 
     <!-- Settings -->
@@ -216,5 +216,7 @@
     <string name="debug_mode_open">Ny voi dresata.</string>
     <string name="service_off">Pelit seis</string>
     <string name="upload_button">Paa meneen</string>
+    <string name="email_startactivity_text">Sähköpostin lähetys</string>
+    <string name="email_subject">Käyttäjäpalaute</string>
 
 </resources>
