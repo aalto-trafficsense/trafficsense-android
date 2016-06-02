@@ -11,6 +11,7 @@
     <string name="text_close">Close</string>
     <string name="text_continue">Continue</string>
 
+    <string name="trafficsense_web_page">https://aaltotrafficsense.wordpress.com/about/</string>
     <string name="navigation_header_name" translatable="false">TrafficSense</string>
     <string name="navigation_header_email" translatable="false">trafficsense.aalto@gmail.com</string>
     <string name="email_subject">Sent from client</string>
@@ -25,8 +26,17 @@
     <string name="navigation_startservice">Service start</string>
     <string name="navigation_stopservice">Service stop</string>
     <string name="navigation_debug">Debug</string>
+
     <string name="navigation_feedback">Send feedback</string>
+    <!--The URL to open when "Send feedback" is selected from the MainActivity Drawer-->
+    <!--NOTE: Strings client_number, client_version and phone_model are replaced in MainActivity by the appropriate values.-->
+    <string name="feedback_form_address">https://docs.google.com/forms/d/1GRvwgUXigE2iclSqAMqd6B2m3SDcs239a9nRrhHOgKM/viewform?entry.1453132440&amp;entry.1290358306=client_number&amp;entry.1714883594=client_version&amp;entry.3621406=phone_model</string>
+
     <string name="navigation_transport">Register transport</string>
+    <!--The URL to open when "Register transport" is selected from the MainActivity Drawer-->
+    <!--NOTE: String client_number is replaced in MainActivity by the appropriate values.-->
+    <string name="transport_form_address">https://docs.google.com/forms/d/14qNjB3apfCVq-DeCW4OLOqDeulUyNCA7g7t1v3dBKcQ/viewform?entry.1350607554&amp;entry.1076972644&amp;entry.949631321=client_number</string>
+
     <string name="navigation_lang_default">Default language</string>
     <string name="navigation_lang_stadi">Stadin slangi</string>
     <string name="lang_select_stadi">Bamlaan stadia.</string>
@@ -222,31 +232,33 @@
     <string name="service_off">Service off</string>
     <string name="upload_button">Upload</string>
 
-    <string name="research_consent_title">Research Consent</string>
+    <string name="research_consent_title">Informed Consent</string>
     <string name="research_consent">
-        Hyväksymällä tämän suostumuksen vahvistan, että osallistun vapaaehtoisesti TrafficSense-
-        projektiin liittyvään tutkimukseen ja annan suostumukseni siihen, että minusta kertynyttä
-        tutkimusaineistoa käsitellään <a href="https://drive.google.com/file/d/0BxXOJCBPJX5sdV9EZ0RST0ZRcDQ/view">tutkimusselosteessa</a> kuvatulla tavalla.\n\n
-        Olen lukenut ja ymmärtänyt TrafficSense-projektin tutkimusselosteen ja vahvistan, että minulle on
-        annettu riittävästi tietoja tutkimuksen kulusta. Olen ymmärtänyt, että osallistumiseni tutkimukseen
-        on täysin vapaaehtoista ja että voin missä tutkimuksen vaiheessa tahansa keskeyttää tutkimuksen
-        ilman mitään seuraamuksia. Ymmärrän, että halutessani saan alla nimetyltä tutkijalta lisätietoja
-        tutkimuksen yleisistä periaatteista ja edistymisestä.\n\n\n
-        Tutkimustulokseni ovat vain TrafficSense-projektin tutkijoiden käytettävissä. Tutkimuksesta
-        vastaava tutkija voi kuitenkin antaa muiden yhteistyökumppaniensa analysoida tutkimustuloksiani
-        tieteellisiä tarkoituksia varten ilman erillistä lupaa. Tällöin on huolehdittava siitä, että tulosten
-        anonymiteetti on varmistettu. Tutkimusdatan kaikenlainen kaupallinen hyödyntäminen on kielletty.
-        Tutkimustuloksiani voidaan käyttää ilman erillistä uutta suostumusta saman tutkijan Aalto-
-        yliopistossa harjoittamaan muuhun tutkimukseen, joka liittyy samaan tutkimusalueeseen.\n\n
-        Ymmärrän, että jatkamalla TrafficSense-sovelluksen käyttöä osallistun tutkimukseen ja että voin
-        keskeyttää tutkimuksen osaltani poistamalla sovelluksen älypuhelimestani. Ennen keskeyttämistä
-        kertynyttä tutkimusdataani voidaan kuitenkin käyttää tutkimuksessa.\n
-        Tiedossani ei ole terveydellistä seikkaa, joka estäisi tutkimukseen osallistumisen.\n\n
-        Mikäli haluat tutkimuksesta lisää tietoa tai sinulla on muuta kysyttävää, voit ottaa yhteyttä:\n\n
-        Lisätietoja:\n\n
-
-        <a href="http://aef.aalto.fi/en/research/trafficsense/">TrafficSense-projekti</a>\n
-        YHTEYSTIEDOT
+        By giving my consent I confirm my voluntary participation in a study belonging
+        to the TrafficSense project and I consent to personal research data collected
+        about me being processed in the ways described in the research description.\n\n
+        I have read and understood <a href="https://aaltotrafficsense.wordpress.com/research/">the research description</a>
+        and confirm that I have received sufficient information on the study. I have understood
+        that my participation is completely voluntary and I am aware of the fact that I have
+        the right to cancel my participation in the study at any time without providing
+        a reason, and without any consequences. I have understood that I can ask for
+        more information about the study from the researcher named below.\n\n
+        The personal research data collected about me is only available for processing
+        by the TrafficSense –project researchers. However, the project leader may give
+        permission for third parties to analyze my research data for scientific purposes
+        without my separate additional approval. In such a case, the anonymity of the
+        results must be ensured. Any commercial use of my research data is not allowed.\n\n
+        I have understood that by continuing to use the TrafficSense application I participate
+        in the study and that I can discontinue my participation in the study by uninstalling
+        the application and that the data collected up to that point can be used in the
+        research. I have understood that I may also cancel my participation in study in the
+        way described in the research description.\n\n
+        I am not aware of any medical or health condition that would prevent me from
+        participating in the study.\n\n
+        For more information on the study or in case of any questions, please contact:\n
+        Project leader, Seppo Törmä\n
+        Phone (switch): (09) 47001\n
+        Email: <a href="mailto:trafficsense.aalto@gmail.com?Subject=Question%20about%20the%20project">trafficsense.aalto@gmail.com</a>
     </string>
     <string name="research_consent_agree_button">I agree</string>
     <string name="research_consent_disagree_button">Not acceptable</string>

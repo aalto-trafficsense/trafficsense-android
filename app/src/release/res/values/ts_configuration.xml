@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <bool name="use_test_server">false</bool>
-    <!--<integer name="queue_size">4096</integer>-->
 </resources>

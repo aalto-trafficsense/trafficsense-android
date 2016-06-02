@@ -43,10 +43,40 @@
     <string name="play_services_error">Google Play Services ei saatavilla. Ohjelma sulkeutuu.</string>
     <string name="plus_disconnect">Peru tilinkäyttöoikeus</string>
     <string name="plus_sign_out">Kirjaudu ulos</string>
-    <string name="research_consent_agree_button">Hyväksyn</string>
+    <string name="research_consent_agree_button">Suostun</string>
     <string name="research_consent_disagree_button">En hyväksy</string>
-    <string name="research_consent_dismissed">Valitettavasti tätä sovellusta voi käyttää ainoastaan antamalla tutkimussuostumuksen.</string>
-    <string name="research_consent_title">Tutkimussuostumus</string>
+    <string name="research_consent_dismissed">Valitettavasti tätä sovellusta voi käyttää ainoastaan suostumuksen antamalla.</string>
+    <string name="research_consent_title">Tietoinen suostumus</string>
+    <string name="research_consent">
+        Hyväksymällä tämän suostumuksen vahvistan, että osallistun vapaaehtoisesti
+        TrafficSense-projektiin liittyvään tutkimukseen ja annan suostumukseni siihen, että
+        minusta kertynyttä tutkimusaineistoa käsitellään tutkimusselosteessa kuvatulla tavalla.\n\n
+        Olen lukenut ja ymmärtänyt <a href="https://aaltotrafficsense.wordpress.com/tutkimuksen-kuvaus/">TrafficSense-projektin tutkimusselosteen</a> ja vahvistan, että
+        minulle on annettu riittävästi tietoja tutkimuksen kulusta. Olen ymmärtänyt, että
+        osallistumiseni tutkimukseen on täysin vapaaehtoista ja että voin missä tutkimuksen
+        vaiheessa tahansa keskeyttää tutkimuksen ilman mitään seuraamuksia. Ymmärrän, että
+        halutessani saan alla nimetyltä tutkijalta lisätietoja tutkimuksen yleisistä
+        periaatteista ja edistymisestä.\n\n
+        Tutkimustulokseni ovat vain TrafficSense-projektin tutkijoiden käytettävissä.
+        Tutkimuksesta vastaava tutkija voi kuitenkin antaa muiden yhteistyökumppaniensa
+        analysoida tutkimustuloksiani tieteellisiä tarkoituksia varten ilman erillistä
+        lupaa. Tällöin on huolehdittava siitä, että tulosten anonymiteetti on varmistettu.
+        Tutkimusdatan kaikenlainen kaupallinen hyödyntäminen on kielletty.
+        Tutkimustuloksiani voidaan käyttää ilman erillistä uutta suostumusta saman tutkijan
+        Aalto-yliopistossa harjoittamaan muuhun tutkimukseen, joka liittyy samaan
+        tutkimusalueeseen.\n\n
+        Ymmärrän, että jatkamalla TrafficSense-sovelluksen käyttöä osallistun tutkimukseen
+        ja että voin keskeyttää tutkimuksen osaltani poistamalla sovelluksen älypuhelimestani.
+        Ennen keskeyttämistä kertynyttä tutkimusdataani voidaan kuitenkin käyttää
+        tutkimuksessa. Voin myös halutessani peruuttaa osallistumiseni kokonaan
+        tutkimusselosteessa kuvatulla tavalla.\n\n
+        Tiedossani ei ole terveydellistä seikkaa, joka estäisi tutkimukseen osallistumisen.\n\n
+        Mikäli haluat tutkimuksesta lisää tietoa tai sinulla on muuta kysyttävää,
+        voit ottaa yhteyttä:\n
+        Projektin johtaja, Seppo Törmä\n
+        Puhelinvaihde: (09) 47001\n
+        Email: <a href="mailto:trafficsense.aalto@gmail.com?Subject=Kysymyksiä%20projektista">trafficsense.aalto@gmail.com</a>
+    </string>
     <string name="service_off">Palvelu suljettu</string>
     <string name="service_state_running">Päällä</string>
     <string name="service_state_sleeping">Lepotilassa</string>
@@ -79,4 +109,5 @@
     <string name="unknown">Tuntematon</string>
     <string name="walking">Kävely</string>
     <string name="not_available"></string>
+    <string name="trafficsense_web_page">https://aaltotrafficsense.wordpress.com/</string>
 </resources>
