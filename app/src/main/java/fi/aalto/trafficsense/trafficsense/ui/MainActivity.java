@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity
     private final SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private Set<String> publicTransport = new HashSet<>(Arrays.asList(new String[]
             {"BUS", "TRAIN", "TRAM", "SUBWAY", "FERRY"}));
+    // Count as public transport for testing: , "ON_BICYCLE", "IN_VEHICLE", "WALKING"
 
     private GeoJsonLayer pathLayer=null;
 
@@ -931,13 +932,14 @@ public class MainActivity extends AppCompatActivity
                             // Find mid-coordinates of the trip
                             LatLng pos = coordinates.get(coordinates.size()/2);
                             GeoJsonFeature transportIconFeature = new GeoJsonFeature(new GeoJsonPoint(pos), null, null, null);
-                            GeoJsonPointStyle pointStyle = pathLayer.getDefaultPointStyle();
+                            GeoJsonPointStyle pointStyle = new GeoJsonPointStyle();
+                            // pointStyle = pathLayer.getDefaultPointStyle();
                             StringBuilder title = new StringBuilder();
                             title.append(getTransportString(activity));
                             if (feature.hasProperty("line_name")) {
                                 String lineName = feature.getProperty("line_name");
                                 if (!lineName.equals("null")) {
-                                    title.append(": ").append(feature.getProperty("line_name"));
+                                    title.append(": ").append(lineName);
                                 }
                             }
                             pointStyle.setTitle(title.toString());
@@ -1011,8 +1013,13 @@ public class MainActivity extends AppCompatActivity
                 return R.drawable.map_vehicle_bus;
             case "FERRY":
                 return R.drawable.md_activity_ferry_24dp;
+            // Non-public transport just for testing
             case "ON_BICYCLE":
                 return R.drawable.map_activity_bicycle;
+            case "IN_VEHICLE":
+                return R.drawable.map_activity_vehicle;
+            case "WALKING":
+                return R.drawable.map_activity_walking;
             default:
                 return R.drawable.md_activity_unknown_24dp;
         }
@@ -1030,8 +1037,13 @@ public class MainActivity extends AppCompatActivity
                 return mRes.getString(R.string.bus);
             case "FERRY":
                 return mRes.getString(R.string.ferry);
+            // Non-public transport just for testing
             case "ON_BICYCLE":
                 return mRes.getString(R.string.on_bicycle);
+            case "IN_VEHICLE":
+                return mRes.getString(R.string.in_vehicle);
+            case "WALKING":
+                return mRes.getString(R.string.walking);
             default:
                 return mRes.getString(R.string.unknown);
         }
