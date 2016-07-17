@@ -10,5 +10,5 @@
 
     <string name="server_address_production">http://your.production.server/api</string>
     <string name="web_client_id_production">your_production_server_web_client_id.apps.googleusercontent.com</string>
-    
+
 </resources>
