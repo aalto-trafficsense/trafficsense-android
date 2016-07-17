@@ -20,7 +20,6 @@ import static android.support.v7.preference.PreferenceManager.getDefaultSharedPr
 
 public class DataQueue {
     private final Deque<DataPoint> mDeque;
-//    private final int flushThreshold;
     private final int mMaxSize;
     private int activeThreshold;
 
@@ -31,14 +30,12 @@ public class DataQueue {
 
     private long mNextSequence;
 
-    // debug_settings_upload_threshold_key
-
     public DataQueue() {
         mRes = TrafficSenseService.getContext().getResources();
         mSettings = getDefaultSharedPreferences(TrafficSenseService.getContext());
 
         mMaxSize = mRes.getInteger(R.integer.queue_size);
-        // Evictingqueue automatically allocates the full size!!
+        // Evictingqueue seems to automatically allocates the full size!!
 //        this.mDeque = EvictingQueue.create(mMaxSize);
         this.mDeque = new LinkedList<>();
         initThreshold();
@@ -86,12 +83,16 @@ public class DataQueue {
     }
 
     public boolean increaseThreshold() {
-        int flushThreshold = mSettings.getInt(mRes.getString(R.string.debug_settings_upload_threshold_key), 24);
-        if (activeThreshold + flushThreshold < mMaxSize) {
-            activeThreshold += flushThreshold;
-            return true;
-        } else {
+        if (size() < activeThreshold) { // not at the threshold yet - no need to increase
             return false;
+        } else { // threshold reached - increase if possible
+            int flushThreshold = mSettings.getInt(mRes.getString(R.string.debug_settings_upload_threshold_key), 24);
+            if (activeThreshold + flushThreshold < mMaxSize) {
+                activeThreshold += flushThreshold;
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
@@ -100,7 +101,7 @@ public class DataQueue {
     }
 
     public boolean shouldBeFlushed() {
-        Timber.d("DataQueue:shouldBeFlushed (test) called with size:"+mDeque.size()+" threshold "+activeThreshold);
+        // Timber.d("DataQueue:shouldBeFlushed (test) called with size:"+mDeque.size()+" threshold "+activeThreshold);
         return mDeque.size() >= activeThreshold;
     }
 

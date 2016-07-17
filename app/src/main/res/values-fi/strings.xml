@@ -20,7 +20,7 @@
     <string name="location_permission_persistently_refused">TrafficSense perustuu paikkatietoon. Taustapalvelu suljetaan.</string>
     <string name="location_permission_refused">TrafficSense ei pysty toimimaan ilman paikannuslupaa.</string>
     <string name="login_headerText">Kirjaudu Google-tilillä</string>
-    <string name="main_toolbar_path_label">Näytä reitti</string>
+    <string name="main_toolbar_path_label">Kuljetut reitit</string>
     <string name="main_toolbar_traffic_label">Liikenne</string>
     <string name="navigation_about">Tietoa ohjelmasta</string>
     <string name="navigation_drawer_close">Sulje vetovalikko</string>
@@ -50,7 +50,9 @@
     <string name="research_consent">
         Hyväksymällä tämän suostumuksen vahvistan, että osallistun vapaaehtoisesti
         TrafficSense-projektiin liittyvään tutkimukseen ja annan suostumukseni siihen, että
-        minusta kertynyttä tutkimusaineistoa käsitellään tutkimusselosteessa kuvatulla tavalla.\n\n
+        minusta kertynyttä tutkimusaineistoa käsitellään tutkimusselosteessa kuvatulla tavalla.
+        Vahvistan myös, että olen vähintään 15-vuotias. Jos olen alle 18-vuotias, vahvistan,
+        että minulla on huoltajani suostumus osallistumiseen.\n\n
         Olen lukenut ja ymmärtänyt <a href="https://aaltotrafficsense.wordpress.com/tutkimuksen-kuvaus/">TrafficSense-projektin tutkimusselosteen</a> ja vahvistan, että
         minulle on annettu riittävästi tietoja tutkimuksen kulusta. Olen ymmärtänyt, että
         osallistumiseni tutkimukseen on täysin vapaaehtoista ja että voin missä tutkimuksen
@@ -110,4 +112,5 @@
     <string name="walking">Kävely</string>
     <string name="not_available"></string>
     <string name="trafficsense_web_page">https://aaltotrafficsense.wordpress.com/</string>
+    <string name="main_toolbar_dest_label">Kohteet</string>
 </resources>

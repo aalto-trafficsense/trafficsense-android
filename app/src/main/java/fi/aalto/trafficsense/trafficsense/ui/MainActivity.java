@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity
     private MenuItem mShutdownItem;
     private MenuItem mDebugItem;
     private MenuItem mPathItem;
+    private MenuItem mDestItem;
     private MenuItem mTrafficItem;
     private MenuItem mLangDefaultItem;
     private MenuItem mLangStadiItem;
@@ -104,6 +105,7 @@ public class MainActivity extends AppCompatActivity
     private Set<String> publicTransport = new HashSet<>(Arrays.asList(new String[]
             {"BUS", "TRAIN", "TRAM", "SUBWAY", "FERRY"}));
     // Count as public transport for testing: , "ON_BICYCLE", "IN_VEHICLE", "WALKING"
+    private List<Marker> destMarkers = new ArrayList<>();
 
     private GeoJsonLayer pathLayer=null;
 
@@ -111,6 +113,8 @@ public class MainActivity extends AppCompatActivity
     private final float initLat = 60.1841396f;
     private final float initLng = 24.8300838f;
     private final float initZoom = 12;
+
+    private final int DEST_ON_MAP = 5; // TODO: Add into settings
 
     private final int MY_PERMISSIONS_ACCESS_FINE_LOCATION = 1;
 
@@ -229,6 +233,23 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onMapLoaded() {
         if (mMap != null) {
+            if (getSharedBoolean(SharedPrefs.KEY_SHOW_DEST)) { // Redraw current path, if displayed.
+                String destString = mPref.getString(SharedPrefs.KEY_DEST_OBJECT, null);
+                // Timber.d("GeoJsonString: " + geoJsonString);
+                if (destString == null) {
+                    // Destinations on but nothing fetched - get again
+                    fetchDest();
+                } else {
+                    //Draw destinations to map
+                    try {
+                        processDest(new JSONObject(destString));
+                    } catch (JSONException e) {
+                        Timber.e("onMapLoaded: Destination GeoJson conversion returned an exception: %s", e.toString());
+                        setDestOff();
+                    }
+                }
+            }
+
             if (getSharedBoolean(SharedPrefs.KEY_SHOW_PATH)) { // Redraw current path, if displayed.
                 String geoJsonString = mPref.getString(SharedPrefs.KEY_PATH_OBJECT, null);
                 // Timber.d("GeoJsonString: " + geoJsonString);
@@ -350,8 +371,8 @@ public class MainActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.activity_main_toolbar, menu);
         mPathItem = menu.findItem(R.id.main_toolbar_path);
+        mDestItem = menu.findItem(R.id.main_toolbar_dest);
         mTrafficItem = menu.findItem(R.id.main_toolbar_traffic);
-//        if (getSharedBoolean(SharedPrefs.KEY_SHOW_PATH)) mPathItem.setIcon(R.drawable.road_variant_on);
         if (getSharedBoolean(SharedPrefs.KEY_SHOW_TRAFFIC)) mTrafficItem.setIcon(R.drawable.ic_traffic_24dp_on);
         return true;
     }
@@ -370,10 +391,12 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.main_toolbar_traffic:
-                Boolean b = flipSharedBoolean(SharedPrefs.KEY_SHOW_TRAFFIC);
-                mMap.setTrafficEnabled(b);
-                mTrafficItem.setIcon(b ? R.drawable.ic_traffic_24dp_on : R.drawable.ic_traffic_24dp_off);
+            case R.id.main_toolbar_dest:
+                if (!getSharedBoolean(SharedPrefs.KEY_SHOW_DEST)) {
+                    fetchDest();
+                } else {
+                    setDestOff();
+                }
                 return true;
             case R.id.main_toolbar_path:
                 if (!getSharedBoolean(SharedPrefs.KEY_SHOW_PATH)) {
@@ -382,6 +405,11 @@ public class MainActivity extends AppCompatActivity
                 } else {
                     setPathOff();
                 }
+                return true;
+            case R.id.main_toolbar_traffic:
+                Boolean b = flipSharedBoolean(SharedPrefs.KEY_SHOW_TRAFFIC);
+                mMap.setTrafficEnabled(b);
+                mTrafficItem.setIcon(b ? R.drawable.ic_traffic_24dp_on : R.drawable.ic_traffic_24dp_off);
                 return true;
         }
 
@@ -754,6 +782,174 @@ public class MainActivity extends AppCompatActivity
         else serviceRunningToDrawer(true);
     }
 
+    /******************************************
+     *
+     * Show the destinations of the user on map
+     *
+     ******************************************/
+
+    public void fetchDest() {
+        mDestItem.setEnabled(false);
+        Optional<String> token = mStorage.readSessionToken();
+        if (!token.isPresent()) {
+            Toast.makeText(this, R.string.not_signed_in, Toast.LENGTH_SHORT).show();
+            mDestItem.setEnabled(true);
+        } else {
+            try {
+                URL url = new URL(mStorage.getServerName() + "/destinations/" + token.get());
+                DownloadDestTask downloader = new DownloadDestTask();
+                downloader.execute(url);
+            } catch (MalformedURLException e) {
+                Toast.makeText(this, R.string.path_url_broken, Toast.LENGTH_SHORT).show();
+                mDestItem.setEnabled(true);
+            }
+        }
+    }
+
+    private class DownloadDestTask extends AsyncTask<URL, Void, JSONObject> {
+        protected JSONObject doInBackground(URL... urls) {
+            String geoJsonString = null;
+            if (urls.length != 1) {
+                Timber.e("Path downloader attempted to get more or less than one URL");
+                mDestItem.setEnabled(true);
+                return null;
+            }
+
+            HttpURLConnection urlConnection = null;
+            try {
+                Timber.d("Opening with URL: " + urls[0].toString());
+                urlConnection = (HttpURLConnection) urls[0].openConnection();
+
+                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                java.util.Scanner s = new java.util.Scanner(in).useDelimiter("\\A");
+                if (s.hasNext()) {
+                    geoJsonString = s.next();
+                } else {
+                    Timber.e("DownloadDestTask received no data!");
+                }
+                in.close();
+            } catch (IOException e) {
+                Timber.e("DownloadDestTask error connecting to URL.");
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+            }
+
+            JSONObject geoJson = null;
+            if (geoJsonString != null) {
+                try {
+                    geoJson = new JSONObject(geoJsonString);
+                    JSONArray ga = geoJson.getJSONArray("features");
+                    if (ga.length() > 0) mPrefEditor.putString(SharedPrefs.KEY_DEST_OBJECT, geoJsonString);
+                    else mPrefEditor.putString(SharedPrefs.KEY_DEST_OBJECT, null);
+                    mPrefEditor.commit();
+                } catch (JSONException e) {
+                    Timber.e("Destination GeoJson conversion returned an exception: %s", e.toString());
+                    mPathItem.setEnabled(true);
+                    return null;
+                }
+            }
+            return geoJson;
+        }
+
+        protected void onPostExecute(JSONObject geoJson) {
+//            Timber.d("DownloadDestTask Received a string of length: " + info.length());
+//            Timber.d("First 200 characters: \n" + info.substring(0,min(200,info.length())));
+            if (geoJson != null) {
+                processDest(geoJson);
+            }
+            mDestItem.setEnabled(true);
+        }
+    }
+
+    /**
+     * Adds the appropriate color to each linestring based on the activity
+     * Construct new bounds for the window
+     * Add icons for identified public transport
+     */
+    private void processDest(JSONObject geoJson) {
+        // Iterate over all the features stored in the layer
+        LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
+        JSONArray features = null;
+        int l = -1;
+        try {
+            features = geoJson.getJSONArray("features");
+            l = features.length();
+        } catch (JSONException e) {
+            Timber.e("Destination features array conversion threw a JSONException: %s", e.toString());
+        }
+        if (l>0) {
+            if (l>DEST_ON_MAP) l=DEST_ON_MAP;
+            JSONObject feature = null;
+            JSONArray lngLat = null;
+            LatLng markerPos = null;
+            int visits = 0;
+            float[] distResults = new float[]{};
+            boolean useMarker;
+            destMarkers.clear();
+            int i = 0;
+            do {
+                useMarker = true;
+                try {
+                    feature = features.getJSONObject(i);
+                    lngLat = feature.getJSONObject("geometry").getJSONArray("coordinates");
+                    markerPos = new LatLng(lngLat.getDouble(1),lngLat.getDouble(0));
+                    visits = feature.getJSONObject("properties").getInt("visits");
+                } catch (JSONException e) {
+                    Timber.e("Destination feature object extraction threw a JSONException: %s", e.toString());
+                    useMarker = false;
+                }
+                if ((latestPosition != null) && (markerPos != null)) {
+                    Location.distanceBetween(latestPosition.latitude,
+                            latestPosition.longitude,
+                            markerPos.latitude,
+                            markerPos.longitude,
+                            distResults);
+                    if (distResults[0]<200.0f) useMarker=false;
+                }
+
+                if (useMarker) {
+                    boundsBuilder.include(markerPos);
+                    if (mMap != null) {
+                        destMarkers.add(mMap.addMarker(new MarkerOptions()
+                                .position(markerPos)
+                                .title("Visits: " + visits)));
+                    }
+                } else { // Skipping this marker - we are too close
+                    if (features.length() > l) l++;
+                }
+                i++;
+            } while (i < l);
+            if (latestPosition!=null) {
+                boundsBuilder.include(latestPosition);
+                l++;
+            }
+            setDestOn();
+            if (l > 1) mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 20));
+        }
+    }
+
+    private void setDestOn() {
+        mPrefEditor.putBoolean(SharedPrefs.KEY_SHOW_DEST, true);
+        mPrefEditor.commit();
+        mDestItem.setIcon(R.drawable.ic_dest_on);
+    }
+
+    private void setDestOff() {
+        mPrefEditor.putBoolean(SharedPrefs.KEY_SHOW_DEST, false);
+        mPrefEditor.putString(SharedPrefs.KEY_DEST_OBJECT, null);
+        mPrefEditor.commit();
+        mDestItem.setIcon(R.drawable.ic_dest_off);
+        /* Remove destinations from map */
+        if (destMarkers.size() > 0) {
+            for (Marker m: destMarkers) {
+                m.remove();
+            }
+            destMarkers.clear();
+        }
+    }
+
     /**********************************
      *
      * Show the path of the user on map
@@ -776,7 +972,7 @@ public class MainActivity extends AppCompatActivity
             mPathItem.setEnabled(true);
         } else {
             try {
-                URL url = new URL(mStorage.getServerName().toString() + "/path/" + token.get() + "?date=" + pathDate + "&maxpts=20000&mindist=20");
+                URL url = new URL(mStorage.getServerName() + "/path/" + token.get() + "?date=" + pathDate + "&maxpts=20000&mindist=20");
                 DownloadPathTask downloader = new DownloadPathTask();
                 downloader.execute(url);
             } catch (MalformedURLException e) {
@@ -798,7 +994,7 @@ public class MainActivity extends AppCompatActivity
 
             HttpURLConnection urlConnection = null;
             try {
-                Timber.d("Opening with URL: " + urls[0].toString());
+                Timber.d("Opening with URL: %s", urls[0].toString());
                 urlConnection = (HttpURLConnection) urls[0].openConnection();
 
                 InputStream in = new BufferedInputStream(urlConnection.getInputStream());
@@ -1052,7 +1248,7 @@ public class MainActivity extends AppCompatActivity
     private void addLine(LatLng start, LatLng end, int color) {
         if (pathLayer==null) { // This happens when today's path was selected with no data on the server
             try { // generate an empty geojsonlayer
-                Timber.d("Generating a one-line geojsonlayer");
+                // Timber.d("Generating a one-line geojsonlayer");
                 JSONObject firstLine = new JSONObject(String.format("{ \"features\": [ { \"geometry\": { \"coordinates\": [ [%f,%f], [%f,%f] ], \"type\": \"LineString\" }, \"properties\": { \"type\": \"line\" }, \"type\": \"Feature\" } ], \"type\": \"FeatureCollection\" }", start.longitude, start.latitude, end.longitude, end.latitude));
                 pathLayer = new GeoJsonLayer(mMap, firstLine);
                 GeoJsonLineStringStyle mStyle = new GeoJsonLineStringStyle();

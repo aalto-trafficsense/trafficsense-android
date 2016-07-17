@@ -218,5 +218,6 @@
     <string name="upload_button">Paa meneen</string>
     <string name="email_startactivity_text">Sähköpostin lähetys</string>
     <string name="email_subject">Käyttäjäpalaute</string>
+    <string name="main_toolbar_dest_label">Mestat</string>
 
 </resources>

@@ -2,6 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/main_toolbar_dest"
+        android:icon="@drawable/ic_dest_off"
+        android:title="@string/main_toolbar_dest_label"
+        app:showAsAction="ifRoom"/>
+    <item
         android:id="@+id/main_toolbar_path"
         android:icon="@drawable/road_variant_off"
         android:title="@string/main_toolbar_path_label"

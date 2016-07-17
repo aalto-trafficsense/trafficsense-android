@@ -46,7 +46,8 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="main_toolbar_traffic_label">Traffic</string>
-    <string name="main_toolbar_path_label">Show route</string>
+    <string name="main_toolbar_path_label">Past routes</string>
+    <string name="main_toolbar_dest_label">Destinations</string>
 
     <string name="service_state_label">Service State:</string>
 
@@ -236,7 +237,9 @@
     <string name="research_consent">
         By giving my consent I confirm my voluntary participation in a study belonging
         to the TrafficSense project and I consent to personal research data collected
-        about me being processed in the ways described in the research description.\n\n
+        about me being processed in the ways described in the research description. I also
+        confirm that I am at least 15 years old. If I am under 18 years old I confirm that I
+        have the consent of my guardian for participation.\n\n
         I have read and understood <a href="https://aaltotrafficsense.wordpress.com/research/">the research description</a>
         and confirm that I have received sufficient information on the study. I have understood
         that my participation is completely voluntary and I am aware of the fact that I have

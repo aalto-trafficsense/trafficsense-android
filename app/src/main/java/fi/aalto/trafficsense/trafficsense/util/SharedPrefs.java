@@ -8,6 +8,8 @@ package fi.aalto.trafficsense.trafficsense.util;
 public class SharedPrefs {
     public static final String KEY_SHOW_PATH = "SHOW_PATH";
     public static final String KEY_PATH_OBJECT = "PATH_OBJECT";
+    public static final String KEY_SHOW_DEST = "SHOW_DEST";
+    public static final String KEY_DEST_OBJECT = "DEST_OBJECT";
     public static final String KEY_SHOW_TRAFFIC = "SHOW_TRAFFIC";
     public static final String KEY_MAP_LAT = "MAP_LAT";
     public static final String KEY_MAP_LNG = "MAP_LNG";
