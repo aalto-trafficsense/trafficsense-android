@@ -11,7 +11,4 @@
     <string name="server_address_production">http://your.production.server/api</string>
     <string name="web_client_id_production">your_production_server_web_client_id.apps.googleusercontent.com</string>
 
-    <!--The URL to open when "Send feedback" is selected from the MainActivity Drawer-->
-    <string name="feedback_form_address">http://aef.aalto.fi/en/research/trafficsense/</string>
-
 </resources>
