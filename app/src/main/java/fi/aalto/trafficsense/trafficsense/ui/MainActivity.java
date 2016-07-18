@@ -561,6 +561,7 @@ public class MainActivity extends AppCompatActivity
             mServiceOffLayout.setVisibility(View.GONE);
         } else {
             mServiceOffLayout.setVisibility(View.VISIBLE);
+
         }
     }
 

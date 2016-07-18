@@ -20,9 +20,7 @@
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
                   tools:context=".ui.MainActivity"
-                  android:layout_alignParentTop="true"
-                  android:layout_toRightOf="@+id/main_service_off_layout"
-                  android:layout_toEndOf="@+id/main_service_off_layout"/>
+                  android:layout_alignParentTop="true"/>
 
         <FrameLayout
             android:id="@+id/main_path_date_layout"
@@ -48,8 +46,6 @@
 
         </FrameLayout>
 
-
-
         <FrameLayout
             android:id="@+id/main_service_off_layout"
             android:layout_width="wrap_content"
@@ -64,9 +60,7 @@
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/service_off"
                     android:textColor="@color/white"
-                    android:background="@color/colorInVehicle"
-                    android:singleLine="true"/>
+                    android:background="@color/colorInVehicle"/>
         </FrameLayout>
-
 
 </RelativeLayout>

@@ -5,15 +5,18 @@
         android:id="@+id/main_toolbar_dest"
         android:icon="@drawable/ic_dest_off"
         android:title="@string/main_toolbar_dest_label"
+        android:checkable="true"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/main_toolbar_path"
         android:icon="@drawable/road_variant_off"
         android:title="@string/main_toolbar_path_label"
+        android:checkable="true"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/main_toolbar_traffic"
         android:icon="@drawable/ic_traffic_24dp_off"
         android:title="@string/main_toolbar_traffic_label"
+        android:checkable="true"
         app:showAsAction="ifRoom"/>
 </menu>
