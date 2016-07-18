@@ -224,9 +224,11 @@
     <string name="error_creating_map">Error in map creation!</string>
     <string name="path_no_data_for_date">No path data for selected date.</string>
     <string name="path_no_public_transport">Public transport not recognised for current day.</string>
+    <string name="dest_no_data">No destinations available.</string>
 
     <string name="not_signed_in">Not signed in?</string>
     <string name="path_url_broken">Path URL broken.</string>
+    <string name="dest_url_broken">Destination URL broken.</string>
     <string name="certificate_url_broken">Certificate URL broken.</string>
 
     <string name="debug_mode_open">Debug mode open.</string>

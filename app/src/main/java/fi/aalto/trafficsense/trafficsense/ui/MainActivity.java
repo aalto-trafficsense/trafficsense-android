@@ -171,7 +171,6 @@ public class MainActivity extends AppCompatActivity
 
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
         mStorage = BackendStorage.create(mContext);
-        mBuildBounds = new MapBounds();
 
         mSettings = getDefaultSharedPreferences(this);
 
@@ -801,7 +800,7 @@ public class MainActivity extends AppCompatActivity
                 DownloadDestTask downloader = new DownloadDestTask();
                 downloader.execute(url);
             } catch (MalformedURLException e) {
-                Toast.makeText(this, R.string.path_url_broken, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.dest_url_broken, Toast.LENGTH_SHORT).show();
                 mDestItem.setEnabled(true);
             }
         }
@@ -879,11 +878,11 @@ public class MainActivity extends AppCompatActivity
         }
         if (l>0) {
             if (l>DEST_ON_MAP) l=DEST_ON_MAP;
-            JSONObject feature = null;
-            JSONArray lngLat = null;
+            JSONObject feature;
+            JSONArray lngLat;
             LatLng markerPos = null;
             int visits = 0;
-            float[] distResults = new float[]{};
+            float[] distResults = new float[5];
             boolean useMarker;
             destMarkers.clear();
             int i = 0;
@@ -893,7 +892,7 @@ public class MainActivity extends AppCompatActivity
                     feature = features.getJSONObject(i);
                     lngLat = feature.getJSONObject("geometry").getJSONArray("coordinates");
                     markerPos = new LatLng(lngLat.getDouble(1),lngLat.getDouble(0));
-                    Timber.d("Received position: %s", markerPos.toString());
+                    // Timber.d("Received position: %s", markerPos.toString());
                     visits = feature.getJSONObject("properties").getInt("visits");
                 } catch (JSONException e) {
                     Timber.e("Destination feature object extraction threw a JSONException: %s", e.toString());
@@ -907,6 +906,20 @@ public class MainActivity extends AppCompatActivity
                             distResults);
                     if (distResults[0]<200.0f) useMarker=false;
                 }
+
+                // Test code for the emulator with Mikko's coordinates - comment out!!
+                /*
+                if (markerPos != null) {
+                    Location.distanceBetween(60.19067498360351,
+                            24.764974265193345,
+                            markerPos.latitude,
+                            markerPos.longitude,
+                            distResults);
+                    if (distResults[0]<200.0f) {
+                        Timber.d("Destination %d matched with current test location.", i+1);
+                        useMarker=false;
+                    }
+                } */
 
                 if (useMarker) {
                     mBuildBounds.include(markerPos);
@@ -925,6 +938,8 @@ public class MainActivity extends AppCompatActivity
             }
             setDestOn();
             mBuildBounds.update(mMap);
+        } else { // !l>0 -> no destinations
+            Toast.makeText(this, R.string.dest_no_data, Toast.LENGTH_SHORT).show();
         }
     }
 

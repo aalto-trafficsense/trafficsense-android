@@ -113,4 +113,6 @@
     <string name="not_available"></string>
     <string name="trafficsense_web_page">https://aaltotrafficsense.wordpress.com/</string>
     <string name="main_toolbar_dest_label">Kohteet</string>
+    <string name="dest_no_data">Ei kohteita.</string>
+    <string name="dest_url_broken">Kohteiden hakuosoite viallinen.</string>
 </resources>

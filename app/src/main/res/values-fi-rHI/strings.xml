@@ -219,5 +219,6 @@
     <string name="email_startactivity_text">Sähköpostin lähetys</string>
     <string name="email_subject">Käyttäjäpalaute</string>
     <string name="main_toolbar_dest_label">Mestat</string>
+    <string name="dest_no_data">Ei mestoja.</string>
 
 </resources>
