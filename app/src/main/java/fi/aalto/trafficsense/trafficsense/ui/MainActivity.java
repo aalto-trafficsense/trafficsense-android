@@ -926,7 +926,8 @@ public class MainActivity extends AppCompatActivity
                     if (mMap != null) {
                         destMarkers.add(mMap.addMarker(new MarkerOptions()
                                 .position(markerPos)
-                                .title("Visits: " + visits)));
+                                .title("Visits: " + visits)
+                                .icon(destIcon(i+1))));
                     }
                 } else { // Skipping this marker - we are too close
                     if (features.length() > l) l++;
@@ -961,6 +962,31 @@ public class MainActivity extends AppCompatActivity
             }
             destMarkers.clear();
         }
+    }
+
+    private BitmapDescriptor destIcon(int destNr) {
+        int res = 0;
+        switch (destNr) {
+            case 1:
+                res = R.drawable.map_dest1;
+                break;
+            case 2:
+                res = R.drawable.map_dest2;
+                break;
+            case 3:
+                res = R.drawable.map_dest3;
+                break;
+            case 4:
+                res = R.drawable.map_dest4;
+                break;
+            case 5:
+                res = R.drawable.map_dest5;
+                break;
+            default:
+                res = R.mipmap.ic_launcher;
+        }
+
+        return BitmapDescriptorFactory.fromResource(res);
     }
 
     /**********************************
