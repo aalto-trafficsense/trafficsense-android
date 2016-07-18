@@ -410,6 +410,7 @@ public class MainActivity extends AppCompatActivity
                 Boolean b = flipSharedBoolean(SharedPrefs.KEY_SHOW_TRAFFIC);
                 mMap.setTrafficEnabled(b);
                 mTrafficItem.setIcon(b ? R.drawable.ic_traffic_24dp_on : R.drawable.ic_traffic_24dp_off);
+                mTrafficItem.setChecked(b);
                 return true;
         }
 
@@ -951,6 +952,7 @@ public class MainActivity extends AppCompatActivity
         mPrefEditor.putBoolean(SharedPrefs.KEY_SHOW_DEST, true);
         mPrefEditor.commit();
         mDestItem.setIcon(R.drawable.ic_dest_on);
+        mDestItem.setChecked(true);
     }
 
     private void setDestOff() {
@@ -958,6 +960,7 @@ public class MainActivity extends AppCompatActivity
         mPrefEditor.putString(SharedPrefs.KEY_DEST_OBJECT, null);
         mPrefEditor.commit();
         mDestItem.setIcon(R.drawable.ic_dest_off);
+        mDestItem.setChecked(false);
         /* Remove destinations from map */
         if (destMarkers.size() > 0) {
             for (Marker m: destMarkers) {
@@ -1124,6 +1127,7 @@ public class MainActivity extends AppCompatActivity
         mPrefEditor.putBoolean(SharedPrefs.KEY_SHOW_PATH, true);
         mPrefEditor.commit();
         mPathItem.setIcon(R.drawable.road_variant_on);
+        mPathItem.setChecked(true);
         if (isTodaysPath()) mPathDate.setText(R.string.today);
         else mPathDate.setText(DateFormat.getDateInstance().format(pathCal.getTime()));
         mPathDateLayout.setVisibility(View.VISIBLE);
@@ -1134,6 +1138,7 @@ public class MainActivity extends AppCompatActivity
         mPrefEditor.putString(SharedPrefs.KEY_PATH_OBJECT, null);
         mPrefEditor.commit();
         mPathItem.setIcon(R.drawable.road_variant_off);
+        mPathItem.setChecked(false);
         mPathDateLayout.setVisibility(View.GONE);
         if (pathLayer!=null) {
             pathLayer.removeLayerFromMap();
