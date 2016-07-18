@@ -4,6 +4,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import timber.log.Timber;
 
 /**
  * Manage the viewport window bounds for a Google Maps view
@@ -13,7 +14,6 @@ import com.google.android.gms.maps.model.LatLngBounds;
 public class MapBounds {
 
     private LatLngBounds.Builder mBuilder;
-
     private int numPoints;
 
     // Public constructor
@@ -28,11 +28,9 @@ public class MapBounds {
     }
 
     public void update(GoogleMap map) {
-        if (numPoints > 1) {
-            map.moveCamera(CameraUpdateFactory.newLatLngBounds(mBuilder.build(), 20));
-            // Reset everything for the next build cycle
-            numPoints = 0;
-            mBuilder = new LatLngBounds.Builder();
+        if ((numPoints > 1) && (map != null)) {
+            Timber.d("MapBounds update moving camera with: %d points",numPoints);
+            map.animateCamera(CameraUpdateFactory.newLatLngBounds(mBuilder.build(), 20));
         }
     }
 }

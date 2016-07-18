@@ -95,7 +95,6 @@ public class MainActivity extends AppCompatActivity
 
     private GoogleMap mMap;
     private LatLngBounds mBounds; // Tracks user's visibility
-    private MapBounds mBuildBounds; // Builds view for path and destinations
     private Marker mMarker=null;
     private Circle mCircle=null;
     private ActivityType latestActivityType=ActivityType.STILL;
@@ -270,8 +269,6 @@ public class MainActivity extends AppCompatActivity
                 }
             }
 
-            mBuildBounds.update(mMap);
-
             if (getSharedBoolean(SharedPrefs.KEY_SHOW_TRAFFIC)) {
                 mMap.setTrafficEnabled(true);
             }
@@ -398,7 +395,6 @@ public class MainActivity extends AppCompatActivity
             case R.id.main_toolbar_dest:
                 if (!getSharedBoolean(SharedPrefs.KEY_SHOW_DEST)) {
                     fetchDest();
-                    if (mMap != null) mBuildBounds.update(mMap);
                 } else {
                     setDestOff();
                 }
@@ -448,7 +444,6 @@ public class MainActivity extends AppCompatActivity
             setPreviousMatchingWeekday(); // A little joke for the young at heart
         }
         fetchPath();
-        if (mMap != null) mBuildBounds.update(mMap);
     }
 
     private void setPreviousMatchingWeekday() {
@@ -873,7 +868,7 @@ public class MainActivity extends AppCompatActivity
      * Processes all destinations for viewing
      */
     private void processDest(JSONObject geoJson) {
-        // LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
+        MapBounds mBuildBounds = new MapBounds();
         JSONArray features = null;
         int l = -1;
         try {
@@ -898,6 +893,7 @@ public class MainActivity extends AppCompatActivity
                     feature = features.getJSONObject(i);
                     lngLat = feature.getJSONObject("geometry").getJSONArray("coordinates");
                     markerPos = new LatLng(lngLat.getDouble(1),lngLat.getDouble(0));
+                    Timber.d("Received position: %s", markerPos.toString());
                     visits = feature.getJSONObject("properties").getInt("visits");
                 } catch (JSONException e) {
                     Timber.e("Destination feature object extraction threw a JSONException: %s", e.toString());
@@ -926,10 +922,9 @@ public class MainActivity extends AppCompatActivity
             } while (i < l);
             if (latestPosition!=null) {
                 mBuildBounds.include(latestPosition);
-                // l++;
             }
             setDestOn();
-            // if (l > 1) mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 20));
+            mBuildBounds.update(mMap);
         }
     }
 
@@ -1109,9 +1104,7 @@ public class MainActivity extends AppCompatActivity
      */
     private void processPath() {
         Boolean today = isTodaysPath(); // optimise a bit = no lookup for every feature
-        // Iterate over all the features stored in the layer
-        // LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
-        // boolean boundsOk = false; // Only build the new bounds if there is some content
+        MapBounds mBuildBounds = new MapBounds();
         List<LatLng> coordinates;
         Set<GeoJsonFeature> newFeatures = new HashSet<>();
         for (GeoJsonFeature feature : pathLayer.getFeatures()) {
@@ -1132,7 +1125,6 @@ public class MainActivity extends AppCompatActivity
                             LatLng pos = coordinates.get(coordinates.size()/2);
                             GeoJsonFeature transportIconFeature = new GeoJsonFeature(new GeoJsonPoint(pos), null, null, null);
                             GeoJsonPointStyle pointStyle = new GeoJsonPointStyle();
-                            // pointStyle = pathLayer.getDefaultPointStyle();
                             StringBuilder title = new StringBuilder();
                             title.append(getTransportString(activity));
                             if (feature.hasProperty("line_name")) {
@@ -1152,8 +1144,6 @@ public class MainActivity extends AppCompatActivity
             }
             // Check that our route is included in the bounds
             if (coordinates != null) {
-                // boundsOk = true; // A LineString will always contain at least two points
-//                GeoJsonLineString ls = (GeoJsonLineString)feature.getGeometry();
                 for (LatLng pos : coordinates) {
                     mBuildBounds.include(pos);
                 }
@@ -1169,7 +1159,7 @@ public class MainActivity extends AppCompatActivity
             // Quick-n-dirty solution to bypass all the queued points with one line
             if (pathEnd!=null) addLine(pathEnd, latestPosition, ActivityType.getActivityColor(latestActivityType));
         }
-        // if (boundsOk) mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 20));
+        mBuildBounds.update(mMap);
     }
 
     private int getActivityColorByString(String activity) {
