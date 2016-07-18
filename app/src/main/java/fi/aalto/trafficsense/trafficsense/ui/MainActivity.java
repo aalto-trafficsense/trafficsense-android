@@ -94,7 +94,8 @@ public class MainActivity extends AppCompatActivity
     // private FloatingActionButton mFab;
 
     private GoogleMap mMap;
-    private LatLngBounds mBounds;
+    private LatLngBounds mBounds; // Tracks user's visibility
+    private MapBounds mBuildBounds; // Builds view for path and destinations
     private Marker mMarker=null;
     private Circle mCircle=null;
     private ActivityType latestActivityType=ActivityType.STILL;
@@ -171,6 +172,7 @@ public class MainActivity extends AppCompatActivity
 
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
         mStorage = BackendStorage.create(mContext);
+        mBuildBounds = new MapBounds();
 
         mSettings = getDefaultSharedPreferences(this);
 
@@ -267,6 +269,8 @@ public class MainActivity extends AppCompatActivity
 
                 }
             }
+
+            mBuildBounds.update(mMap);
 
             if (getSharedBoolean(SharedPrefs.KEY_SHOW_TRAFFIC)) {
                 mMap.setTrafficEnabled(true);
@@ -394,6 +398,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.main_toolbar_dest:
                 if (!getSharedBoolean(SharedPrefs.KEY_SHOW_DEST)) {
                     fetchDest();
+                    if (mMap != null) mBuildBounds.update(mMap);
                 } else {
                     setDestOff();
                 }
@@ -443,6 +448,7 @@ public class MainActivity extends AppCompatActivity
             setPreviousMatchingWeekday(); // A little joke for the young at heart
         }
         fetchPath();
+        if (mMap != null) mBuildBounds.update(mMap);
     }
 
     private void setPreviousMatchingWeekday() {
@@ -864,13 +870,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * Adds the appropriate color to each linestring based on the activity
-     * Construct new bounds for the window
-     * Add icons for identified public transport
+     * Processes all destinations for viewing
      */
     private void processDest(JSONObject geoJson) {
-        // Iterate over all the features stored in the layer
-        LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
+        // LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
         JSONArray features = null;
         int l = -1;
         try {
@@ -910,7 +913,7 @@ public class MainActivity extends AppCompatActivity
                 }
 
                 if (useMarker) {
-                    boundsBuilder.include(markerPos);
+                    mBuildBounds.include(markerPos);
                     if (mMap != null) {
                         destMarkers.add(mMap.addMarker(new MarkerOptions()
                                 .position(markerPos)
@@ -922,11 +925,11 @@ public class MainActivity extends AppCompatActivity
                 i++;
             } while (i < l);
             if (latestPosition!=null) {
-                boundsBuilder.include(latestPosition);
-                l++;
+                mBuildBounds.include(latestPosition);
+                // l++;
             }
             setDestOn();
-            if (l > 1) mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 20));
+            // if (l > 1) mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 20));
         }
     }
 
@@ -1107,8 +1110,8 @@ public class MainActivity extends AppCompatActivity
     private void processPath() {
         Boolean today = isTodaysPath(); // optimise a bit = no lookup for every feature
         // Iterate over all the features stored in the layer
-        LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
-        boolean boundsOk = false; // Only build the new bounds if there is some content
+        // LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
+        // boolean boundsOk = false; // Only build the new bounds if there is some content
         List<LatLng> coordinates;
         Set<GeoJsonFeature> newFeatures = new HashSet<>();
         for (GeoJsonFeature feature : pathLayer.getFeatures()) {
@@ -1149,10 +1152,10 @@ public class MainActivity extends AppCompatActivity
             }
             // Check that our route is included in the bounds
             if (coordinates != null) {
-                boundsOk = true; // A LineString will always contain at least two points
+                // boundsOk = true; // A LineString will always contain at least two points
 //                GeoJsonLineString ls = (GeoJsonLineString)feature.getGeometry();
                 for (LatLng pos : coordinates) {
-                    boundsBuilder.include(pos);
+                    mBuildBounds.include(pos);
                 }
             }
         } // for-loop
@@ -1162,11 +1165,11 @@ public class MainActivity extends AppCompatActivity
             }
         }
         if (today && latestPosition!=null) {
-            boundsBuilder.include(latestPosition);
+            mBuildBounds.include(latestPosition);
             // Quick-n-dirty solution to bypass all the queued points with one line
             if (pathEnd!=null) addLine(pathEnd, latestPosition, ActivityType.getActivityColor(latestActivityType));
         }
-        if (boundsOk) mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 20));
+        // if (boundsOk) mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 20));
     }
 
     private int getActivityColorByString(String activity) {
