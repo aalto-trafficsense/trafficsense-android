@@ -886,6 +886,7 @@ public class MainActivity extends AppCompatActivity
             boolean useMarker;
             destMarkers.clear();
             int i = 0;
+            int iconIndex = 1;
             do {
                 useMarker = true;
                 try {
@@ -927,7 +928,8 @@ public class MainActivity extends AppCompatActivity
                         destMarkers.add(mMap.addMarker(new MarkerOptions()
                                 .position(markerPos)
                                 .title("Visits: " + visits)
-                                .icon(destIcon(i+1))));
+                                .icon(destIcon(iconIndex))));
+                        iconIndex++;
                     }
                 } else { // Skipping this marker - we are too close
                     if (features.length() > l) l++;
