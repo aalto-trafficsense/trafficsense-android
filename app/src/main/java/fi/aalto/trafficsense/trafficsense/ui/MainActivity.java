@@ -929,7 +929,7 @@ public class MainActivity extends AppCompatActivity
                     if (mMap != null) {
                         destMarkers.add(mMap.addMarker(new MarkerOptions()
                                 .position(markerPos)
-                                .title("Visits: " + visits)
+                                .title(R.string.dest_visits + ": " + visits)
                                 .icon(destIcon(iconIndex))));
                         iconIndex++;
                     }

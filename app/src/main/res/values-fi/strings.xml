@@ -115,4 +115,5 @@
     <string name="main_toolbar_dest_label">Kohteet</string>
     <string name="dest_no_data">Ei kohteita.</string>
     <string name="dest_url_broken">Kohteiden hakuosoite viallinen.</string>
+    <string name="dest_visits">Käyntejä</string>
 </resources>
