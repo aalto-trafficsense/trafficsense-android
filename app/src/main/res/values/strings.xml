@@ -239,8 +239,9 @@
     <string name="research_consent_title">Informed Consent</string>
     <string name="research_consent">
         By giving my consent I confirm my voluntary participation in a study belonging
-        to the TrafficSense project and I consent to personal research data collected
-        about me being processed in the ways described in the research description. I also
+        to the TrafficSense project and I consent to anonymous research data collected
+        about me being processed in the ways described in the research description.\n\n
+        I also
         confirm that I am at least 15 years old. If I am under 18 years old I confirm that I
         have the consent of my guardian for participation.\n\n
         I have read and understood <a href="https://aaltotrafficsense.wordpress.com/research/">the research description</a>
@@ -249,7 +250,7 @@
         the right to cancel my participation in the study at any time without providing
         a reason, and without any consequences. I have understood that I can ask for
         more information about the study from the researcher named below.\n\n
-        The personal research data collected about me is only available for processing
+        The research data collected about me is only available for processing
         by the TrafficSense –project researchers. However, the project leader may give
         permission for third parties to analyze my research data for scientific purposes
         without my separate additional approval. In such a case, the anonymity of the

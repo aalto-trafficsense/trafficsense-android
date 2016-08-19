@@ -50,7 +50,7 @@
     <string name="research_consent">
         Hyväksymällä tämän suostumuksen vahvistan, että osallistun vapaaehtoisesti
         TrafficSense-projektiin liittyvään tutkimukseen ja annan suostumukseni siihen, että
-        minusta kertynyttä tutkimusaineistoa käsitellään tutkimusselosteessa kuvatulla tavalla.
+        minusta kertynyttä anonyymiä tutkimusaineistoa käsitellään tutkimusselosteessa kuvatulla tavalla.\n\n
         Vahvistan myös, että olen vähintään 15-vuotias. Jos olen alle 18-vuotias, vahvistan,
         että minulla on huoltajani suostumus osallistumiseen.\n\n
         Olen lukenut ja ymmärtänyt <a href="https://aaltotrafficsense.wordpress.com/tutkimuksen-kuvaus/">TrafficSense-projektin tutkimusselosteen</a> ja vahvistan, että
@@ -63,7 +63,7 @@
         Tutkimuksesta vastaava tutkija voi kuitenkin antaa muiden yhteistyökumppaniensa
         analysoida tutkimustuloksiani tieteellisiä tarkoituksia varten ilman erillistä
         lupaa. Tällöin on huolehdittava siitä, että tulosten anonymiteetti on varmistettu.
-        Tutkimusdatan kaikenlainen kaupallinen hyödyntäminen on kielletty.
+        Tutkimusdatan kaikenlainen kaupallinen hyödyntäminen on kielletty.\n\n
         Tutkimustuloksiani voidaan käyttää ilman erillistä uutta suostumusta saman tutkijan
         Aalto-yliopistossa harjoittamaan muuhun tutkimukseen, joka liittyy samaan
         tutkimusalueeseen.\n\n
