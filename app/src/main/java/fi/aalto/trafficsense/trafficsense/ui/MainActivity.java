@@ -115,6 +115,8 @@ public class MainActivity extends AppCompatActivity
     private final float initZoom = 12;
 
     private final int DEST_ON_MAP = 5; // TODO: Add into settings
+    private final float minDistToDest = 200.0f; // meters
+    private final float maxDistToDest = 200000.0f; // meters
 
     private final int MY_PERMISSIONS_ACCESS_FINE_LOCATION = 1;
 
@@ -233,7 +235,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onMapLoaded() {
         if (mMap != null) {
-            if (getSharedBoolean(SharedPrefs.KEY_SHOW_DEST)) { // Redraw current path, if displayed.
+            if (getSharedBoolean(SharedPrefs.KEY_SHOW_DEST)) { // Redraw current destinations, if displayed.
                 String destString = mPref.getString(SharedPrefs.KEY_DEST_OBJECT, null);
                 // Timber.d("GeoJsonString: " + geoJsonString);
                 if (destString == null) {
@@ -305,8 +307,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private boolean flipSharedBoolean(String key) {
-        boolean b = mPref.getBoolean(key, false);
-        b = !b;
+        boolean b = !mPref.getBoolean(key, false);
+        // b = !b; //MJR: simplified, check that there are no adverse impacts!
         mPrefEditor.putBoolean(key, b);
         mPrefEditor.commit();
         return b;
@@ -907,7 +909,9 @@ public class MainActivity extends AppCompatActivity
                             markerPos.latitude,
                             markerPos.longitude,
                             distResults);
-                    if (distResults[0]<200.0f) useMarker=false;
+                    // Skip markers too close and too far
+                    // TODO: Remove this after coordinates are sent to server
+                    if (distResults[0]<minDistToDest || distResults[0]>maxDistToDest) useMarker=false;
                 }
 
                 // Test code for the emulator with Mikko's coordinates - comment out!!
