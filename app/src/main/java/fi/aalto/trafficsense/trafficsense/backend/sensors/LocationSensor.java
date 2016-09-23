@@ -54,18 +54,23 @@ public class LocationSensor implements LocationListener {
 
     private void locationRequest(int priority) {
         if (mGoogleApiClient != null) {
-            // Confirm that location permission is still valid
-            if (ContextCompat.checkSelfPermission(TrafficSenseApplication.getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
-                // Set location request settings
-                LocationRequest mLocationRequest = LocationRequest.create();
-                int interval = mSettings.getInt(mRes.getString(R.string.debug_settings_location_interval_key), 10);
-                mLocationRequest.setInterval(interval);
-                mLocationRequest.setFastestInterval(interval*1000);
-                mLocationRequest.setPriority(priority);
+            if (mGoogleApiClient.isConnected()) {
+                // Confirm that location permission is still valid
+                if (ContextCompat.checkSelfPermission(TrafficSenseApplication.getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    // Set location request settings
+                    LocationRequest mLocationRequest = LocationRequest.create();
+                    int interval = mSettings.getInt(mRes.getString(R.string.debug_settings_location_interval_key), 10);
+                    mLocationRequest.setInterval(interval);
+                    mLocationRequest.setFastestInterval(interval*1000);
+                    mLocationRequest.setPriority(priority);
 
-                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-                Timber.i("Requested location updates with interval: %d", interval);
+                    LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+                    Timber.i("Requested location updates with interval: %d", interval);
+                }
+
+            } else {
+                Timber.w("locationRequest called, but GoogleApiClient is not connected");
             }
         }
     }
