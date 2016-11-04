@@ -116,4 +116,6 @@
     <string name="dest_no_data">Ei kohteita.</string>
     <string name="dest_url_broken">Kohteiden hakuosoite viallinen.</string>
     <string name="dest_visits">Käyntejä</string>
+    <string name="navigation_survey">Uusin käyttäjäkysely</string>
+    <string name="survey_notification_title">TrafficSense käyttäjäkysely</string>
 </resources>

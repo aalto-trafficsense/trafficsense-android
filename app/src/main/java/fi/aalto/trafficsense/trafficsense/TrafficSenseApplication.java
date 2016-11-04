@@ -184,6 +184,7 @@ public class TrafficSenseApplication extends Application {
         stopService(serviceIntent);
         unbindService(mServiceConnection);
         mTSServiceState = STOPPED;
+        mTSService = null;
         updateServiceState();
     }
 

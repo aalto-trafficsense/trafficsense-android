@@ -60,5 +60,4 @@ public class InternalBroadcasts {
     public static final String KEY_SETTINGS_ACTIVITY_INTERVAL = "SETTINGS_ACTIVITY_INTERVAL_CHG";
     public static final String KEY_SETTINGS_LOCATION_INTERVAL = "SETTINGS_LOCATION_INTERVAL_CHG";
 
-
 }

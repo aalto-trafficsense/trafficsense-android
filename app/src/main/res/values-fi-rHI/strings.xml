@@ -221,5 +221,7 @@
     <string name="main_toolbar_dest_label">Mestat</string>
     <string name="dest_no_data">Ei mestoja.</string>
     <string name="dest_visits">Käyntejä</string>
+    <string name="navigation_survey">Vika kyssäri</string>
+    <string name="survey_notification_title">TrafficSense kyssäri</string>
 
 </resources>

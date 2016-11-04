@@ -17,6 +17,4 @@ public class SharedPrefs {
     public static final String KEY_PATH_YEAR = "PATH_YEAR";
     public static final String KEY_PATH_MONTH = "PATH_MONTH";
     public static final String KEY_PATH_DAY = "PATH_DAY";
-
-
 }

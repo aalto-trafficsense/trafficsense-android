@@ -4,10 +4,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.*;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
@@ -47,10 +44,12 @@ public class TrafficSenseService extends Service {
     private static LocalBroadcastManager mLocalBroadcastManager;
     private BroadcastReceiver mBroadcastReceiver;
     private NotificationManager mNotificationManager;
+
     private static BackendStorage mStorage;
     private AtomicReference<Boolean> mClientNumberFetchOngoing = new AtomicReference<>(false);
 
     private static boolean viewActive = false;
+    private static boolean surveyNotification = false; // Are we displaying a survey notification
 
     private ActivityType mPreviousActivity = STILL;
 
@@ -92,6 +91,11 @@ public class TrafficSenseService extends Service {
         }
 
         testUploadEnabled();
+
+        // Not sure if this is needed or helpful, but in some cases play service interface has not been ready
+        if (mPlayServiceInterface == null) mPlayServiceInterface = new PlayServiceInterface();
+        else mPlayServiceInterface.resumePlayServiceInterface();
+
         return mBinder;
     }
 
@@ -167,12 +171,11 @@ public class TrafficSenseService extends Service {
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-        Notification notification = builder.setContentIntent(pendingIntent)
+        return builder.setContentIntent(pendingIntent)
                 .setSmallIcon(ActivityType.getActivityIcon(act))
                 .setWhen(System.currentTimeMillis())
                 .setContentTitle(getText(R.string.app_name))
                 .setContentText(ActivityType.getActivityString(act)).build();
-        return notification;
     }
 
     private static Notification buildServiceStateNotification() {
@@ -180,12 +183,13 @@ public class TrafficSenseService extends Service {
         Intent notificationIntent = new Intent(ctx, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(ctx, 0, notificationIntent, 0);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(ctx);
-        Notification notification = builder.setContentIntent(pendingIntent)
-                .setSmallIcon(R.mipmap.ic_launcher)
+        int nIcon = R.mipmap.ic_launcher;
+        if (mServiceState == SLEEPING) nIcon = R.drawable.md_sleep;
+        return builder.setContentIntent(pendingIntent)
+                .setSmallIcon(nIcon)
                 .setWhen(System.currentTimeMillis())
                 .setContentTitle(ctx.getText(R.string.app_name))
                 .setContentText(getServiceStateString(getServiceState())).build();
-        return notification;
     }
 
     /*************************

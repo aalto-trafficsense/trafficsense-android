@@ -41,9 +41,12 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.*;
 import com.google.common.base.Optional;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.maps.android.geojson.*;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
+import fi.aalto.trafficsense.trafficsense.backend.TrafficSenseService;
+import fi.aalto.trafficsense.trafficsense.backend.backend_util.TSFirebaseMessagingService;
 import fi.aalto.trafficsense.trafficsense.util.*;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -78,6 +81,7 @@ public class MainActivity extends AppCompatActivity
     private SharedPreferences mPref; // Local prefs in this activity
     private SharedPreferences.Editor mPrefEditor;
     private SharedPreferences mSettings; // Application settings
+    private SharedPreferences mSurvey; // Latest end-user survey information
 
     private MenuItem mStartupItem;
     private MenuItem mShutdownItem;
@@ -88,6 +92,7 @@ public class MainActivity extends AppCompatActivity
     private MenuItem mLangDefaultItem;
     private MenuItem mLangStadiItem;
     private MenuItem mTransportReportItem;
+    private MenuItem mSurveyItem;
     private TextView mPathDate;
     private FrameLayout mPathDateLayout;
     private FrameLayout mServiceOffLayout;
@@ -165,6 +170,7 @@ public class MainActivity extends AppCompatActivity
         mLangDefaultItem = navMenu.findItem(R.id.nav_lang_default);
         mLangStadiItem = navMenu.findItem(R.id.nav_lang_stadi);
         mTransportReportItem = navMenu.findItem(R.id.nav_transport);
+        mSurveyItem = navMenu.findItem(R.id.nav_survey);
 
         mPathDate = (TextView) findViewById(R.id.main_path_date);
         mPathDateLayout = (FrameLayout) findViewById(R.id.main_path_date_layout);
@@ -185,6 +191,9 @@ public class MainActivity extends AppCompatActivity
             pathCal.set(Calendar.MONTH, mPref.getInt(SharedPrefs.KEY_PATH_MONTH, pathCal.get(Calendar.MONTH)));
             pathCal.set(Calendar.DAY_OF_MONTH, mPref.getInt(SharedPrefs.KEY_PATH_DAY, pathCal.get(Calendar.DAY_OF_MONTH)));
         }
+
+        FirebaseMessaging.getInstance().subscribeToTopic(TSFirebaseMessagingService.SURVEY_TOPIC);
+        mSurvey = this.getSharedPreferences(TSFirebaseMessagingService.SURVEY_PREFS_FILE_NAME, Context.MODE_PRIVATE);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -216,6 +225,10 @@ public class MainActivity extends AppCompatActivity
         Boolean dbg = mSettings.getBoolean(mRes.getString(R.string.debug_settings_debug_mode_key), false);
         mDebugItem.setVisible(dbg);
         mTransportReportItem.setVisible(dbg);
+        // If there is a stored survey URI, show the drawer item
+        if (!mSurvey.getString(TSFirebaseMessagingService.KEY_SURVEY_URI, "").isEmpty()) {
+            mSurveyItem.setVisible(true);
+        }
     }
 
     /**
@@ -484,6 +497,12 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_about:
                 openActivity(AboutActivity.class);
                 break;
+            case R.id.nav_survey:
+                String surveyUriStr = mSurvey.getString(TSFirebaseMessagingService.KEY_SURVEY_URI, "");
+                if (!surveyUriStr.isEmpty()) {
+                    openFeedbackForm(surveyUriStr);
+                }
+                break;
             case R.id.nav_energy:
                 openActivity(EnergyCertificateActivity.class);
                 break;
@@ -491,7 +510,7 @@ public class MainActivity extends AppCompatActivity
                 openRegisterTransportForm();
                 break;
             case R.id.nav_feedback:
-                openFeedbackForm();
+                openFeedbackForm(mRes.getString(R.string.feedback_form_address));
                 break;
             case R.id.nav_lang_default:
                 selectStadi(false);
@@ -568,9 +587,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void openFeedbackForm() {
-        String uriString = mRes.getString(R.string.feedback_form_address);
-
+    private void openFeedbackForm(String uriString) {
         uriString = uriString.replace("client_number", getClientNumberString());
         String clientVersionString = "";
         try {

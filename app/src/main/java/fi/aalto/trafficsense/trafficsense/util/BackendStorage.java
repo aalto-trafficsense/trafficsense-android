@@ -32,6 +32,7 @@ public class BackendStorage {
     private static final String KEY_CLIENT_NUMBER =  "device-id";
 
     private final SharedPreferences mPreferences;
+
     private final LocalBroadcastManager mLocalBroadcastManager;
     private static Resources mRes;
 

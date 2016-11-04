@@ -1,0 +1,59 @@
+{
+  "project_info": {
+    "project_number": "162519296124",
+    "firebase_url": "https://regularroutes-test.firebaseio.com",
+    "project_id": "regularroutes-test",
+    "storage_bucket": "regularroutes-test.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:162519296124:android:fe2892164ac35d6d",
+        "android_client_info": {
+          "package_name": "fi.aalto.trafficsense.trafficsense.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "162519296124-aghuk0vm3aflpl1ma73jbotdg5irhs3q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "fi.aalto.trafficsense.trafficsense.debug",
+            "certificate_hash": "F6E12108B334154761DEEC11036B11A2408C69CC"
+          }
+        },
+        {
+          "client_id": "162519296124-e6nd3nfbikd60b0nbeeb1u3ms3dbjm4v.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "162519296124-0c35tdqinedlreds3tkfro9e3alnta2s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDdaM58GeagGEzIORhbkEfmY4u6nKV2x8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "162519296124-e6nd3nfbikd60b0nbeeb1u3ms3dbjm4v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
