@@ -43,7 +43,6 @@
     <string name="debug_show_page_title">Kyylää</string>
     <string name="debug_show_activity_label">Duuni:</string>
     <string name="debug_show_activitylist_prefix">Rankkaus:</string>
-    <string name="debug_show_client_number_label">Sun numero:</string>
 
     <string name="debug_show_location_label">Mesta:</string>
     <string name="debug_show_location_time_label">Viimeks:</string>

@@ -57,7 +57,7 @@
     <string name="debug_show_page_title">Dash</string>
     <string name="debug_show_activity_label">Activity:</string>
     <string name="debug_show_activitylist_prefix">Ranking:</string>
-    <string name="debug_show_client_number_label">Client number:</string>
+    <string name="client_number_label">Client number:</string>
 
     <string name="debug_show_location_label">Location:</string>
     <string name="debug_show_location_time_label">Latest:</string>
@@ -95,6 +95,7 @@
     <string name="meters">meters</string>
     <string name="points">points</string>
     <string name="str_clientVersionPrefix">Version:</string>
+
     <string name="str_legalNotice">Legal notice:</string>
     <string name="str_contributions">Contributions:</string>
     <string name="str_ok">Ok</string>

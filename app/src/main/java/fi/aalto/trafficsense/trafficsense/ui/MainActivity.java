@@ -193,7 +193,6 @@ public class MainActivity extends AppCompatActivity
         }
 
         mSurvey = this.getSharedPreferences(TSFirebaseMessagingService.SURVEY_PREFS_FILE_NAME, Context.MODE_PRIVATE);
-        // FirebaseMessaging.getInstance().subscribeToTopic(TSFirebaseMessagingService.SURVEY_TOPIC);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -500,7 +499,8 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_survey:
                 String surveyUriStr = mSurvey.getString(TSFirebaseMessagingService.KEY_SURVEY_URI, "");
                 if (!surveyUriStr.isEmpty()) {
-                    openFeedbackForm(surveyUriStr);
+                    // openFeedbackForm(surveyUriStr);
+                    launchBrowser(EnvInfo.replaceUriFields(surveyUriStr));
                 }
                 break;
             case R.id.nav_energy:
@@ -510,7 +510,8 @@ public class MainActivity extends AppCompatActivity
                 openRegisterTransportForm();
                 break;
             case R.id.nav_feedback:
-                openFeedbackForm(mRes.getString(R.string.feedback_form_address));
+                // openFeedbackForm(mRes.getString(R.string.feedback_form_address));
+                launchBrowser(EnvInfo.replaceUriFields(mRes.getString(R.string.feedback_form_address)));
                 break;
             case R.id.nav_lang_default:
                 selectStadi(false);
@@ -587,6 +588,8 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /*
+
     private void openFeedbackForm(String uriString) {
         uriString = uriString.replace("client_number", getClientNumberString());
         String clientVersionString = "";
@@ -600,12 +603,15 @@ public class MainActivity extends AppCompatActivity
         launchBrowser(uriString);
     }
 
+    */
+
     private void openRegisterTransportForm() {
         String uriString = mRes.getString(R.string.transport_form_address);
-        uriString = uriString.replace("client_number", getClientNumberString());
+        uriString = uriString.replace("client_number", EnvInfo.getClientNumberString());
         launchBrowser(uriString);
     }
 
+    /*
     private String getClientNumberString() {
         String clientNumberString;
         if (mStorage.isClientNumberAvailable()) {
@@ -615,6 +621,8 @@ public class MainActivity extends AppCompatActivity
         }
         return clientNumberString;
     }
+
+    */
 
     private void launchBrowser(String us) {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(us));

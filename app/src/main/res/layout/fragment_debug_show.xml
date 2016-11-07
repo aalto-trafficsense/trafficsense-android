@@ -33,7 +33,7 @@
             <TableRow>
                 <TextView style="@android:style/TextAppearance.Medium"
                           android:layout_weight="1"
-                          android:text="@string/debug_show_client_number_label"
+                          android:text="@string/client_number_label"
                           android:textColor="@color/black" />
                 <TextView android:id="@+id/debug_show_client_number"
                           android:layout_width="match_parent"

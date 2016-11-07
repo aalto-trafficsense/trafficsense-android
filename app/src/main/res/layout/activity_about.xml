@@ -3,7 +3,7 @@
              xmlns:app="http://schemas.android.com/apk/res-auto"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context="fi.aalto.trafficsense.regularroutes.ui.AboutActivity">
+             tools:context="fi.aalto.trafficsense.trafficsense.ui.AboutActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/about_appbarlayout"
@@ -61,11 +61,30 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/colorTilting"/>
             </LinearLayout>
+            <LinearLayout
+                android:id="@+id/abt_clientNumberInfo"
+                android:layout_below="@+id/abt_clientVersionInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/client_number_label"
+                    android:textColor="@color/colorTilting"/>
+                <TextView
+                    android:id="@+id/abt_clientNumberField"
+                    android:layout_marginLeft="12dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorTilting"/>
+            </LinearLayout>
 
             <!-- Legal notice information -->
             <LinearLayout
                 android:id="@+id/abt_legalNoticeInfo"
-                android:layout_below="@+id/abt_clientVersionInfo"
+                android:layout_below="@+id/abt_clientNumberInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/activity_vertical_margin"

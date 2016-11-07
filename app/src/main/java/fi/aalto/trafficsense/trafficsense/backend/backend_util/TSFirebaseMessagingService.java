@@ -35,7 +35,6 @@ public class TSFirebaseMessagingService extends FirebaseMessagingService {
     public static final String SURVEY_TOPIC = "surveys";
     public static final String KEY_SURVEY_MESSAGE = "SURVEY_MESSAGE";
     public static final String KEY_SURVEY_URI = "SURVEY_URI";
-    // public static final String KEY_SURVEY_CLICKED = "SURVEY_CLICKED";
 
     private static final int SURVEY_NOTIFICATION_ID = 1213;
 
@@ -82,17 +81,13 @@ public class TSFirebaseMessagingService extends FirebaseMessagingService {
         String surveyUriString = "";
         String body = "";
 
-
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             // Timber.d("Message data payload: " + remoteMessage.getData());
             Map<String, String> msgPayload = remoteMessage.getData();
             if (msgPayload.containsKey(KEY_SURVEY_URI)) {
                 surveyUriString = msgPayload.get(KEY_SURVEY_URI);
-                // mPrefEditor.putBoolean(KEY_SURVEY_CLICKED, false);
-
-                surveyUriString = EnvInfo.replaceUriFields(surveyUriString);
-
+                // Store without field replacements -> Survey should get the latest numbers, when launched
                 mPrefEditor.putString(KEY_SURVEY_URI, surveyUriString);
                 Timber.d("Survey URI String stored as: %s", surveyUriString);
 
@@ -116,9 +111,6 @@ public class TSFirebaseMessagingService extends FirebaseMessagingService {
 
         mPrefEditor.apply();
 
-        // Also if you intend on generating your own notifications as a result of a received FCM
-        // message, here is where that should be initiated. See sendNotification method below.
-
         if (!surveyUriString.isEmpty() && !body.isEmpty()) {
             sendNotification(body, surveyUriString);
         }
@@ -132,7 +124,7 @@ public class TSFirebaseMessagingService extends FirebaseMessagingService {
      * @param messageBody FCM message body received.
      */
     private void sendNotification(String messageBody, String uriString) {
-        Intent notificationIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uriString));
+        Intent notificationIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(EnvInfo.replaceUriFields(uriString)));
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, notificationIntent,
                 PendingIntent.FLAG_ONE_SHOT);
 

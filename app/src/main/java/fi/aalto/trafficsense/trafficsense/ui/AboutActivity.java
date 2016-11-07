@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
+import fi.aalto.trafficsense.trafficsense.util.EnvInfo;
 import timber.log.Timber;
 
 import java.io.IOException;
@@ -113,13 +114,10 @@ public class AboutActivity extends AppCompatActivity {
 
     private void initFields() {
         final TextView clientVersionField = (TextView) findViewById(R.id.abt_clientVersionField);
+        clientVersionField.setText(EnvInfo.getClientVersionString());
 
-        try {
-            final String ver = getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName;
-            clientVersionField.setText(ver);
-        } catch (PackageManager.NameNotFoundException e) {
-            clientVersionField.setText(R.string.not_available);
-        }
+        final TextView clientNumberField = (TextView) findViewById(R.id.abt_clientNumberField);
+        clientNumberField.setText(EnvInfo.getClientNumberString());
 
         loadLicenseInfo();
         loadContributions();
