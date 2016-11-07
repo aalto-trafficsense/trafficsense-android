@@ -6,6 +6,7 @@ package fi.aalto.trafficsense.trafficsense.backend.backend_util;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
+import com.google.firebase.messaging.FirebaseMessaging;
 import timber.log.Timber;
 
 public class TSFirebaseInstanceIDService extends FirebaseInstanceIdService {
@@ -21,6 +22,9 @@ public class TSFirebaseInstanceIDService extends FirebaseInstanceIdService {
         // Get updated InstanceID token.
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
         Timber.d("Refreshed token: %s", refreshedToken);
+
+        // All clients register to the survey topic
+        FirebaseMessaging.getInstance().subscribeToTopic(TSFirebaseMessagingService.SURVEY_TOPIC);
 
         // If you want to send messages to this application instance or
         // manage this apps subscriptions on the server side, send the

@@ -192,7 +192,6 @@ public class MainActivity extends AppCompatActivity
             pathCal.set(Calendar.DAY_OF_MONTH, mPref.getInt(SharedPrefs.KEY_PATH_DAY, pathCal.get(Calendar.DAY_OF_MONTH)));
         }
 
-        FirebaseMessaging.getInstance().subscribeToTopic(TSFirebaseMessagingService.SURVEY_TOPIC);
         mSurvey = this.getSharedPreferences(TSFirebaseMessagingService.SURVEY_PREFS_FILE_NAME, Context.MODE_PRIVATE);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
