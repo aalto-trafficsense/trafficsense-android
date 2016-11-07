@@ -17,6 +17,7 @@ import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
 import fi.aalto.trafficsense.trafficsense.backend.TrafficSenseService;
 import fi.aalto.trafficsense.trafficsense.ui.MainActivity;
 import fi.aalto.trafficsense.trafficsense.util.BackendStorage;
+import fi.aalto.trafficsense.trafficsense.util.EnvInfo;
 import fi.aalto.trafficsense.trafficsense.util.SharedPrefs;
 import timber.log.Timber;
 
@@ -90,27 +91,7 @@ public class TSFirebaseMessagingService extends FirebaseMessagingService {
                 surveyUriString = msgPayload.get(KEY_SURVEY_URI);
                 // mPrefEditor.putBoolean(KEY_SURVEY_CLICKED, false);
 
-                if (surveyUriString.contains("client_number")) {
-                    // Fetch client number from backend storage
-                    BackendStorage mStorage = BackendStorage.create(this);
-                    String clientNumberString;
-                    if (mStorage.isClientNumberAvailable()) {
-                        clientNumberString = String.format("%d", mStorage.readClientNumber().get());
-                    } else {
-                        clientNumberString = getString(R.string.not_available);
-                    }
-                    surveyUriString = surveyUriString.replace("client_number", clientNumberString);
-                }
-
-                if (surveyUriString.contains("client_version")) {
-                    String clientVersionString = "";
-                    try {
-                        clientVersionString = getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName;
-                    } catch (PackageManager.NameNotFoundException e) {
-                        clientVersionString = getString(R.string.not_available);
-                    }
-                    surveyUriString = surveyUriString.replace("client_version", clientVersionString);
-                }
+                surveyUriString = EnvInfo.replaceUriFields(surveyUriString);
 
                 mPrefEditor.putString(KEY_SURVEY_URI, surveyUriString);
                 Timber.d("Survey URI String stored as: %s", surveyUriString);

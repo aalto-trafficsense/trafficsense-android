@@ -193,6 +193,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         mSurvey = this.getSharedPreferences(TSFirebaseMessagingService.SURVEY_PREFS_FILE_NAME, Context.MODE_PRIVATE);
+        // FirebaseMessaging.getInstance().subscribeToTopic(TSFirebaseMessagingService.SURVEY_TOPIC);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
