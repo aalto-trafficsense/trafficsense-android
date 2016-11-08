@@ -6,7 +6,7 @@ import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
 
 /**
- * Return environmental variable-type information and
+ * Retrieve environmental variable-type information and
  * process related strings
  *
  * Created by mikko.rinne@aalto.fi on 07/11/16.

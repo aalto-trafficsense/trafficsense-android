@@ -1,0 +1,59 @@
+{
+  "project_info": {
+    "project_number": "880161488833",
+    "firebase_url": "https://calm-catfish-95111.firebaseio.com",
+    "project_id": "calm-catfish-95111",
+    "storage_bucket": "calm-catfish-95111.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:880161488833:android:0cd9305647d7d376",
+        "android_client_info": {
+          "package_name": "fi.aalto.trafficsense.trafficsense"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "880161488833-66nju4mqitddhjbivfujo0ujb9u25pt6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "fi.aalto.trafficsense.trafficsense",
+            "certificate_hash": "3B1E1DA7D5B53074D1E177036CEB2D24193D4DBE"
+          }
+        },
+        {
+          "client_id": "880161488833-fdsisuc27bdk6ia9fvcrau9a5edpbcor.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "880161488833-7rgaffailda19pqb17c1b0oni2e6b2qt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD94CIP7dsHL3Lmq9TvpvB-Jb0dfylOIXM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "880161488833-fdsisuc27bdk6ia9fvcrau9a5edpbcor.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
