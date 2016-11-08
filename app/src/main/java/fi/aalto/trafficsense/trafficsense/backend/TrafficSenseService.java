@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import com.google.common.base.Optional;
 import fi.aalto.trafficsense.trafficsense.R;
@@ -173,6 +174,7 @@ public class TrafficSenseService extends Service {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         return builder.setContentIntent(pendingIntent)
                 .setSmallIcon(ActivityType.getActivityIcon(act))
+                .setColor(ContextCompat.getColor(this,R.color.colorWalking))
                 .setWhen(System.currentTimeMillis())
                 .setContentTitle(getText(R.string.app_name))
                 .setContentText(ActivityType.getActivityString(act)).build();
@@ -187,6 +189,7 @@ public class TrafficSenseService extends Service {
         if (mServiceState == SLEEPING) nIcon = R.drawable.md_sleep;
         return builder.setContentIntent(pendingIntent)
                 .setSmallIcon(nIcon)
+                .setColor(ContextCompat.getColor(ctx,R.color.colorWalking))
                 .setWhen(System.currentTimeMillis())
                 .setContentTitle(ctx.getText(R.string.app_name))
                 .setContentText(getServiceStateString(getServiceState())).build();

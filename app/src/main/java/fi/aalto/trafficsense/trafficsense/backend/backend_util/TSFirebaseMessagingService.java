@@ -10,6 +10,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 
+import android.support.v4.content.ContextCompat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import fi.aalto.trafficsense.trafficsense.R;
@@ -131,9 +132,11 @@ public class TSFirebaseMessagingService extends FirebaseMessagingService {
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_message_24dp)
+                .setColor(ContextCompat.getColor(TrafficSenseApplication.getContext(),R.color.colorSubway))
                 .setWhen(System.currentTimeMillis())
                 .setContentTitle(getString(R.string.survey_notification_title))
                 .setContentText(messageBody)
+                .setWhen(System.currentTimeMillis())
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent);
