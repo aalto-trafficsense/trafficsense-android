@@ -15,14 +15,14 @@ public class RegisterRequest extends AuthenticateRequest {
     @SerializedName("deviceModel")
     public final String DeviceModel;
 
-    public RegisterRequest(String userId, String deviceId, String installationId, String oneTimeToken, String deviceModel) {
-        super(userId, deviceId, installationId);
+    public RegisterRequest(String userId, String deviceId, String installationId, String oneTimeToken, String deviceModel, String clientVersion) {
+        super(userId, deviceId, installationId, clientVersion);
         OneTimeToken = oneTimeToken;
         DeviceModel = deviceModel;
     }
 
 
-    public RegisterRequest(AuthenticateRequest authRequest, String oneTimeToken, String deviceModel) {
-        this(authRequest.UserId, authRequest.DeviceId, authRequest.InstallationId, oneTimeToken, deviceModel);
+    public RegisterRequest(AuthenticateRequest authRequest, String oneTimeToken, String deviceModel, String clientVersion) {
+        this(authRequest.UserId, authRequest.DeviceId, authRequest.InstallationId, oneTimeToken, deviceModel, clientVersion);
     }
 }

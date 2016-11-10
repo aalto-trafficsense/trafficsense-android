@@ -14,9 +14,14 @@ public class AuthenticateRequest {
     @SerializedName("deviceId")
     public final String DeviceId;
 
-    public AuthenticateRequest(String userId, String deviceId, String installationId) {
+    @SerializedName("clientVersion")
+    public final String ClientVersion;
+
+
+    public AuthenticateRequest(String userId, String deviceId, String installationId, String clientVersion) {
         UserId = userId;
         InstallationId = installationId;
         DeviceId = deviceId;
+        ClientVersion = clientVersion;
     }
 }

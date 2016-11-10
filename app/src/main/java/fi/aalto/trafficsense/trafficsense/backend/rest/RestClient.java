@@ -584,7 +584,7 @@ public class RestClient {
 
 
         final Optional<String> installationId = mStorage.readInstallationId();
-        AuthenticateRequest request = new AuthenticateRequest(userId.get(), mAndroidDeviceId, installationId.get());
+        AuthenticateRequest request = new AuthenticateRequest(userId.get(), mAndroidDeviceId, installationId.get(), EnvInfo.getClientVersionString());
         Timber.d("User id: " + userId.get());
         Timber.d("mAndroidDeviceId " + mAndroidDeviceId);
         Timber.d("installationId: " + installationId.get());
@@ -611,7 +611,7 @@ public class RestClient {
      **/
     private boolean registerInternal(final String oneTimeToken, final AuthenticateRequest authRequest, final Callback<Void> callback) {
 
-        register(new RegisterRequest(authRequest, oneTimeToken, Build.MODEL) ,new Callback<RegisterResponse>() {
+        register(new RegisterRequest(authRequest, oneTimeToken, Build.MODEL, EnvInfo.getClientVersionString()) ,new Callback<RegisterResponse>() {
             @Override
             public void run(RegisterResponse response, RuntimeException error) {
                 if (error != null) {
