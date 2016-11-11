@@ -131,8 +131,8 @@ public class TSFirebaseMessagingService extends FirebaseMessagingService {
 
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.ic_message_24dp)
-                .setColor(ContextCompat.getColor(TrafficSenseApplication.getContext(),R.color.colorSubway))
+                .setSmallIcon(R.drawable.md_survey)
+                .setColor(ContextCompat.getColor(TrafficSenseApplication.getContext(),R.color.colorTilting))
                 .setWhen(System.currentTimeMillis())
                 .setContentTitle(getString(R.string.survey_notification_title))
                 .setContentText(messageBody)
