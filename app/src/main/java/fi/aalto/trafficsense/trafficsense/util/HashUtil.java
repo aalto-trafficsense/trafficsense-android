@@ -1,6 +1,5 @@
 package fi.aalto.trafficsense.trafficsense.util;
 
-
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -9,6 +8,7 @@ public class HashUtil {
     final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
 
     /** Convert Byte array to Hex (string) */
+    // Originates from https://stackoverflow.com/a/9855338
     public static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
         for ( int j = 0; j < bytes.length; j++ ) {
