@@ -1,3 +1,43 @@
-This software has been developed in Aalto University as a part of the TrafficSense project funded by the Aalto Energy Efficiency program. The source code is published as open-source under MIT license "as is" in GitHub.
+This software has been developed in Aalto University as a part of the TrafficSense project funded by the Aalto Energy Efficiency program. The source code is published as open-source under <a href="https://opensource.org/licenses/MIT">MIT license</a> "as is" in <a href="https://github.com/aalto-trafficsense/trafficsense-android">GitHub</a>.<br>
+<br>
+We are extremely grateful to the contributors of the following open source libraries:<br>
 
-Material Design icons by Google are licensed under CC-BY 4.0. Other Material Design icons are licensed under SIL Open Font License 1.1.
+<a href="https://opensource.org/licenses/MIT">MIT license</a>:
+<a href="https://pypi.python.org/pypi/APScheduler">APScheduler</a>,
+<a href="https://pypi.python.org/pypi/svgwrite">svgwrite</a>,
+<a href="https://pypi.python.org/pypi/GeoAlchemy2">GeoAlchemy2</a>,
+<a href="https://pypi.python.org/pypi/Flask-KVSession">Flask-KVSession</a>,
+<a href="https://pypi.python.org/pypi/simplekv/">simplekv</a>,
+<a href="https://pypi.python.org/pypi/httplib2">httplib2</a><br>
+
+<a href="https://opensource.org/licenses/BSD-3-Clause">BSD-license</a>:
+<a href="http://flask.pocoo.org/">Flask</a>,
+<a href="https://pypi.python.org/pypi/Flask-SQLAlchemy/2.1">Flask-SQLAlchemy</a>,
+<a href="https://pypi.python.org/pypi/joblib">joblib</a>,
+<a href="http://jinja.pocoo.org/">Jinja2</a>,
+<a href="https://pypi.python.org/pypi/Werkzeug">Werkzeug</a>,
+<a href="https://pypi.python.org/pypi/itsdangerous">itsdangerous</a>,
+<a href="https://pypi.python.org/pypi/python-gflags/2.0">python-gflags</a><br>
+
+<a href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 license</a>:
+<a href="http://www.pyopenssl.org/en/stable/">pyOpenSSL</a>,
+<a href="https://pypi.python.org/pypi/google-api-python-client/">google-api-python-client</a>,
+<a href="https://pypi.python.org/pypi/gtfs-realtime-bindings">gtfs-realtime-bindings</a>,
+<a href="https://github.com/google/guava">Guava</a>,
+<a href="https://github.com/JakeWharton/timber">Timber</a>,
+<a href="https://square.github.io/retrofit/">Retrofit</a>,
+<a href="https://bigbadaboom.github.io/androidsvg/">AndroidSVG</a><br>
+
+Uniquely licensed:
+<a href="http://initd.org/psycopg/">psycopg2</a>,
+<a href="https://pypi.python.org/pypi/wsgiref">wsgiref</a>,
+<a href="https://pypi.python.org/pypi/OWSLib/0.13.0">OWSLib</a><br>
+
+Without their work and expertise this service would not exist.<br>
+<br>
+To provide the service we utilise the <a href="https://digitransit.fi/en/developers/">Digitransit</a> routing and realtime APIs,
+<a href="https://en.ilmatieteenlaitos.fi/open-data">FMI Open Data</a> licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY 4.0</a> by the <a href="http://en.ilmatieteenlaitos.fi/home">Finnish Meteorological Institute</a> and
+<a href="https://github.com/finnishtransportagency/digitraffic/wiki/Digitraffic-in-English">Digitraffic</a> licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY 4.0</a> by the <a href="http://www.fta.fi">Finnish Transport Agency</a>.<br>
+<br>
+Material Design icons by Google are licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY 4.0</a>.
+Other Material Design icons are licensed under <a href="http://scripts.sil.org/cms/scripts/page.php?item_id=OFL">SIL Open Font License 1.1</a>.<br>

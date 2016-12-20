@@ -32,10 +32,7 @@ import java.util.Map;
  */
 public class TSFirebaseMessagingService extends FirebaseMessagingService {
 
-    public static final String SURVEY_PREFS_FILE_NAME = "SurveyPrefs";
-    public static final String SURVEY_TOPIC = "surveys";
-    public static final String KEY_SURVEY_MESSAGE = "SURVEY_MESSAGE";
-    public static final String KEY_SURVEY_URI = "SURVEY_URI";
+
 
     private static final int SURVEY_NOTIFICATION_ID = 1213;
 
@@ -74,46 +71,15 @@ public class TSFirebaseMessagingService extends FirebaseMessagingService {
         //
         // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
-        Timber.d("From: %s", remoteMessage.getFrom());
 
-        SharedPreferences mPref = getSharedPreferences(SURVEY_PREFS_FILE_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor mPrefEditor = mPref.edit();
-
-        String surveyUriString = "";
-        String body = "";
-
-        // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
-            // Timber.d("Message data payload: " + remoteMessage.getData());
-            Map<String, String> msgPayload = remoteMessage.getData();
-            if (msgPayload.containsKey(KEY_SURVEY_URI)) {
-                surveyUriString = msgPayload.get(KEY_SURVEY_URI);
-                // Store without field replacements -> Survey should get the latest numbers, when launched
-                mPrefEditor.putString(KEY_SURVEY_URI, surveyUriString);
-                Timber.d("Survey URI String stored as: %s", surveyUriString);
+            ServerNotification sn = new ServerNotification(remoteMessage);
+
+            if (sn.messageOk()) {
+                sn.postNotification();
 
             }
 
-            if (msgPayload.containsKey(KEY_SURVEY_MESSAGE)) {
-                body = msgPayload.get(KEY_SURVEY_MESSAGE);
-
-                mPrefEditor.putString(KEY_SURVEY_MESSAGE, body);
-                Timber.d("Message Notification Body: %s", body);
-            }
-        }
-
-        // Check if message contains a notification payload.
-        /*
-        if (remoteMessage.getNotification() != null) {
-            body = remoteMessage.getNotification().getBody();
-            mPrefEditor.putString(KEY_SURVEY_MESSAGE, body);
-            Timber.d("Message Notification Body: %s", body);
-        } */
-
-        mPrefEditor.apply();
-
-        if (!surveyUriString.isEmpty() && !body.isEmpty()) {
-            sendNotification(body, surveyUriString);
         }
 
     }
@@ -124,26 +90,26 @@ public class TSFirebaseMessagingService extends FirebaseMessagingService {
      *
      * @param messageBody FCM message body received.
      */
-    private void sendNotification(String messageBody, String uriString) {
-        Intent notificationIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(EnvInfo.replaceUriFields(uriString)));
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, notificationIntent,
-                PendingIntent.FLAG_ONE_SHOT);
-
-        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.md_survey)
-                .setColor(ContextCompat.getColor(TrafficSenseApplication.getContext(),R.color.colorTilting))
-                .setWhen(System.currentTimeMillis())
-                .setContentTitle(getString(R.string.survey_notification_title))
-                .setContentText(messageBody)
-                .setWhen(System.currentTimeMillis())
-                .setAutoCancel(true)
-                .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent);
-
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        notificationManager.notify(SURVEY_NOTIFICATION_ID /* ID of notification */, notificationBuilder.build());
-    }
+//    private void sendNotification(String messageBody, String uriString) {
+//        Intent notificationIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(EnvInfo.replaceUriFields(uriString)));
+//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, notificationIntent,
+//                PendingIntent.FLAG_ONE_SHOT);
+//
+//        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+//        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+//                .setSmallIcon(R.drawable.md_survey)
+//                .setColor(ContextCompat.getColor(TrafficSenseApplication.getContext(),R.color.colorTilting))
+//                .setWhen(System.currentTimeMillis())
+//                .setContentTitle(getString(R.string.survey_notification_title))
+//                .setContentText(messageBody)
+//                .setWhen(System.currentTimeMillis())
+//                .setAutoCancel(true)
+//                .setSound(defaultSoundUri)
+//                .setContentIntent(pendingIntent);
+//
+//        NotificationManager notificationManager =
+//                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//
+//        notificationManager.notify(SURVEY_NOTIFICATION_ID /* ID of notification */, notificationBuilder.build());
+//    }
 }

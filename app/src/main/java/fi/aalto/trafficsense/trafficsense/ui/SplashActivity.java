@@ -15,13 +15,16 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.LocationServices;
+import com.google.firebase.messaging.FirebaseMessaging;
 import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
+import fi.aalto.trafficsense.trafficsense.backend.backend_util.ServerNotification;
 import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
 
 /**
  * Created by mikko.rinne@aalto.fi on 15/05/16.
  *
  * 11.10.2016: Extended to handle play service connectivity and updates
+ * 16.12.2016: Added registration to Firebase broadcast topics.
  */
 public class SplashActivity extends AppCompatActivity {
 
@@ -112,8 +115,12 @@ public class SplashActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch(requestCode) {
             case REQUEST_GOOGLE_PLAY_SERVICES:
-                if (resultCode == Activity.RESULT_OK) {
-                    // Play services fine, proceed to main activity
+                if (resultCode == Activity.RESULT_OK) { // Play services fine
+                    // Register Firebase Messaging broadcast topics
+                    FirebaseMessaging fm = FirebaseMessaging.getInstance();
+                    fm.subscribeToTopic(ServerNotification.FB_TOPIC_SURVEY);
+                    fm.subscribeToTopic(ServerNotification.FB_TOPIC_BROADCAST);
+                    // Proceed to main activity
                     openActivity(MainActivity.class);
                 }
                 break;

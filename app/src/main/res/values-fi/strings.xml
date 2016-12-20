@@ -38,7 +38,7 @@
     <string name="not_signed_in">Tarkista Google-tilille kirjautuminen</string>
     <string name="path_future_date_request">Tulevaisuutesi on minulta salattu.</string>
     <string name="path_no_data_for_date">Ei tietoja valitulle päivälle.</string>
-    <string name="path_no_public_transport">Joukkoliikennevälineet tunnistetaan huomiseksi.</string>
+    <!-- <string name="path_no_public_transport">Joukkoliikennevälineet tunnistetaan huomiseksi.</string> -->
     <string name="path_url_broken">Verkko-osoite viallinen</string>
     <string name="play_services_error">Google Play Services ei saatavilla. Ohjelma sulkeutuu.</string>
     <string name="plus_disconnect">Peru tilinkäyttöoikeus</string>
@@ -116,6 +116,6 @@
     <string name="dest_no_data">Ei kohteita.</string>
     <string name="dest_url_broken">Kohteiden hakuosoite viallinen.</string>
     <string name="dest_visits">Käyntejä</string>
-    <string name="navigation_survey">Uusin käyttäjäkysely</string>
-    <string name="survey_notification_title">TrafficSense käyttäjäkysely</string>
+    <string name="navigation_broadcast_message">Uusin käyttäjätiedote</string>
+    <string name="navigation_broadcast_survey">Uusin käyttäjäkysely</string>
 </resources>

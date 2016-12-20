@@ -46,6 +46,7 @@ import com.google.maps.android.geojson.*;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
 import fi.aalto.trafficsense.trafficsense.backend.TrafficSenseService;
+import fi.aalto.trafficsense.trafficsense.backend.backend_util.ServerNotification;
 import fi.aalto.trafficsense.trafficsense.backend.backend_util.TSFirebaseMessagingService;
 import fi.aalto.trafficsense.trafficsense.util.*;
 import org.json.JSONArray;
@@ -192,7 +193,7 @@ public class MainActivity extends AppCompatActivity
             pathCal.set(Calendar.DAY_OF_MONTH, mPref.getInt(SharedPrefs.KEY_PATH_DAY, pathCal.get(Calendar.DAY_OF_MONTH)));
         }
 
-        mSurvey = this.getSharedPreferences(TSFirebaseMessagingService.SURVEY_PREFS_FILE_NAME, Context.MODE_PRIVATE);
+        mSurvey = this.getSharedPreferences(ServerNotification.SURVEY_PREFS_FILE_NAME, Context.MODE_PRIVATE);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -224,9 +225,25 @@ public class MainActivity extends AppCompatActivity
         Boolean dbg = mSettings.getBoolean(mRes.getString(R.string.debug_settings_debug_mode_key), false);
         mDebugItem.setVisible(dbg);
         mTransportReportItem.setVisible(dbg);
-        // If there is a stored survey URI, show the drawer item
-        if (!mSurvey.getString(TSFirebaseMessagingService.KEY_SURVEY_URI, "").isEmpty()) {
+        // If there is a broadcast notification URI, show the drawer item
+        if (!mSurvey.getString(ServerNotification.KEY_NOTIFICATION_URI, "").isEmpty()) {
             mSurveyItem.setVisible(true);
+            int notificationType = mSurvey.getInt(ServerNotification.KEY_NOTIFICATION_TYPE, 0);
+            switch (notificationType) {
+                case ServerNotification.NOTIFICATION_TYPE_SURVEY:
+                    mSurveyItem.setIcon(R.drawable.md_survey);
+                    mSurveyItem.setTitle(R.string.navigation_broadcast_survey);
+                    break;
+                case ServerNotification.NOTIFICATION_TYPE_BROADCASTMESSAGE:
+                    mSurveyItem.setIcon(R.drawable.ic_info_outline_24dp);
+                    mSurveyItem.setTitle(R.string.navigation_broadcast_message);
+                    break;
+                default:
+                    mSurveyItem.setIcon(R.mipmap.ic_launcher);
+            }
+
+        } else {
+            mSurveyItem.setVisible(false);
         }
     }
 
@@ -497,9 +514,8 @@ public class MainActivity extends AppCompatActivity
                 openActivity(AboutActivity.class);
                 break;
             case R.id.nav_survey:
-                String surveyUriStr = mSurvey.getString(TSFirebaseMessagingService.KEY_SURVEY_URI, "");
+                String surveyUriStr = mSurvey.getString(ServerNotification.KEY_NOTIFICATION_URI, "");
                 if (!surveyUriStr.isEmpty()) {
-                    // openFeedbackForm(surveyUriStr);
                     launchBrowser(EnvInfo.replaceUriFields(surveyUriStr));
                 }
                 break;
@@ -510,7 +526,6 @@ public class MainActivity extends AppCompatActivity
                 openRegisterTransportForm();
                 break;
             case R.id.nav_feedback:
-                // openFeedbackForm(mRes.getString(R.string.feedback_form_address));
                 launchBrowser(EnvInfo.replaceUriFields(mRes.getString(R.string.feedback_form_address)));
                 break;
             case R.id.nav_lang_default:
@@ -588,41 +603,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    /*
-
-    private void openFeedbackForm(String uriString) {
-        uriString = uriString.replace("client_number", getClientNumberString());
-        String clientVersionString = "";
-        try {
-            clientVersionString = getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            clientVersionString = mRes.getString(R.string.not_available);
-        }
-        uriString = uriString.replace("client_version", clientVersionString);
-        uriString = uriString.replace("phone_model", Build.MODEL);
-        launchBrowser(uriString);
-    }
-
-    */
-
     private void openRegisterTransportForm() {
         String uriString = mRes.getString(R.string.transport_form_address);
         uriString = uriString.replace("client_number", EnvInfo.getClientNumberString());
         launchBrowser(uriString);
     }
-
-    /*
-    private String getClientNumberString() {
-        String clientNumberString;
-        if (mStorage.isClientNumberAvailable()) {
-            clientNumberString = String.format("%d", mStorage.readClientNumber().get());
-        } else {
-            clientNumberString = mRes.getString(R.string.not_available);
-        }
-        return clientNumberString;
-    }
-
-    */
 
     private void launchBrowser(String us) {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(us));
@@ -1140,9 +1125,9 @@ public class MainActivity extends AppCompatActivity
                         Toast.makeText(mContext, R.string.path_no_data_for_date, Toast.LENGTH_SHORT).show();
                     }
                 }
-                if (isTodaysPath()) {
-                    Toast.makeText(mContext, R.string.path_no_public_transport, Toast.LENGTH_SHORT).show();
-                }
+//                if (isTodaysPath()) {
+//                    Toast.makeText(mContext, R.string.path_no_public_transport, Toast.LENGTH_SHORT).show();
+//                }
             }
             mPathItem.setEnabled(true);
         }
@@ -1196,7 +1181,7 @@ public class MainActivity extends AppCompatActivity
                 GeoJsonLineStringStyle mStyle = new GeoJsonLineStringStyle();
                 mStyle.setColor(ContextCompat.getColor(mContext, getActivityColorByString(activity)));
                 feature.setLineStringStyle(mStyle);
-                if (!today) {
+//                if (!today) { // Update 20.12.2016: Show public transport also for current day
                     if (publicTransport.contains(activity)) { // Special marker for public transport
                         if (coordinates != null) {
                             // Find mid-coordinates of the trip
@@ -1218,7 +1203,7 @@ public class MainActivity extends AppCompatActivity
                             newFeatures.add(transportIconFeature);
                         }
                     }
-                }
+//                }
             }
             // Check that our route is included in the bounds
             if (coordinates != null) {

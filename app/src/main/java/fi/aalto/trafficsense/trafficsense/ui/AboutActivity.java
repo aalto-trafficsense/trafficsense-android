@@ -11,6 +11,9 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.text.SpannedString;
+import android.text.method.LinkMovementMethod;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -125,27 +128,25 @@ public class AboutActivity extends AppCompatActivity {
 
     private void loadContributions() {
         TextView contributionsField = (TextView) findViewById(R.id.abt_contributions);
-        loadAndFillField(R.raw.contributions, contributionsField);
+        contributionsField.setText(loadRawText(R.raw.contributions));
     }
 
     private void loadLicenseInfo() {
         TextView legalNoticesField = (TextView) findViewById(R.id.abt_legalNotice);
-        loadAndFillField(R.raw.legal_notice, legalNoticesField);
+        legalNoticesField.setMovementMethod(LinkMovementMethod.getInstance()); // Support hyperlinks
+        legalNoticesField.setText(Html.fromHtml(loadRawText(R.raw.legal_notice)));
     }
 
-    private void loadAndFillField(int resId, TextView field) {
+    private String loadRawText(int resId) {
         Resources res = getResources();
-
-        if (res == null || field == null)
-            return;
 
         try {
             InputStream stream = res.openRawResource(resId);
             byte[] b = new byte[stream.available()];
             stream.read(b);
-            field.setText(new String(b));
+            return new String(b);
         } catch (IOException e) {
-            field.setText(R.string.not_available);
+            return res.getString(R.string.not_available);
         }
     }
 }

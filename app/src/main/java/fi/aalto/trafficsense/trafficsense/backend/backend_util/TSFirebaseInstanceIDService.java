@@ -23,9 +23,6 @@ public class TSFirebaseInstanceIDService extends FirebaseInstanceIdService {
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
         Timber.d("Refreshed token: %s", refreshedToken);
 
-        // All clients register to the survey topic
-        FirebaseMessaging.getInstance().subscribeToTopic(TSFirebaseMessagingService.SURVEY_TOPIC);
-
         // If you want to send messages to this application instance or
         // manage this apps subscriptions on the server side, send the
         // Instance ID token to your app server.
