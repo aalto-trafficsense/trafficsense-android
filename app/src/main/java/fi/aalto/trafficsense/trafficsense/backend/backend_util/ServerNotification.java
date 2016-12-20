@@ -70,7 +70,7 @@ public class ServerNotification {
 
                 // All broadcast notifications currently have a title, message and uri.
                 if (msgPayload.containsKey(KEY_NOTIFICATION_TITLE)) {
-                    messageTitle = msgPayload.get(KEY_NOTIFICATION_MESSAGE);
+                    messageTitle = msgPayload.get(KEY_NOTIFICATION_TITLE);
                 } else {
                     messageOk = false;
                 }
