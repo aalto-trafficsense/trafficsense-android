@@ -222,5 +222,6 @@
     <string name="dest_visits">Käyntejä</string>
     <string name="navigation_broadcast_message">Vika tiedote</string>
     <string name="navigation_broadcast_survey">Vika kyssäri</string>
+    <string name="feedback_form_address">https://docs.google.com/forms/d/e/1FAIpQLSc5SwgTEDB3NMfiNjoWjpO_vih7OyePwxNmRaR3socdRCKCPg/viewform?entry.1453132440&amp;entry.1290358306=client_number&amp;entry.1714883594=client_version&amp;entry.3621406=phone_model</string>
 
 </resources>

@@ -32,7 +32,7 @@
     <string name="navigation_feedback">Send feedback</string>
     <!--The URL to open when "Send feedback" is selected from the MainActivity Drawer-->
     <!--NOTE: Strings client_number, client_version and phone_model are replaced in MainActivity by the appropriate values.-->
-    <string name="feedback_form_address">https://docs.google.com/forms/d/1GRvwgUXigE2iclSqAMqd6B2m3SDcs239a9nRrhHOgKM/viewform?entry.1453132440&amp;entry.1290358306=client_number&amp;entry.1714883594=client_version&amp;entry.3621406=phone_model</string>
+    <string name="feedback_form_address">https://docs.google.com/forms/d/e/1FAIpQLSeBf3wQFEcmySzjWqYMeVwuA_i8DnnusSMlcthPTbOuxRir7Q/viewform?entry.1453132440&amp;entry.1290358306=client_number&amp;entry.1714883594=client_version&amp;entry.3621406=phone_model</string>
 
     <string name="navigation_transport">Register transport</string>
     <!--The URL to open when "Register transport" is selected from the MainActivity Drawer-->
