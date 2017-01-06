@@ -30,7 +30,7 @@ public class ServerNotification {
     private String messageTitle;
     private String messageBody;
     private int notificationType;
-    private boolean messageOk = true;
+    private boolean shouldCreateNotification = true;
 
 
     public static final String FB_TOPIC_SURVEY = "surveys";
@@ -72,12 +72,12 @@ public class ServerNotification {
                 if (msgPayload.containsKey(KEY_NOTIFICATION_TITLE)) {
                     messageTitle = msgPayload.get(KEY_NOTIFICATION_TITLE);
                 } else {
-                    messageOk = false;
+                    shouldCreateNotification = false;
                 }
                 if (msgPayload.containsKey(KEY_NOTIFICATION_MESSAGE)) {
                     messageBody = msgPayload.get(KEY_NOTIFICATION_MESSAGE);
                 } else {
-                    messageOk = false;
+                    shouldCreateNotification = false;
                 }
                 if (msgPayload.containsKey(KEY_NOTIFICATION_URI)) {
                     uriString = msgPayload.get(KEY_NOTIFICATION_URI);
@@ -87,7 +87,7 @@ public class ServerNotification {
 
                 // If terminal locale is set to Finnish and there is Finnish content => replace
                 String loc = Locale.getDefault().getLanguage();
-                Timber.d("ServerNotification got language as: %s", loc);
+                // Timber.d("ServerNotification got language as: %s", loc);
                 if (loc.equalsIgnoreCase("fi")) {
                     if (msgPayload.containsKey(KEY_NOTIFICATION_TITLE_FI)) {
                         messageTitle = msgPayload.get(KEY_NOTIFICATION_TITLE_FI);
@@ -157,7 +157,6 @@ public class ServerNotification {
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(TrafficSenseApplication.getContext())
                 .setSmallIcon(notificationIcon)
                 .setColor(ContextCompat.getColor(TrafficSenseApplication.getContext(),R.color.colorTilting))
-                .setWhen(System.currentTimeMillis())
                 .setContentTitle(messageTitle)
                 .setContentText(messageBody)
                 .setWhen(System.currentTimeMillis())
@@ -184,6 +183,6 @@ public class ServerNotification {
         notificationManager.notify(SERVER_NOTIFICATION_ID /* ID of notification */, notificationBuilder.build());
     }
 
-    public boolean messageOk() { return messageOk; }
+    public boolean shouldCreateNotification() { return shouldCreateNotification; }
 
 }

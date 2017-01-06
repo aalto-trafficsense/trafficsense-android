@@ -94,7 +94,7 @@
     <string name="status_signed_out">Kirjautunut ulos</string>
     <string name="status_signing_in">Kirjautuu Google-tilille...</string>
     <string name="still">Paikoillaan</string>
-    <string name="str_clientVersionPrefix">Versio:</string>
+    <string name="str_clientVersionPrefix">Sovelluksen versio:</string>
     <string name="str_contributions">Tekijät:</string>
     <string name="str_legalNotice">Lisenssitiedot:</string>
     <string name="subway">Metro</string>
@@ -111,7 +111,7 @@
     <string name="unknown">Tuntematon</string>
     <string name="walking">Kävely</string>
     <string name="not_available"></string>
-    <string name="trafficsense_web_page">https://aaltotrafficsense.wordpress.com/</string>
+    <string name="trafficsense_web_page">https://aaltotrafficsense.wordpress.com/yleista/</string>
     <string name="main_toolbar_dest_label">Kohteet</string>
     <string name="dest_no_data">Ei kohteita.</string>
     <string name="dest_url_broken">Kohteiden hakuosoite viallinen.</string>
@@ -119,4 +119,5 @@
     <string name="navigation_broadcast_message">Uusin käyttäjätiedote</string>
     <string name="navigation_broadcast_survey">Uusin käyttäjäkysely</string>
     <string name="feedback_form_address">https://docs.google.com/forms/d/e/1FAIpQLSc5SwgTEDB3NMfiNjoWjpO_vih7OyePwxNmRaR3socdRCKCPg/viewform?entry.1453132440&amp;entry.1290358306=client_number&amp;entry.1714883594=client_version&amp;entry.3621406=phone_model</string>
+    <string name="client_number_label">Asennuksen numero:</string>
 </resources>

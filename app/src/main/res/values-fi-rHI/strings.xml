@@ -79,7 +79,7 @@
     <string name="minutes">minaa</string>
     <string name="meters">metrii</string>
     <string name="points">mestaa</string>
-    <string name="str_clientVersionPrefix">Versio:</string>
+    <string name="str_clientVersionPrefix">Sovelluksen versio:</string>
     <string name="str_legalNotice">Pykälät:</string>
     <string name="str_contributions">Tyypit:</string>
     <string name="str_ok">Jes</string>
@@ -223,5 +223,7 @@
     <string name="navigation_broadcast_message">Vika tiedote</string>
     <string name="navigation_broadcast_survey">Vika kyssäri</string>
     <string name="feedback_form_address">https://docs.google.com/forms/d/e/1FAIpQLSc5SwgTEDB3NMfiNjoWjpO_vih7OyePwxNmRaR3socdRCKCPg/viewform?entry.1453132440&amp;entry.1290358306=client_number&amp;entry.1714883594=client_version&amp;entry.3621406=phone_model</string>
+    <string name="client_number_label">Asennuksen numero:</string>
+    <string name="trafficsense_web_page">https://aaltotrafficsense.wordpress.com/yleista/</string>
 
 </resources>

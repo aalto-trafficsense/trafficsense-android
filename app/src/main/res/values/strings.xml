@@ -95,7 +95,7 @@
     <string name="minutes">min.</string>
     <string name="meters">meters</string>
     <string name="points">points</string>
-    <string name="str_clientVersionPrefix">Version:</string>
+    <string name="str_clientVersionPrefix">Client Version:</string>
 
     <string name="str_legalNotice">Legal notice:</string>
     <string name="str_contributions">Contributions:</string>
