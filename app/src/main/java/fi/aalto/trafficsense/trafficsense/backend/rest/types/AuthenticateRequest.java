@@ -17,11 +17,15 @@ public class AuthenticateRequest {
     @SerializedName("clientVersion")
     public final String ClientVersion;
 
+    @SerializedName("messagingToken")
+    public final String MessagingToken;
 
-    public AuthenticateRequest(String userId, String deviceId, String installationId, String clientVersion) {
+
+    public AuthenticateRequest(String userId, String deviceId, String installationId, String clientVersion, String messagingToken) {
         UserId = userId;
         InstallationId = installationId;
         DeviceId = deviceId;
         ClientVersion = clientVersion;
+        MessagingToken = messagingToken;
     }
 }

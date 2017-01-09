@@ -30,6 +30,7 @@ public class BackendStorage {
     private static final String KEY_USER_ID = "device-auth-id";
     private static final String KEY_ONE_TIME_TOKEN =  "one-time-token";
     private static final String KEY_CLIENT_NUMBER =  "device-id";
+    private static final String KEY_MESSAGING_TOKEN = "messaging-token";
 
     private final SharedPreferences mPreferences;
 
@@ -69,6 +70,15 @@ public class BackendStorage {
     public void writeSessionToken(String sessionToken) {
         mPreferences.edit().putString(KEY_SESSION_TOKEN, sessionToken).commit();
         Timber.i("Session token saved: " + sessionToken);
+    }
+
+    public Optional<String> readMessagingToken() {
+        return Optional.fromNullable(mPreferences.getString(KEY_MESSAGING_TOKEN, null));
+    }
+
+    public void writeMessagingToken(String msgToken) {
+        mPreferences.edit().putString(KEY_MESSAGING_TOKEN, msgToken).commit();
+        Timber.i("Messaging token saved: " + msgToken);
     }
 
     public synchronized void clearSessionToken() {

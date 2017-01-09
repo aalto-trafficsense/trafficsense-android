@@ -11,8 +11,6 @@ import com.google.firebase.messaging.RemoteMessage;
  */
 public class TSFirebaseMessagingService extends FirebaseMessagingService {
 
-    private static final int SURVEY_NOTIFICATION_ID = 1213;
-
     /**
      * Called when message is received.
      *
@@ -36,10 +34,6 @@ public class TSFirebaseMessagingService extends FirebaseMessagingService {
 "NOTIFICATION_URI_FI" : "https://docs.google.com/forms/d/e/1FAIpQLSct_vTN8Mz4sVvCM9N-NoE5eVGoVWlGTUf_05vWIXgmGfXrcQ/viewform?entry.1637582747&entry.355863673&entry.1724961827&entry.1031700194=client_number&entry.764908055=client_version&entry.779736130=phone_model"
     }
 }         */
-        // Feedback form test URI:
-        // https://docs.google.com/forms/d/1GRvwgUXigE2iclSqAMqd6B2m3SDcs239a9nRrhHOgKM/viewform?entry.1453132440&entry.1290358306=client_number&entry.1714883594=client_version
-        //
-        // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
 
         if (remoteMessage.getData().size() > 0) {
