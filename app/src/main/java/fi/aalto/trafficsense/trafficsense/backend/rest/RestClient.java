@@ -14,6 +14,7 @@ import android.util.Log;
 import android.util.Pair;
 import com.google.common.base.Optional;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.google.firebase.iid.FirebaseInstanceId;
 import fi.aalto.trafficsense.trafficsense.backend.TrafficSenseService;
 import fi.aalto.trafficsense.trafficsense.backend.rest.types.*;
 import fi.aalto.trafficsense.trafficsense.backend.uploader.DataQueue;
@@ -588,6 +589,13 @@ public class RestClient {
         String messagingToken;
         if (messagingTokenOpt.isPresent()) messagingToken = messagingTokenOpt.get();
         else messagingToken = "";
+        if (messagingToken.length()<5) { // Doesn't look like a valid messaging token
+            messagingToken = FirebaseInstanceId.getInstance().getToken();
+            if (messagingToken.length()>5) { // Better - save it
+                Timber.d("RestClient got messaging token: %s", messagingToken);
+                mStorage.writeMessagingToken(messagingToken);
+            }
+        }
         AuthenticateRequest request = new AuthenticateRequest(userId.get(), mAndroidDeviceId, installationId.get(), EnvInfo.getClientVersionString(), messagingToken);
         Timber.d("User id: " + userId.get());
         Timber.d("mAndroidDeviceId " + mAndroidDeviceId);
