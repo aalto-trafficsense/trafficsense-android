@@ -16,8 +16,10 @@ public class TSBootReceiver extends BroadcastReceiver
     @Override
     public void onReceive(Context context, Intent intent) {
         final String action = intent.getAction();
-        if(action.equals(Intent.ACTION_BOOT_COMPLETED)){
+        if (action.equals(Intent.ACTION_BOOT_COMPLETED)){
             Timber.d("TrafficSense received boot completed.");
+        } else if (action.equals(Intent.ACTION_MY_PACKAGE_REPLACED)) {
+            Timber.d("TrafficSense received my package replaced.");
         } else if (action.equals(ServerNotification.PTP_ALERT_END_ACTION)) {
             int id = intent.getIntExtra("notification_id", -1);
             if (id != -1) {
