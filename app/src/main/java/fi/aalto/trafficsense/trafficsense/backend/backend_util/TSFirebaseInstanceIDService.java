@@ -55,7 +55,7 @@ public class TSFirebaseInstanceIDService extends FirebaseInstanceIdService {
      */
     private void sendRegistrationToServer(String messaging_token) {
         BackendStorage mStorage = BackendStorage.create(TrafficSenseApplication.getContext());
-        mStorage.writeMessagingToken(messaging_token);
+        // mStorage.writeMessagingToken(messaging_token);
         // TODO: If this cannot be properly tested (token never refreshes while signed in) it should be commented out!
         // If token refresh is very rare, can also rely on refreshing together with authentication.
         Optional<String> token = mStorage.readSessionToken();

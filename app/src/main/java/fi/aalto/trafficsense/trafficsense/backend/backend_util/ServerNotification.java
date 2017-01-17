@@ -65,10 +65,13 @@ public class ServerNotification {
     public static final int NOTIFICATION_TYPE_TRAIN = 5;
     public static final int NOTIFICATION_TYPE_TRAM = 6;
     public static final int NOTIFICATION_TYPE_BUS = 7;
+    public static final int NOTIFICATION_TYPE_DIGITRAFFIC = 8;
 
     private static final String PTP_ALERT_PUBTRANS = "PTP_ALERT_PUBTRANS";
+    private static final String PTP_ALERT_TRAFFIC = "PTP_ALERT_TRAFFIC";
     private static final String PTP_ALERT_END = "PTP_ALERT_END";
     private static final String PTP_ALERT_TYPE = "PTP_ALERT_TYPE";
+    private static final String PTP_NOTIFICATION = "PTP_NOTIFICATION";
 
     public static final String SURVEY_PREFS_FILE_NAME = "SurveyPrefs";
 
@@ -153,7 +156,7 @@ public class ServerNotification {
 
             } else { // No topic - point-to-point message
                 Timber.d("ServerNotification received a point-to-point");
-                if (msgPayload.containsKey(PTP_ALERT_PUBTRANS)) {
+                if (msgPayload.containsKey(PTP_ALERT_PUBTRANS) || msgPayload.containsKey(PTP_ALERT_TRAFFIC)) {
                     if (msgPayload.containsKey(PTP_ALERT_END)) { // Alert expiration time specified
                         Date alertEndDate = new Date();
                         try {
@@ -166,7 +169,6 @@ public class ServerNotification {
                         long now = System.currentTimeMillis();
                         if (alertEndMillis > now) {
                             Timber.d("ServerNotification interpreted remaining alert duration as %d ms.", alertEndMillis - now);
-                            // TODO: Check stored notification status
                             // Set up an alarm for the alert end time
                             Context ctx = TrafficSenseApplication.getContext();
                             AlarmManager alarmManager = (AlarmManager)ctx.getSystemService(Context.ALARM_SERVICE);
@@ -194,13 +196,18 @@ public class ServerNotification {
                             case "FERRY":
                                 notificationType = NOTIFICATION_TYPE_FERRY;
                                 break;
+                            case "DIGITRAFFIC":
+                                notificationType = NOTIFICATION_TYPE_DIGITRAFFIC;
+                                break;
                             default:
                                 notificationType = NOTIFICATION_TYPE_UNKNOWN;
-                                break;
                         }
                     }
 
-                } else { // Unknown PTP - do not post
+                } else if (msgPayload.containsKey(PTP_NOTIFICATION)) {
+                    notificationType = NOTIFICATION_TYPE_BROADCASTMESSAGE;
+                } else {
+                    // Unknown PTP - do not post
                     shouldCreateNotification = false;
                 }
 
@@ -236,6 +243,9 @@ public class ServerNotification {
                 break;
             case NOTIFICATION_TYPE_BUS:
                 notificationIcon = R.drawable.md_activity_bus_24dp;
+                break;
+            case NOTIFICATION_TYPE_DIGITRAFFIC:
+                notificationIcon = R.drawable.md_activity_vehicle_24dp;
                 break;
             default:
                 notificationIcon = R.mipmap.ic_launcher;

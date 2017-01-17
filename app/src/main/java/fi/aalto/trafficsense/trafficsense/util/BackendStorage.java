@@ -71,6 +71,7 @@ public class BackendStorage {
         mPreferences.edit().putString(KEY_SESSION_TOKEN, sessionToken).commit();
         Timber.i("Session token saved: " + sessionToken);
     }
+/*
 
     public Optional<String> readMessagingToken() {
         return Optional.fromNullable(mPreferences.getString(KEY_MESSAGING_TOKEN, null));
@@ -80,6 +81,7 @@ public class BackendStorage {
         mPreferences.edit().putString(KEY_MESSAGING_TOKEN, msgToken).commit();
         Timber.i("Messaging token saved: " + msgToken);
     }
+*/
 
     public synchronized void clearSessionToken() {
         if (mPreferences.contains(KEY_SESSION_TOKEN)) {
