@@ -157,28 +157,31 @@ public class ServerNotification {
             } else { // No topic - point-to-point message
                 Timber.d("ServerNotification received a point-to-point");
                 if (msgPayload.containsKey(PTP_ALERT_PUBTRANS) || msgPayload.containsKey(PTP_ALERT_TRAFFIC)) {
+                    long now = System.currentTimeMillis();
+                    long alertEndMillis = now + (15 * 60 * 1000); // Default 15 minutes
                     if (msgPayload.containsKey(PTP_ALERT_END)) { // Alert expiration time specified
                         Date alertEndDate = new Date();
+                        Timber.d("PTP Alert End is: %s", msgPayload.get(PTP_ALERT_END));
                         try {
                             alertEndDate = dateTimeFormat.parse(msgPayload.get(PTP_ALERT_END));
                         } catch (ParseException e) {
                             Timber.d("ServerNotification failed to parse PTP_ALERT_END: %s", e.getMessage());
                             e.printStackTrace();
                         }
-                        long alertEndMillis = alertEndDate.getTime();
-                        long now = System.currentTimeMillis();
-                        if (alertEndMillis > now) {
-                            Timber.d("ServerNotification interpreted remaining alert duration as %d ms.", alertEndMillis - now);
-                            // Set up an alarm for the alert end time
-                            Context ctx = TrafficSenseApplication.getContext();
-                            AlarmManager alarmManager = (AlarmManager)ctx.getSystemService(Context.ALARM_SERVICE);
-                            Intent intent = new Intent(ctx, TSBootReceiver.class);
-                            intent.setAction(PTP_ALERT_END_ACTION);
-                            intent.putExtra("notification_id", SERVER_NOTIFICATION_ID);
-                            PendingIntent pi = PendingIntent.getBroadcast(ctx, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                            alarmManager.set(RTC, alertEndMillis, pi);
+                        Timber.d("Now is: %d Alert End is: %d", now, alertEndMillis);
+                        if (alertEndDate.getTime() > now) {
+                            alertEndMillis = alertEndDate.getTime();
                         }
                     }
+                    Timber.d("ServerNotification set alert duration as %d ms.", alertEndMillis - now);
+                    // Set up an alarm for the alert end time
+                    Context ctx = TrafficSenseApplication.getContext();
+                    AlarmManager alarmManager = (AlarmManager)ctx.getSystemService(Context.ALARM_SERVICE);
+                    Intent intent = new Intent(ctx, TSBootReceiver.class);
+                    intent.setAction(PTP_ALERT_END_ACTION);
+                    intent.putExtra("notification_id", SERVER_NOTIFICATION_ID);
+                    PendingIntent pi = PendingIntent.getBroadcast(ctx, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    alarmManager.set(RTC, alertEndMillis, pi);
                     if (msgPayload.containsKey(PTP_ALERT_TYPE)) {
                         switch (msgPayload.get(PTP_ALERT_TYPE)) {
                             case "TRAIN":
