@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import static android.app.AlarmManager.RTC;
 
@@ -52,6 +53,7 @@ public class ServerNotification {
     public static final String KEY_NOTIFICATION_MESSAGE_FI = "NOTIFICATION_MESSAGE_FI";
     public static final String KEY_NOTIFICATION_URI_FI = "NOTIFICATION_URI_FI";
 
+    public static final String KEY_PTP_ALERT_TITLE = "PTP_ALERT_TITLE";
     public static final String KEY_PTP_ALERT_MESSAGE = "PTP_ALERT_MESSAGE";
     public static final String KEY_PTP_ALERT_LAT = "PTP_ALERT_LAT";
     public static final String KEY_PTP_ALERT_LNG = "PTP_ALERT_LNG";
@@ -166,8 +168,11 @@ public class ServerNotification {
                     if (msgPayload.containsKey(KEY_PTP_ALERT_LAT) && msgPayload.containsKey(KEY_PTP_ALERT_LNG)) {
                         mPrefEditor.putFloat(KEY_PTP_ALERT_LAT, Float.parseFloat(msgPayload.get(KEY_PTP_ALERT_LAT)));
                         mPrefEditor.putFloat(KEY_PTP_ALERT_LNG, Float.parseFloat(msgPayload.get(KEY_PTP_ALERT_LNG)));
-                        mPrefEditor.putString(KEY_PTP_ALERT_MESSAGE, messageBody);
+                        mPrefEditor.putString(KEY_PTP_ALERT_TITLE, addLinebreaks(messageTitle, 30));
+                        mPrefEditor.putString(KEY_PTP_ALERT_MESSAGE, addLinebreaks(messageBody, 30));
+                        Timber.d("Saved PTP Traffic alert position.");
                     } else {
+                        Timber.d("Clearing a PTP Traffic alert position.");
                         mPrefEditor.remove(KEY_PTP_ALERT_LAT);
                         mPrefEditor.remove(KEY_PTP_ALERT_LNG);
                         mPrefEditor.remove(KEY_PTP_ALERT_MESSAGE);
@@ -304,5 +309,23 @@ public class ServerNotification {
     }
 
     public boolean shouldCreateNotification() { return shouldCreateNotification; }
+
+    // From http://stackoverflow.com/a/7528259/5528498
+    private String addLinebreaks(String input, int maxLineLength) {
+        StringTokenizer tok = new StringTokenizer(input, " ");
+        StringBuilder output = new StringBuilder(input.length());
+        int lineLen = 0;
+        while (tok.hasMoreTokens()) {
+            String word = tok.nextToken()+" ";
+
+            if (lineLen + word.length() > maxLineLength) {
+                output.append("\n");
+                lineLen = 0;
+            }
+            output.append(word);
+            lineLen += word.length();
+        }
+        return output.toString();
+    }
 
 }

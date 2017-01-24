@@ -8,10 +8,7 @@ import android.content.*;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
+import android.graphics.*;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
@@ -30,6 +27,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -66,6 +64,7 @@ import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_S
 public class MainActivity extends AppCompatActivity
         implements  NavigationView.OnNavigationItemSelectedListener,
                     OnMapReadyCallback,
+        GoogleMap.OnMarkerClickListener,
         GoogleMap.OnMapLoadedCallback,
                     DatePickerDialog.OnDateSetListener {
 
@@ -98,6 +97,7 @@ public class MainActivity extends AppCompatActivity
     private GoogleMap mMap;
     private LatLngBounds mBounds; // Tracks user's visibility
     private Marker mMarker=null;
+    private Marker mTrafficAlertMarker =null;
     private Circle mCircle=null;
     private ActivityType latestActivityType=ActivityType.STILL;
     private LatLng latestPosition;
@@ -241,6 +241,10 @@ public class MainActivity extends AppCompatActivity
         } else {
             mSurveyItem.setVisible(false);
         }
+
+        // In case alert comes when the map is already drawn
+        if (mMap!=null && mTrafficAlertMarker==null) checkTrafficAlert();
+
     }
 
     /**
@@ -252,6 +256,41 @@ public class MainActivity extends AppCompatActivity
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng((double)mPref.getFloat(SharedPrefs.KEY_MAP_LAT, initLat)
                 , (double)mPref.getFloat(SharedPrefs.KEY_MAP_LNG, initLng)), mPref.getFloat(SharedPrefs.KEY_MAP_ZOOM, initZoom)));
         mMap.setOnMapLoadedCallback(this);
+        mMap.setOnMarkerClickListener(this);
+
+        // Solution from http://stackoverflow.com/a/31629308/5528498
+        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+
+            @Override
+            public View getInfoWindow(Marker arg0) {
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+
+                LinearLayout info = new LinearLayout(mContext);
+                info.setOrientation(LinearLayout.VERTICAL);
+
+                TextView title = new TextView(mContext);
+                title.setTextColor(Color.BLACK);
+                title.setGravity(Gravity.CENTER);
+                title.setTypeface(null, Typeface.BOLD);
+                title.setText(marker.getTitle());
+
+                TextView snippet = new TextView(mContext);
+                snippet.setTextColor(Color.GRAY);
+                snippet.setText(marker.getSnippet());
+
+                info.addView(title);
+                info.addView(snippet);
+
+                return info;
+            }
+        });
+
+        Timber.d("Map ready");
+
     }
 
     /**
@@ -259,6 +298,7 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onMapLoaded() {
+        Timber.d("Map loaded.");
         if (mMap != null) {
             if (getSharedBoolean(SharedPrefs.KEY_SHOW_DEST)) { // Redraw current destinations, if displayed.
                 String destString = mPref.getString(SharedPrefs.KEY_DEST_OBJECT, null);
@@ -299,22 +339,27 @@ public class MainActivity extends AppCompatActivity
                 mMap.setTrafficEnabled(true);
             }
 
+            // In case alert could not be drawn at resume due to lack of map
+            if (mTrafficAlertMarker == null) checkTrafficAlert();
+
+        }
+    }
+
+    private void checkTrafficAlert() {
+        if (mMap != null) {
             String alertMsg = mServerNotification.getString(ServerNotification.KEY_PTP_ALERT_MESSAGE, "");
             if (!alertMsg.isEmpty()) {
                 // An active traffic disorder to be shown
+                Timber.d("Showing a traffic alert message");
                 Bitmap bitmap = getBitmap(mContext, R.drawable.ic_warning_black_24dp);
                 LatLng alertPos = new LatLng(mServerNotification.getFloat(ServerNotification.KEY_PTP_ALERT_LAT, 0),
                         mServerNotification.getFloat(ServerNotification.KEY_PTP_ALERT_LNG, 0));
-                mMap.addMarker(new MarkerOptions()
+                mTrafficAlertMarker = mMap.addMarker(new MarkerOptions()
                         .position(alertPos)
-                        .title(alertMsg)
-                        .icon(BitmapDescriptorFactory.fromBitmap(bitmap))).showInfoWindow();
-                // Remove the prefs after showing, so the alert doesn't accidentally stick forever
-                SharedPreferences.Editor mNotificationPrefEditor = mServerNotification.edit();
-                mNotificationPrefEditor.remove(ServerNotification.KEY_PTP_ALERT_LAT);
-                mNotificationPrefEditor.remove(ServerNotification.KEY_PTP_ALERT_LNG);
-                mNotificationPrefEditor.remove(ServerNotification.KEY_PTP_ALERT_MESSAGE);
-                mNotificationPrefEditor.apply();
+                        .title(mServerNotification.getString(ServerNotification.KEY_PTP_ALERT_TITLE, ""))
+                        .snippet(alertMsg)
+                        .icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
+                mTrafficAlertMarker.showInfoWindow();
                 if (latestPosition != null) {
                     // User position known, show both the user and the alert on the map
                     MapBounds mBuildBounds = new MapBounds();
@@ -330,9 +375,32 @@ public class MainActivity extends AppCompatActivity
                 mTrafficItem.setChecked(true);
                 mPrefEditor.putBoolean(SharedPrefs.KEY_SHOW_TRAFFIC, true);
                 mPrefEditor.commit();
+                mMap.setTrafficEnabled(true);
             }
-
         }
+    }
+
+    @Override
+    public boolean onMarkerClick(final Marker clickedMarker) {
+
+        if (clickedMarker.equals(mTrafficAlertMarker)) {
+            // Remove the prefs, so the alert doesn't accidentally stick forever
+            SharedPreferences.Editor mNotificationPrefEditor = mServerNotification.edit();
+            mNotificationPrefEditor.remove(ServerNotification.KEY_PTP_ALERT_LAT);
+            mNotificationPrefEditor.remove(ServerNotification.KEY_PTP_ALERT_LNG);
+            mNotificationPrefEditor.remove(ServerNotification.KEY_PTP_ALERT_MESSAGE);
+            mNotificationPrefEditor.apply();
+            mTrafficAlertMarker.remove();
+            mTrafficAlertMarker = null;
+            Timber.d("Accident marker clicked, removing it.");
+            return true;
+        }
+
+
+        // Return false to indicate that we have not consumed the event and that we wish
+        // for the default behavior to occur (which is for the camera to move such that the
+        // marker is centered and for the marker's info window to open, if it has one).
+        return false;
     }
 
     @Override
