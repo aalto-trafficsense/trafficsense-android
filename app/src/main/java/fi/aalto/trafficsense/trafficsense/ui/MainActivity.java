@@ -33,7 +33,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.*;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -41,13 +40,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.*;
 import com.google.common.base.Optional;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.maps.android.geojson.*;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
-import fi.aalto.trafficsense.trafficsense.backend.TrafficSenseService;
 import fi.aalto.trafficsense.trafficsense.backend.backend_util.ServerNotification;
-import fi.aalto.trafficsense.trafficsense.backend.backend_util.TSFirebaseMessagingService;
 import fi.aalto.trafficsense.trafficsense.util.*;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -82,7 +78,7 @@ public class MainActivity extends AppCompatActivity
     private SharedPreferences mPref; // Local prefs in this activity
     private SharedPreferences.Editor mPrefEditor;
     private SharedPreferences mSettings; // Application settings
-    private SharedPreferences mSurvey; // Latest end-user survey information
+    private SharedPreferences mServerNotification; // Server notification prefs
 
     private MenuItem mStartupItem;
     private MenuItem mShutdownItem;
@@ -193,7 +189,7 @@ public class MainActivity extends AppCompatActivity
             pathCal.set(Calendar.DAY_OF_MONTH, mPref.getInt(SharedPrefs.KEY_PATH_DAY, pathCal.get(Calendar.DAY_OF_MONTH)));
         }
 
-        mSurvey = this.getSharedPreferences(ServerNotification.SURVEY_PREFS_FILE_NAME, Context.MODE_PRIVATE);
+        mServerNotification = this.getSharedPreferences(ServerNotification.NOTIFICATION_PREFS_FILE_NAME, Context.MODE_PRIVATE);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -226,9 +222,9 @@ public class MainActivity extends AppCompatActivity
         mDebugItem.setVisible(dbg);
         mTransportReportItem.setVisible(dbg);
         // If there is a broadcast notification URI, show the drawer item
-        if (!mSurvey.getString(ServerNotification.KEY_NOTIFICATION_URI, "").isEmpty()) {
+        if (!mServerNotification.getString(ServerNotification.KEY_NOTIFICATION_URI, "").isEmpty()) {
             mSurveyItem.setVisible(true);
-            int notificationType = mSurvey.getInt(ServerNotification.KEY_NOTIFICATION_TYPE, 0);
+            int notificationType = mServerNotification.getInt(ServerNotification.KEY_NOTIFICATION_TYPE, 0);
             switch (notificationType) {
                 case ServerNotification.NOTIFICATION_TYPE_SURVEY:
                     mSurveyItem.setIcon(R.drawable.md_survey);
@@ -301,6 +297,39 @@ public class MainActivity extends AppCompatActivity
 
             if (getSharedBoolean(SharedPrefs.KEY_SHOW_TRAFFIC)) {
                 mMap.setTrafficEnabled(true);
+            }
+
+            String alertMsg = mServerNotification.getString(ServerNotification.KEY_PTP_ALERT_MESSAGE, "");
+            if (!alertMsg.isEmpty()) {
+                // An active traffic disorder to be shown
+                Bitmap bitmap = getBitmap(mContext, R.drawable.ic_warning_black_24dp);
+                LatLng alertPos = new LatLng(mServerNotification.getFloat(ServerNotification.KEY_PTP_ALERT_LAT, 0),
+                        mServerNotification.getFloat(ServerNotification.KEY_PTP_ALERT_LNG, 0));
+                mMap.addMarker(new MarkerOptions()
+                        .position(alertPos)
+                        .title(alertMsg)
+                        .icon(BitmapDescriptorFactory.fromBitmap(bitmap))).showInfoWindow();
+                // Remove the prefs after showing, so the alert doesn't accidentally stick forever
+                SharedPreferences.Editor mNotificationPrefEditor = mServerNotification.edit();
+                mNotificationPrefEditor.remove(ServerNotification.KEY_PTP_ALERT_LAT);
+                mNotificationPrefEditor.remove(ServerNotification.KEY_PTP_ALERT_LNG);
+                mNotificationPrefEditor.remove(ServerNotification.KEY_PTP_ALERT_MESSAGE);
+                mNotificationPrefEditor.apply();
+                if (latestPosition != null) {
+                    // User position known, show both the user and the alert on the map
+                    MapBounds mBuildBounds = new MapBounds();
+                    mBuildBounds.include(alertPos);
+                    mBuildBounds.include(latestPosition);
+                    mBuildBounds.update(mMap);
+                } else {
+                    // User position unknown, just put the alert in the center and zoom to default level
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(alertPos, initZoom));
+                }
+                // Set also traffic display on for assistance
+                mTrafficItem.setIcon(R.drawable.ic_traffic_24dp_on);
+                mTrafficItem.setChecked(true);
+                mPrefEditor.putBoolean(SharedPrefs.KEY_SHOW_TRAFFIC, true);
+                mPrefEditor.commit();
             }
 
         }
@@ -514,7 +543,7 @@ public class MainActivity extends AppCompatActivity
                 openActivity(AboutActivity.class);
                 break;
             case R.id.nav_survey:
-                String surveyUriStr = mSurvey.getString(ServerNotification.KEY_NOTIFICATION_URI, "");
+                String surveyUriStr = mServerNotification.getString(ServerNotification.KEY_NOTIFICATION_URI, "");
                 if (!surveyUriStr.isEmpty()) {
                     launchBrowser(EnvInfo.replaceUriFields(surveyUriStr));
                 }
@@ -920,7 +949,7 @@ public class MainActivity extends AppCompatActivity
                             markerPos.longitude,
                             distResults);
                     // Skip markers too close and too far
-                    // TODO: Remove this after coordinates are sent to server
+                    // TODO: Remove this after coordinates are sent to server and the server does the filtering
                     if (distResults[0]<minDistToDest || distResults[0]>maxDistToDest) useMarker=false;
                 }
 

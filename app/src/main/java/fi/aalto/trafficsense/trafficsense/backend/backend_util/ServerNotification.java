@@ -20,7 +20,6 @@ import timber.log.Timber;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
@@ -53,6 +52,10 @@ public class ServerNotification {
     public static final String KEY_NOTIFICATION_MESSAGE_FI = "NOTIFICATION_MESSAGE_FI";
     public static final String KEY_NOTIFICATION_URI_FI = "NOTIFICATION_URI_FI";
 
+    public static final String KEY_PTP_ALERT_MESSAGE = "PTP_ALERT_MESSAGE";
+    public static final String KEY_PTP_ALERT_LAT = "PTP_ALERT_LAT";
+    public static final String KEY_PTP_ALERT_LNG = "PTP_ALERT_LNG";
+
     public static final int SERVER_NOTIFICATION_ID = 1213;
 
     public static final String PTP_ALERT_END_ACTION = "fi.aalto.trafficsense.action.PTP_ALERT_END";
@@ -73,7 +76,7 @@ public class ServerNotification {
     private static final String PTP_ALERT_TYPE = "PTP_ALERT_TYPE";
     private static final String PTP_NOTIFICATION = "PTP_NOTIFICATION";
 
-    public static final String SURVEY_PREFS_FILE_NAME = "SurveyPrefs";
+    public static final String NOTIFICATION_PREFS_FILE_NAME = "SurveyPrefs";
 
     private SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
@@ -139,7 +142,7 @@ public class ServerNotification {
                 }
 
                 // Store without field replacements -> Survey should get the latest numbers, when launched
-                SharedPreferences mPref = TrafficSenseApplication.getContext().getSharedPreferences(SURVEY_PREFS_FILE_NAME, Context.MODE_PRIVATE);
+                SharedPreferences mPref = TrafficSenseApplication.getContext().getSharedPreferences(NOTIFICATION_PREFS_FILE_NAME, Context.MODE_PRIVATE);
                 SharedPreferences.Editor mPrefEditor = mPref.edit();
                 if (uriString.length()>5) {
                     mPrefEditor.putString(KEY_NOTIFICATION_URI, uriString);
@@ -156,6 +159,22 @@ public class ServerNotification {
 
             } else { // No topic - point-to-point message
                 Timber.d("ServerNotification received a point-to-point");
+                // Only Traffic Alerts currently contain a location:
+                if (msgPayload.containsKey(PTP_ALERT_TRAFFIC)) {
+                    SharedPreferences mPref = TrafficSenseApplication.getContext().getSharedPreferences(NOTIFICATION_PREFS_FILE_NAME, Context.MODE_PRIVATE);
+                    SharedPreferences.Editor mPrefEditor = mPref.edit();
+                    if (msgPayload.containsKey(KEY_PTP_ALERT_LAT) && msgPayload.containsKey(KEY_PTP_ALERT_LNG)) {
+                        mPrefEditor.putFloat(KEY_PTP_ALERT_LAT, Float.parseFloat(msgPayload.get(KEY_PTP_ALERT_LAT)));
+                        mPrefEditor.putFloat(KEY_PTP_ALERT_LNG, Float.parseFloat(msgPayload.get(KEY_PTP_ALERT_LNG)));
+                        mPrefEditor.putString(KEY_PTP_ALERT_MESSAGE, messageBody);
+                    } else {
+                        mPrefEditor.remove(KEY_PTP_ALERT_LAT);
+                        mPrefEditor.remove(KEY_PTP_ALERT_LNG);
+                        mPrefEditor.remove(KEY_PTP_ALERT_MESSAGE);
+                    }
+                    mPrefEditor.apply();
+                }
+                // Common processing for public transport and traffic alerts
                 if (msgPayload.containsKey(PTP_ALERT_PUBTRANS) || msgPayload.containsKey(PTP_ALERT_TRAFFIC)) {
                     long now = System.currentTimeMillis();
                     long alertEndMillis = now + (15 * 60 * 1000); // Default 15 minutes

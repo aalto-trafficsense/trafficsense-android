@@ -4,6 +4,8 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
 import fi.aalto.trafficsense.trafficsense.backend.backend_util.ServerNotification;
 import timber.log.Timber;
 
@@ -26,8 +28,14 @@ public class TSBootReceiver extends BroadcastReceiver
                 Timber.d("onReceive cancelling notification: %d", id);
                 NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
                 notificationManager.cancel(id);
+                // Also clear the alert from shared prefs:
+                SharedPreferences notificationPref = TrafficSenseApplication.getContext().getSharedPreferences(ServerNotification.NOTIFICATION_PREFS_FILE_NAME, Context.MODE_PRIVATE);
+                SharedPreferences.Editor mPrefEditor = notificationPref.edit();
+                mPrefEditor.remove(ServerNotification.KEY_PTP_ALERT_LAT);
+                mPrefEditor.remove(ServerNotification.KEY_PTP_ALERT_LNG);
+                mPrefEditor.remove(ServerNotification.KEY_PTP_ALERT_MESSAGE);
+                mPrefEditor.apply();
             }
-
         }
     }
 
