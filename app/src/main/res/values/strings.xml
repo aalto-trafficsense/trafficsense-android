@@ -278,6 +278,7 @@
     <string name="energy_button_week">wk</string>
     <string name="energy_button_month">month</string>
     <string name="energy_button_year">year</string>
+    <string name="energy_share_title">Share Energy Certificate</string>
     <string name="energy_load_error">Error in energy certificate loading</string>
 
 

@@ -4,12 +4,19 @@ import android.app.ActionBar;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.PictureDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import com.caverock.androidsvg.SVG;
@@ -21,9 +28,7 @@ import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
 import fi.aalto.trafficsense.trafficsense.util.BackendStorage;
 import timber.log.Timber;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -35,18 +40,22 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
 
     private SVGImageView svgImageView;
     private BackendStorage mStorage;
+    private ShareActionProvider mShareActionProvider;
+    private Intent mShareIntent;
     private static Calendar startDate;
     private static Calendar endDate;
     private static Calendar currentDate;
 
     private Button mStartDateButton;
     private Button mEndDateButton;
+    private MenuItem mEnergyShareItem;
 
     private static int dateDialogId = -1;
 
-    static final int START_DATE_DIALOG = 0;
-    static final int END_DATE_DIALOG = 1;
+    private static final int START_DATE_DIALOG = 0;
+    private static final int END_DATE_DIALOG = 1;
     private final SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private final String energyCertificateFileName = "energycertificate.jpg";
 
 
     @Override
@@ -70,6 +79,11 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
         // Initialize current date and default start and end to one week
         currentDate = Calendar.getInstance();
         setDateOffsets(-7, -1);
+
+        // Initialize all the constant parts of mShareIntent
+        mShareIntent = new Intent();
+        mShareIntent.setAction(Intent.ACTION_SEND);
+        mShareIntent.setType("image/jpeg");
     }
 
     @Override
@@ -82,6 +96,32 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
     protected void onResume() {
         super.onResume();
         fetchCertificate(startDate, endDate);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate menu resource file.
+        getMenuInflater().inflate(R.menu.activity_energy_toolbar, menu);
+
+        // Locate MenuItem with ShareActionProvider
+        mEnergyShareItem = menu.findItem(R.id.energy_toolbar_share);
+
+        // Fetch and store ShareActionProvider
+        mShareActionProvider = (ShareActionProvider) mEnergyShareItem.getActionProvider();
+
+        // Hide until there is an energy certificate to share
+//        mEnergyShareItem.setVisible(false);
+
+        // Return true to display menu
+        return true;
+    }
+
+    // Call to update the share intent
+    private void setShareIntent(URL urlToImage) {
+        if (mShareActionProvider != null) {
+            mShareIntent.putExtra(Intent.EXTRA_STREAM, urlToImage);
+            mShareActionProvider.setShareIntent(mShareIntent);
+        }
     }
 
     private void setDateOffsets(int startOffset, int endOffset) {
@@ -267,10 +307,36 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
                 try {
                     svgImage = SVG.getFromString(info);
                 } catch(SVGParseException e) {
-                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(TrafficSenseApplication.getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                     return;
                 }
                 svgImageView.setSVG(svgImage);
+
+                // Render a separate copy for sharing (could merge this with the above later on)
+                if (svgImage.getDocumentWidth() != -1) {
+                    Bitmap newBM = Bitmap.createBitmap((int) Math.ceil(svgImage.getDocumentWidth()),
+                            (int) Math.ceil(svgImage.getDocumentHeight()),
+                            Bitmap.Config.ARGB_8888);
+                    Canvas bmcanvas = new Canvas(newBM);
+
+                    // Clear background to white
+                    bmcanvas.drawRGB(255, 255, 255);
+
+                    // Render our document onto our canvas
+                    svgImage.renderToCanvas(bmcanvas);
+                    try {
+                        File file = new File(getFilesDir(), energyCertificateFileName);
+
+                        FileOutputStream fos = new FileOutputStream(file, false);  // false = don't append, overwrite every time
+                        newBM.compress(Bitmap.CompressFormat.JPEG, 90, fos);
+                        fos.flush();
+                        fos.close();
+                        String imageUrlStr = MediaStore.Images.Media.insertImage(getContentResolver(), file.getAbsolutePath(), file.getName(), "TrafficSense Energy Certificate");
+                        setShareIntent(new URL(imageUrlStr));
+                    } catch (Exception e) {
+                        Timber.e("Energy Certificate Bitmap save failed: %s", e.getMessage());
+                    }
+                }
             } else {
                 Toast.makeText(getApplicationContext(), R.string.energy_load_error, Toast.LENGTH_LONG).show();
             }
