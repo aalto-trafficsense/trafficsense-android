@@ -85,12 +85,20 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
     }
 
     private void setDateOffsets(int startOffset, int endOffset) {
-        startDate = (Calendar)currentDate.clone();
+        resetStartEnd();
         startDate.add(Calendar.DATE, startOffset);
-        mStartDateButton.setText(DateFormat.getDateInstance().format(startDate.getTime()));
-        endDate = (Calendar)currentDate.clone();
         endDate.add(Calendar.DATE, endOffset);
+        updateButtons();
+    }
+
+    private void updateButtons() {
+        mStartDateButton.setText(DateFormat.getDateInstance().format(startDate.getTime()));
         mEndDateButton.setText(DateFormat.getDateInstance().format(endDate.getTime()));
+    }
+
+    private void resetStartEnd() {
+        startDate = (Calendar)currentDate.clone();
+        endDate = (Calendar)currentDate.clone();
     }
 
     public void selectWeek(View view) { // Select the last week
@@ -101,23 +109,19 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
 
     public void selectMonth(View view) { // Select the last month
         Timber.d("Month selected");
-        startDate = (Calendar)currentDate.clone();
+        resetStartEnd();
         startDate.add(Calendar.MONTH, -1);
-        mStartDateButton.setText(DateFormat.getDateInstance().format(startDate.getTime()));
-        endDate = (Calendar)currentDate.clone();
         endDate.add(Calendar.DATE, -1);
-        mEndDateButton.setText(DateFormat.getDateInstance().format(endDate.getTime()));
+        updateButtons();
         fetchCertificate(startDate, endDate);
     }
 
     public void selectYear(View view) { // Select the last year
         Timber.d("Year selected");
-        startDate = (Calendar)currentDate.clone();
+        resetStartEnd();
         startDate.add(Calendar.YEAR, -1);
-        mStartDateButton.setText(DateFormat.getDateInstance().format(startDate.getTime()));
-        endDate = (Calendar)currentDate.clone();
         endDate.add(Calendar.DATE, -1);
-        mEndDateButton.setText(DateFormat.getDateInstance().format(endDate.getTime()));
+        updateButtons();
         fetchCertificate(startDate, endDate);
     }
 
