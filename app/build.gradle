@@ -8,8 +8,8 @@ android {
         applicationId "fi.aalto.trafficsense.trafficsense"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 20
-        versionName "1.1.0a3"
+        versionCode 21
+        versionName "1.1.1"
         resConfigs "en", "fi", "fi-rHI"
     }
     buildTypes {

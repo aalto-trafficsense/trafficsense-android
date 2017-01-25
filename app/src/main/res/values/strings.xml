@@ -274,4 +274,12 @@
     <string name="research_consent_disagree_button">Not acceptable</string>
     <string name="research_consent_dismissed">Sorry, but this application can only be used if the research consent has been agreed.</string>
 
+    <string name="energy_button_prefix">Last</string>
+    <string name="energy_button_week">week</string>
+    <string name="energy_button_month">month</string>
+    <string name="energy_button_year">year</string>
+    <string name="energy_button_select">Select</string>
+    <string name="energy_load_error">Error in energy certificate loading</string>
+
+
 </resources>

@@ -5,7 +5,12 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical"
-              tools:context="fi.aalto.trafficsense.trafficsense.ui.EnergyCertificateActivity">
+              tools:context="fi.aalto.trafficsense.trafficsense.ui.EnergyCertificateActivity"
+              tools:ignore="UnusedAttribute"
+              android:layout_centerInParent="false"
+              android:layout_centerHorizontal="false"
+              android:layout_alignParentRight="false"
+    >
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -21,6 +26,86 @@
             app:popupTheme="@style/AppTheme.PopupOverlay"/>
 
     </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/energy_button_prefix"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorSubtitleText"
+            android:background="@drawable/energy_date_button"
+            android:textAllCaps="false"
+            android:text="@string/energy_button_week"
+            android:id="@+id/energy_button_week"
+            android:onClick="selectWeek"
+            android:theme="@style/AppTheme"
+            android:elevation="4dp"
+            android:minHeight="24dip"
+            android:minWidth="44dip"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorSubtitleText"
+            android:background="@drawable/energy_date_button"
+            android:textAllCaps="false"
+            android:text="@string/energy_button_month"
+            android:id="@+id/energy_button_month"
+            android:onClick="selectMonth"
+            android:elevation="4dp"
+            android:theme="@style/AppTheme"
+            android:minHeight="24dip"
+            android:minWidth="44dip"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorSubtitleText"
+            android:background="@drawable/energy_date_button"
+            android:textAllCaps="false"
+            android:text="@string/energy_button_year"
+            android:id="@+id/energy_button_year"
+            android:onClick="selectYear"
+            android:elevation="4dp"
+            android:theme="@style/AppTheme"
+            android:minHeight="24dip"
+            android:minWidth="44dip"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorSubtitleText"
+            android:background="@drawable/energy_date_button"
+            android:textAllCaps="false"
+            android:id="@+id/energy_button_start"
+            android:onClick="startDateClick"
+            android:elevation="4dp"
+            android:theme="@style/AppTheme"
+            android:minHeight="24dip"
+            android:minWidth="44dip"
+            android:layout_marginLeft="12dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorSubtitleText"
+            android:background="@drawable/energy_date_button"
+            android:textAllCaps="false"
+            android:id="@+id/energy_button_end"
+            android:onClick="endDateClick"
+            android:elevation="4dp"
+            android:theme="@style/AppTheme"
+            android:minHeight="24dip"
+            android:minWidth="44dip"/>
+    </LinearLayout>
 
     <FrameLayout android:layout_width="match_parent"
                  android:layout_height="match_parent"
