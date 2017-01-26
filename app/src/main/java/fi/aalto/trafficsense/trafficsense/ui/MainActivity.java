@@ -570,7 +570,10 @@ public class MainActivity extends AppCompatActivity
             int day = pathCal.get(Calendar.DAY_OF_MONTH);
 
             // Create a new instance of DatePickerDialog and return it
-            return new DatePickerDialog(getActivity(), (DatePickerDialog.OnDateSetListener) getActivity(), year, month, day);
+            DatePickerDialog dpd = new DatePickerDialog(getActivity(), (DatePickerDialog.OnDateSetListener) getActivity(), year, month, day);
+            DatePicker dp = dpd.getDatePicker();
+            dp.setMaxDate(Calendar.getInstance().getTimeInMillis());
+            return dpd;
         }
     }
 
@@ -582,9 +585,7 @@ public class MainActivity extends AppCompatActivity
         pathCal.set(Calendar.MONTH, month);
         pathCal.set(Calendar.DAY_OF_MONTH, day);
         if (pathCal.after(Calendar.getInstance())) {
-//            Toast.makeText(this, R.string.path_future_date_request, Toast.LENGTH_LONG).show();
-//        } else {
-            setPreviousMatchingWeekday(); // A little joke for the young at heart
+            setPreviousMatchingWeekday(); // Max date set to today = should no longer happen
         }
         fetchPath();
     }
