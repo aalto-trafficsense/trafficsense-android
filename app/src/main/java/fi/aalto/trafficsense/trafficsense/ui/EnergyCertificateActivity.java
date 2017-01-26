@@ -63,6 +63,8 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
     private Button mStartDateButton;
     private Button mEndDateButton;
     private MenuItem mEnergyShareItem;
+    private RadioButton mWeekButton;
+    private RadioButton mSelectButton;
 
     private boolean externalStoragePermission = false;
 
@@ -128,12 +130,15 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
 
         mStartDateButton = (Button) findViewById(R.id.energy_button_start);
         mEndDateButton = (Button) findViewById(R.id.energy_button_end);
+        mWeekButton = (RadioButton) findViewById(R.id.energy_button_week);
+        mSelectButton = (RadioButton) findViewById(R.id.energy_button_select);
 
         mStorage = BackendStorage.create(this);
 
         // Initialize current date and default start and end to one week
         currentDate = Calendar.getInstance();
         setDateOffsets(-7, -1);
+        mWeekButton.setChecked(true);
 
         // Check the current language setting
         if (Locale.getDefault().getLanguage().equalsIgnoreCase("fi")) {
@@ -160,7 +165,7 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
     @Override
     protected void onResume() {
         super.onResume();
-        fetchCertificate(startDate, endDate);
+        fetchCertificate();
     }
 
     @Override
@@ -208,37 +213,34 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
     }
 
     public void selectWeek(View view) { // Select the last week
-        Timber.d("Week selected");
         setDateOffsets(-7, -1);
-        fetchCertificate(startDate, endDate);
+        fetchCertificate();
     }
 
     public void selectMonth(View view) { // Select the last month
-        Timber.d("Month selected");
         resetStartEnd();
         startDate.add(Calendar.MONTH, -1);
         endDate.add(Calendar.DATE, -1);
         updateButtons();
-        fetchCertificate(startDate, endDate);
+        fetchCertificate();
     }
 
     public void selectYear(View view) { // Select the last year
-        Timber.d("Year selected");
         resetStartEnd();
         startDate.add(Calendar.YEAR, -1);
         endDate.add(Calendar.DATE, -1);
         updateButtons();
-        fetchCertificate(startDate, endDate);
+        fetchCertificate();
     }
 
     public void startDateClick(View view) { // Select start date
-        Timber.d("Start date selection selected");
+        mSelectButton.setChecked(true);
         DialogFragment newFragment = new StartDatePicker();
         newFragment.show(getSupportFragmentManager(), "startPicker");
     }
 
     public void endDateClick(View view) { // Select end date
-        Timber.d("End date selection selected");
+        mSelectButton.setChecked(true);
         DialogFragment newFragment = new EndDatePicker();
         newFragment.show(getSupportFragmentManager(), "endPicker");
     }
@@ -309,7 +311,7 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
             default:
                 // Huh??
         }
-        fetchCertificate(startDate, endDate);
+        fetchCertificate();
 
     }
 
@@ -319,13 +321,13 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
         super.onConfigurationChanged(newConfig);
     }
 
-    private void fetchCertificate(Calendar start, Calendar end) {
+    private void fetchCertificate() {
         Optional<String> token = mStorage.readSessionToken();
         if (!token.isPresent()) {
             Toast.makeText(this, R.string.not_signed_in, Toast.LENGTH_SHORT).show();
         } else {
             try {
-                URL url = new URL(mStorage.getServerName() + "/svg/" + token.get() + "?firstday=" + mDateFormat.format(start.getTime()) + "&lastday=" + mDateFormat.format(end.getTime()));
+                URL url = new URL(mStorage.getServerName() + "/svg/" + token.get() + "?firstday=" + mDateFormat.format(startDate.getTime()) + "&lastday=" + mDateFormat.format(endDate.getTime()));
                 DownloadDataTask downloader = new DownloadDataTask();
                 downloader.execute(url);
             } catch (MalformedURLException e) {
@@ -369,7 +371,10 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
 
         protected void onPostExecute(String info) {
             Timber.d("SVG string length: %d", info.length());
-            if (info.length() > 1000) { // Current basic length should be 5943
+            if (info.length() > 1000) { // Current basic length should be >5900
+                // Change to localised date format for the certificate range
+                info = info.replace(mDateFormat.format(startDate.getTime()), DateFormat.getDateInstance().format(startDate.getTime()));
+                info = info.replace(mDateFormat.format(endDate.getTime()), DateFormat.getDateInstance().format(endDate.getTime()));
                 info = info.replace("</svg>", certTitle + "</svg>");  // Title invisible, but localised
                 if (currentLanguage != LANG_EN) info = localiseCertificate(info);
                 SVG svgImage;

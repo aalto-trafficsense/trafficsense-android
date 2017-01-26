@@ -32,50 +32,50 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="12dp">
+        android:layout_marginTop="@dimen/activity_vertical_margin">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:text="@string/energy_button_prefix"/>
-        <Button
+
+        <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+            <RadioButton android:id="@+id/energy_button_week"
+                         android:layout_width="wrap_content"
+                         android:layout_height="wrap_content"
+                         android:text="@string/energy_button_week"
+                         android:onClick="selectWeek"/>
+            <RadioButton android:id="@+id/energy_button_month"
+                         android:layout_width="wrap_content"
+                         android:layout_height="wrap_content"
+                         android:text="@string/energy_button_month"
+                         android:onClick="selectMonth"/>
+            <RadioButton android:id="@+id/energy_button_year"
+                         android:layout_width="wrap_content"
+                         android:layout_height="wrap_content"
+                         android:text="@string/energy_button_year"
+                         android:onClick="selectYear"/>
+            <RadioButton android:id="@+id/energy_button_select"
+                         android:layout_width="wrap_content"
+                         android:layout_height="wrap_content"
+                         android:text="@string/energy_button_select"
+                         android:onClick="startDateClick"/>
+        </RadioGroup>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/activity_vertical_margin">
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorSubtitleText"
-            android:background="@drawable/energy_date_button"
-            android:textAllCaps="false"
-            android:text="@string/energy_button_week"
-            android:id="@+id/energy_button_week"
-            android:onClick="selectWeek"
-            android:theme="@style/AppTheme"
-            android:elevation="4dp"
-            android:minHeight="24dip"
-            android:minWidth="44dip"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorSubtitleText"
-            android:background="@drawable/energy_date_button"
-            android:textAllCaps="false"
-            android:text="@string/energy_button_month"
-            android:id="@+id/energy_button_month"
-            android:onClick="selectMonth"
-            android:elevation="4dp"
-            android:theme="@style/AppTheme"
-            android:minHeight="24dip"
-            android:minWidth="44dip"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorSubtitleText"
-            android:background="@drawable/energy_date_button"
-            android:textAllCaps="false"
-            android:text="@string/energy_button_year"
-            android:id="@+id/energy_button_year"
-            android:onClick="selectYear"
-            android:elevation="4dp"
-            android:theme="@style/AppTheme"
-            android:minHeight="24dip"
-            android:minWidth="44dip"/>
+            android:text="@string/energy_dates_prefix"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -93,7 +93,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/normalText"
-            android:text="-"/>
+            android:text=" - "/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

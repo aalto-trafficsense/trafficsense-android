@@ -274,13 +274,15 @@
     <string name="research_consent_disagree_button">Not acceptable</string>
     <string name="research_consent_dismissed">Sorry, but this application can only be used if the research consent has been agreed.</string>
 
-    <string name="energy_button_prefix">Last</string>
-    <string name="energy_button_week">wk</string>
+    <string name="energy_button_prefix">Latest:</string>
     <string name="energy_button_month">month</string>
     <string name="energy_button_year">year</string>
+    <string name="energy_button_select">select</string>
+    <string name="energy_dates_prefix">Date range:</string>
     <string name="energy_share_title">Share Energy Certificate</string>
     <string name="energy_load_error">Error in energy certificate loading</string>
     <string name="energy_write_permission_persistently_refused">Media write access is required for energy certificate sharing.</string>
+    <string name="energy_button_week">week</string>
 
 
 </resources>
