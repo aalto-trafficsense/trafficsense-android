@@ -1,24 +1,33 @@
 package fi.aalto.trafficsense.trafficsense.ui;
 
+import android.Manifest;
 import android.app.ActionBar;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.PictureDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.*;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
+import android.widget.ShareActionProvider;
 import com.caverock.androidsvg.SVG;
 import com.caverock.androidsvg.SVGImageView;
 import com.caverock.androidsvg.SVGParseException;
@@ -35,12 +44,17 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import static android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class EnergyCertificateActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
     private SVGImageView svgImageView;
     private BackendStorage mStorage;
-    private ShareActionProvider mShareActionProvider;
+    private android.support.v7.widget.ShareActionProvider mShareActionProvider;
     private Intent mShareIntent;
     private static Calendar startDate;
     private static Calendar endDate;
@@ -50,12 +64,53 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
     private Button mEndDateButton;
     private MenuItem mEnergyShareItem;
 
+    private boolean externalStoragePermission = false;
+
     private static int dateDialogId = -1;
 
     private static final int START_DATE_DIALOG = 0;
     private static final int END_DATE_DIALOG = 1;
     private final SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private final String energyCertificateFileName = "energycertificate.jpg";
+
+    private static final int LANG_EN = 0;
+    private static final int LANG_FI = 1;
+    private static final int LANG_STADI = 2;
+    private static int currentLanguage = LANG_EN;
+
+    private final int MY_PERMISSIONS_WRITE_EXTERNAL_STORAGE = 1;
+
+    private final String certTitle = "<text fill=\"rgb(0,0,0)\" font-family=\"Helvetica\" font-size=\"70\" stroke=\"rgb(0,0,0)\" stroke-width=\"1\" x=\"30\" y=\"860\">TrafficSense Energy Certificate</text>";
+
+    private static final String[][] enFiDictionary = new String[][]{
+            { "Ranking", "Sijoitus" },
+            { "Bicycle", "Pyörä" },
+            { "Walking", "Kävely" },
+            { "Running", "Juoksu" },
+            { "Train", "Juna" },
+            { "Subway", "Metro" },
+            { "Tram", "raitiovaunu" },
+            { "Bus", "Linja-auto"},
+            { "Ferry", "lautta" },
+            { "Car", "Auto" },
+            { "Average", "Keskiarvo" },
+            { "Energy Certificate", "Energiatodistus" }
+    };
+
+    private static final String[][] enStadiDictionary = new String[][]{
+            { "Ranking", "Sija" },
+            { "Bicycle", "Fillari" },
+            { "Walking", "Dallaus" },
+            { "Running", "Sprintit" },
+            { "Train", "Stoge" },
+            { "Subway", "Tuubi" },
+            { "Tram", "spåra" },
+            { "Bus", "Dösä"},
+            { "Ferry", "flotta" },
+            { "Car", "Fiude" },
+            { "Average", "Keskiarvo" },
+            { "Energy Certificate", "Päästöspettari" }
+    };
 
 
     @Override
@@ -80,16 +135,26 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
         currentDate = Calendar.getInstance();
         setDateOffsets(-7, -1);
 
+        // Check the current language setting
+        if (Locale.getDefault().getLanguage().equalsIgnoreCase("fi")) {
+            currentLanguage = LANG_FI;
+        }
+        if (getDefaultSharedPreferences(this).getBoolean(getString(R.string.settings_locale_stadi_key), false)) {
+            currentLanguage = LANG_STADI;
+        }
+
         // Initialize all the constant parts of mShareIntent
         mShareIntent = new Intent();
         mShareIntent.setAction(Intent.ACTION_SEND);
         mShareIntent.setType("image/jpeg");
+        mShareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        checkExternalWritePermission(); // Permission to share?
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        // fetchCertificate();
     }
 
     @Override
@@ -107,20 +172,21 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
         mEnergyShareItem = menu.findItem(R.id.energy_toolbar_share);
 
         // Fetch and store ShareActionProvider
-        mShareActionProvider = (ShareActionProvider) mEnergyShareItem.getActionProvider();
+        mShareActionProvider = (android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(mEnergyShareItem);
 
-        // Hide until there is an energy certificate to share
-//        mEnergyShareItem.setVisible(false);
+        // Hide until we have the permission to share
+        mEnergyShareItem.setVisible(false);
 
         // Return true to display menu
         return true;
     }
 
     // Call to update the share intent
-    private void setShareIntent(URL urlToImage) {
+    private void setShareIntent(Uri uriToImage) {
         if (mShareActionProvider != null) {
-            mShareIntent.putExtra(Intent.EXTRA_STREAM, urlToImage);
+            mShareIntent.putExtra(Intent.EXTRA_STREAM, uriToImage);
             mShareActionProvider.setShareIntent(mShareIntent);
+            // Timber.d("Share intent set with url: %s", uriToImage.toString());
         }
     }
 
@@ -302,7 +368,10 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
         }
 
         protected void onPostExecute(String info) {
-            if (info.length() > 20) {
+            Timber.d("SVG string length: %d", info.length());
+            if (info.length() > 1000) { // Current basic length should be 5943
+                info = info.replace("</svg>", certTitle + "</svg>");  // Title invisible, but localised
+                if (currentLanguage != LANG_EN) info = localiseCertificate(info);
                 SVG svgImage;
                 try {
                     svgImage = SVG.getFromString(info);
@@ -312,11 +381,18 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
                 }
                 svgImageView.setSVG(svgImage);
 
-                // Render a separate copy for sharing (could merge this with the above later on)
-                if (svgImage.getDocumentWidth() != -1) {
-                    Bitmap newBM = Bitmap.createBitmap((int) Math.ceil(svgImage.getDocumentWidth()),
-                            (int) Math.ceil(svgImage.getDocumentHeight()),
-                            Bitmap.Config.ARGB_8888);
+                if (externalStoragePermission) {
+                    // Extend viewbox to show the title
+                    info = info.replace("viewBox=\"0,0,1000,800\"", "viewBox=\"0,0,1000,880\"");
+                    // Render again
+                    try {
+                        svgImage = SVG.getFromString(info);
+                    } catch(SVGParseException e) {
+                        Toast.makeText(TrafficSenseApplication.getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    // Render a separate copy for sharing (could merge this with the above later on)
+                    Bitmap newBM = Bitmap.createBitmap(1000, 800, Bitmap.Config.ARGB_8888);
                     Canvas bmcanvas = new Canvas(newBM);
 
                     // Clear background to white
@@ -325,21 +401,105 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
                     // Render our document onto our canvas
                     svgImage.renderToCanvas(bmcanvas);
                     try {
-                        File file = new File(getFilesDir(), energyCertificateFileName);
-
-                        FileOutputStream fos = new FileOutputStream(file, false);  // false = don't append, overwrite every time
-                        newBM.compress(Bitmap.CompressFormat.JPEG, 90, fos);
-                        fos.flush();
-                        fos.close();
-                        String imageUrlStr = MediaStore.Images.Media.insertImage(getContentResolver(), file.getAbsolutePath(), file.getName(), "TrafficSense Energy Certificate");
-                        setShareIntent(new URL(imageUrlStr));
+                        String path = Environment.getExternalStorageDirectory() + File.separator + "TrafficSense";
+                        File f = new File(path);
+                        boolean dirExists = f.isDirectory();
+                        if (!f.isDirectory() && !f.exists()) {
+                            dirExists = f.mkdirs();
+                        }
+                        if (dirExists) {
+                            File file = new File(path, energyCertificateFileName);
+                            FileOutputStream fos = new FileOutputStream(file, false);  // false = don't append, overwrite every time
+                            newBM.compress(Bitmap.CompressFormat.JPEG, 90, fos);
+                            fos.flush();
+                            fos.close();
+                            // String imageUrlStr = MediaStore.Images.Media.insertImage(getContentResolver(), file.getAbsolutePath(), file.getName(), "TrafficSense Energy Certificate");
+                            mEnergyShareItem.setVisible(true);
+                            setShareIntent(Uri.fromFile(file));  // This probably didn't give enough permissions: "file://" + file.getAbsolutePath()
+                        }
                     } catch (Exception e) {
                         Timber.e("Energy Certificate Bitmap save failed: %s", e.getMessage());
                     }
                 }
+
             } else {
                 Toast.makeText(getApplicationContext(), R.string.energy_load_error, Toast.LENGTH_LONG).show();
             }
         }
     }
+
+    /********************************
+     *
+     * Runtime permission checking
+     *
+     ********************************/
+
+    private void checkExternalWritePermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission to write to external storage is missing
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                // Permission persistently refused by the user
+                Toast.makeText(this, getString(R.string.energy_write_permission_persistently_refused), Toast.LENGTH_LONG).show();
+                externalStoragePermission = false;
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        MY_PERMISSIONS_WRITE_EXTERNAL_STORAGE);
+            }
+        } else {
+            externalStoragePermission = true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_WRITE_EXTERNAL_STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Timber.d("WRITE_EXTERNAL_STORAGE permission granted.");
+                    externalStoragePermission = true;
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Toast.makeText(this, getString(R.string.energy_write_permission_persistently_refused), Toast.LENGTH_LONG).show();
+                    externalStoragePermission = false;
+                }
+                return;
+            }
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
+    /********************************
+     *
+     * Certificate localisation
+     *
+     ********************************/
+
+
+    private String localiseCertificate(String in) {
+        if (currentLanguage == LANG_EN) return in;
+        String out = in;
+        String[][] dict = enFiDictionary;  // Making sure this is initialized
+        if (currentLanguage == LANG_FI) dict = enFiDictionary;
+        else if (currentLanguage == LANG_STADI) dict = enStadiDictionary;
+
+        int dictSize = (dict.length);
+
+        for (int i=0; i<dictSize ; i++) {
+            out = out.replaceAll(dict[i][0], dict[i][1]);
+        }
+
+        return out;
+    }
+
 }

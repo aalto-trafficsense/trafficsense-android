@@ -280,6 +280,7 @@
     <string name="energy_button_year">year</string>
     <string name="energy_share_title">Share Energy Certificate</string>
     <string name="energy_load_error">Error in energy certificate loading</string>
+    <string name="energy_write_permission_persistently_refused">Media write access is required for energy certificate sharing.</string>
 
 
 </resources>

@@ -5,6 +5,6 @@
         android:id="@+id/energy_toolbar_share"
         app:showAsAction="ifRoom"
         android:title="@string/energy_share_title"
-        android:actionProviderClass=
-            "android.widget.ShareActionProvider" />
+        app:actionProviderClass=
+            "android.support.v7.widget.ShareActionProvider" />
 </menu>

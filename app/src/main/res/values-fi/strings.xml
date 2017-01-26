@@ -129,4 +129,5 @@
     <string name="energy_button_prefix">Viim</string>
     <string name="energy_button_month">kk</string>
     <string name="energy_load_error">Virhe energiatodistuksen latauksessa</string>
+    <string name="energy_share_title">Jaa energiatodistus</string>
 </resources>

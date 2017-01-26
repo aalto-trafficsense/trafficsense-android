@@ -230,5 +230,6 @@
     <string name="energy_button_week">vko</string>
     <string name="energy_button_year">vuosi</string>
     <string name="energy_load_error">Päästöspettarin haku ei futaa</string>
+    <string name="energy_share_title">Jaa energiatodistus</string>
 
 </resources>
