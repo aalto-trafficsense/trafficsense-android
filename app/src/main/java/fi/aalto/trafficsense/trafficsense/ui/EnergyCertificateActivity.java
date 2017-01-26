@@ -382,7 +382,7 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
                 svgImageView.setSVG(svgImage);
 
                 if (externalStoragePermission) {
-                    // Extend viewbox to show the title
+                    // Extend viewbox to reveal the title
                     info = info.replace("viewBox=\"0,0,1000,800\"", "viewBox=\"0,0,1000,880\"");
                     // Render again
                     try {

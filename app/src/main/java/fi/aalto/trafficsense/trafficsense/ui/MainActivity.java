@@ -365,10 +365,12 @@ public class MainActivity extends AppCompatActivity
                     MapBounds mBuildBounds = new MapBounds();
                     mBuildBounds.include(alertPos);
                     mBuildBounds.include(latestPosition);
+                    // Arrange space for the info window
+                    mBuildBounds.include(alertInfoStretch(alertPos));
                     mBuildBounds.update(mMap);
                 } else {
-                    // User position unknown, just put the alert in the center and zoom to default level
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(alertPos, initZoom));
+                    // User position unknown, just put the alert in the center and zoom back
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(alertPos, initZoom-2));
                 }
                 // Set also traffic display on for assistance
                 mTrafficItem.setIcon(R.drawable.ic_traffic_24dp_on);
@@ -378,6 +380,19 @@ public class MainActivity extends AppCompatActivity
                 mMap.setTrafficEnabled(true);
             }
         }
+    }
+
+    // Create an extra position to arrange space for the alert info window
+    private LatLng alertInfoStretch(LatLng apos) {
+        double alertLat = apos.latitude;
+        double latestLat = latestPosition.latitude;
+        double newLat = alertLat;
+        if (alertLat > latestLat) {  // Alert above us - include more
+            newLat = alertLat + (alertLat - latestLat);
+        }
+        double alertLng = apos.longitude;
+        double newLng = alertLng + (alertLng - latestPosition.longitude);
+        return new LatLng(newLat, newLng);
     }
 
     @Override
