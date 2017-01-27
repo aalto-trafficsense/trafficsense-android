@@ -75,8 +75,8 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
 
     private final int MY_PERMISSIONS_WRITE_EXTERNAL_STORAGE = 1;
 
-    private static final String certTitlePre = "<text fill=\"rgb(0,0,0)\" font-family=\"Helvetica\" font-size=\"58\" stroke=\"rgb(0,0,0)\" stroke-width=\"1\" x=\"30\" y=\"850\">";
-    private static final String uriTitlePre = "<text fill=\"rgb(0,0,0)\" font-family=\"Helvetica\" font-size=\"34\" stroke=\"rgb(0,0,0)\" stroke-width=\"1\" x=\"35\" y=\"900\">";
+    private static final String certTitlePre = "<text fill=\"rgb(0,0,0)\" font-family=\"Helvetica\" font-size=\"58\" stroke=\"rgb(0,0,0)\" stroke-width=\"1\" x=\"30\" y=\"830\">";
+    private static final String uriTitlePre = "<text fill=\"rgb(0,0,0)\" font-family=\"Helvetica\" font-size=\"34\" stroke=\"rgb(0,0,0)\" stroke-width=\"1\" x=\"35\" y=\"890\">";
     private static final String titlePost = "</text>";
     private static String shareSvgTitle;
     private static final String svgViewBoxOriginal = "viewBox=\"0,0,1000,800\"";
