@@ -4,30 +4,26 @@ import android.Manifest;
 import android.app.ActionBar;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.drawable.PictureDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.*;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
-import android.widget.ShareActionProvider;
 import com.caverock.androidsvg.SVG;
 import com.caverock.androidsvg.SVGImageView;
 import com.caverock.androidsvg.SVGParseException;
@@ -44,9 +40,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 import static android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences;
 
@@ -73,7 +67,6 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
     private static final int START_DATE_DIALOG = 0;
     private static final int END_DATE_DIALOG = 1;
     private final SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    private final String energyCertificateFileName = "energycertificate.jpg";
 
     private static final int LANG_EN = 0;
     private static final int LANG_FI = 1;
@@ -82,7 +75,13 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
 
     private final int MY_PERMISSIONS_WRITE_EXTERNAL_STORAGE = 1;
 
-    private final String certTitle = "<text fill=\"rgb(0,0,0)\" font-family=\"Helvetica\" font-size=\"70\" stroke=\"rgb(0,0,0)\" stroke-width=\"1\" x=\"30\" y=\"860\">TrafficSense Energy Certificate</text>";
+    private static final String certTitlePre = "<text fill=\"rgb(0,0,0)\" font-family=\"Helvetica\" font-size=\"58\" stroke=\"rgb(0,0,0)\" stroke-width=\"1\" x=\"30\" y=\"850\">";
+    private static final String uriTitlePre = "<text fill=\"rgb(0,0,0)\" font-family=\"Helvetica\" font-size=\"34\" stroke=\"rgb(0,0,0)\" stroke-width=\"1\" x=\"35\" y=\"900\">";
+    private static final String titlePost = "</text>";
+    private static String shareSvgTitle;
+    private static final String svgViewBoxOriginal = "viewBox=\"0,0,1000,800\"";
+    private static final String svgViewBoxNew = "viewBox=\"0,0,1000,910\"";
+
 
     private static final String[][] enFiDictionary = new String[][]{
             { "Ranking", "Sijoitus" },
@@ -95,8 +94,7 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
             { "Bus", "Linja-auto"},
             { "Ferry", "lautta" },
             { "Car", "Auto" },
-            { "Average", "Keskiarvo" },
-            { "Energy Certificate", "Energiatodistus" }
+            { "Average", "Keskiarvo" }
     };
 
     private static final String[][] enStadiDictionary = new String[][]{
@@ -110,8 +108,7 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
             { "Bus", "Dösä"},
             { "Ferry", "flotta" },
             { "Car", "Fiude" },
-            { "Average", "Keskiarvo" },
-            { "Energy Certificate", "Päästöspettari" }
+            { "Average", "Keskiarvo" }
     };
 
 
@@ -147,6 +144,8 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
         if (getDefaultSharedPreferences(this).getBoolean(getString(R.string.settings_locale_stadi_key), false)) {
             currentLanguage = LANG_STADI;
         }
+        shareSvgTitle = certTitlePre + getString(R.string.app_name) + " " + getString(R.string.navigation_energy_certificate) + titlePost
+                        + uriTitlePre + getString(R.string.energy_uri) + titlePost;
 
         // Initialize all the constant parts of mShareIntent
         mShareIntent = new Intent();
@@ -370,13 +369,11 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
         }
 
         protected void onPostExecute(String info) {
-            Timber.d("SVG string length: %d", info.length());
             if (info.length() > 1000) { // Current basic length should be >5900
                 // Change to localised date format for the certificate range
                 info = info.replace(mDateFormat.format(startDate.getTime()), DateFormat.getDateInstance().format(startDate.getTime()));
                 info = info.replace(mDateFormat.format(endDate.getTime()), DateFormat.getDateInstance().format(endDate.getTime()));
-                info = info.replace("</svg>", certTitle + "</svg>");  // Title invisible, but localised
-                if (currentLanguage != LANG_EN) info = localiseCertificate(info);
+                if (currentLanguage != LANG_EN) info = localiseCertificate(info);  // Localise labels
                 SVG svgImage;
                 try {
                     svgImage = SVG.getFromString(info);
@@ -386,25 +383,25 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
                 }
                 svgImageView.setSVG(svgImage);
 
-                if (externalStoragePermission) {
-                    // Extend viewbox to reveal the title
-                    info = info.replace("viewBox=\"0,0,1000,800\"", "viewBox=\"0,0,1000,880\"");
-                    // Render again
+                if (externalStoragePermission) { // External storage permission exists, create certificate for sharing
+                    info = info.replace(svgViewBoxOriginal, svgViewBoxNew);  // Extend viewbox to reveal the title area
+                    info = info.replace("</svg>", shareSvgTitle + "</svg>");  // Append titles to end
+                    // Render with titles
                     try {
                         svgImage = SVG.getFromString(info);
                     } catch(SVGParseException e) {
                         Toast.makeText(TrafficSenseApplication.getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    // Render a separate copy for sharing (could merge this with the above later on)
                     Bitmap newBM = Bitmap.createBitmap(1000, 800, Bitmap.Config.ARGB_8888);
                     Canvas bmcanvas = new Canvas(newBM);
-
-                    // Clear background to white
-                    bmcanvas.drawRGB(255, 255, 255);
-
-                    // Render our document onto our canvas
+                    bmcanvas.drawRGB(255, 255, 255);  // White background
                     svgImage.renderToCanvas(bmcanvas);
+                    // Draw the QR-code:
+                    Drawable qr = ContextCompat.getDrawable(TrafficSenseApplication.getContext(), R.drawable.energy_uri_qr);
+                    qr.setBounds(850, 770, 990, 910);
+                    qr.draw(bmcanvas);
+                    // Save it as a jpg
                     try {
                         String path = Environment.getExternalStorageDirectory() + File.separator + "TrafficSense";
                         File f = new File(path);
@@ -413,7 +410,7 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
                             dirExists = f.mkdirs();
                         }
                         if (dirExists) {
-                            File file = new File(path, energyCertificateFileName);
+                            File file = new File(path, getString(R.string.energy_share_filename));
                             FileOutputStream fos = new FileOutputStream(file, false);  // false = don't append, overwrite every time
                             newBM.compress(Bitmap.CompressFormat.JPEG, 90, fos);
                             fos.flush();

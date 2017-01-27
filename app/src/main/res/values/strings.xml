@@ -18,7 +18,7 @@
     <string name="email_startactivity_text">Preparing to send email...</string>
 
     <string name="navigation_about">About</string>
-    <string name="navigation_energy_certificate">Energy certificate</string>
+    <string name="navigation_energy_certificate">Energy Certificate</string>
 
     <string name="navigation_group2_title">Configuration</string>
     <string name="navigation_login">Google account</string>
@@ -283,6 +283,7 @@
     <string name="energy_load_error">Error in energy certificate loading</string>
     <string name="energy_write_permission_persistently_refused">Media write access is required for energy certificate sharing.</string>
     <string name="energy_button_week">week</string>
-
+    <string name="energy_uri">trafficsense.aalto.fi</string>
+    <string name="energy_share_filename">energy_certificate.jpg</string>
 
 </resources>
