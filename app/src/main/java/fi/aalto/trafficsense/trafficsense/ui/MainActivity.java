@@ -336,6 +336,8 @@ public class MainActivity extends AppCompatActivity
             }
 
             if (getSharedBoolean(SharedPrefs.KEY_SHOW_TRAFFIC)) {
+                mTrafficItem.setIcon(R.drawable.ic_traffic_24dp_on);
+                mTrafficItem.setChecked(true);
                 mMap.setTrafficEnabled(true);
             }
 
