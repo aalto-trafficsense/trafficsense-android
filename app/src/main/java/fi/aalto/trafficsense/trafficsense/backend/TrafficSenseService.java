@@ -5,9 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.*;
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
@@ -18,7 +16,6 @@ import fi.aalto.trafficsense.trafficsense.backend.backend_util.PlayServiceInterf
 import fi.aalto.trafficsense.trafficsense.backend.uploader.RegularRoutesPipeline;
 import fi.aalto.trafficsense.trafficsense.ui.MainActivity;
 import fi.aalto.trafficsense.trafficsense.util.*;
-import timber.log.Timber;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -246,6 +243,10 @@ public class TrafficSenseService extends Service {
                     case InternalBroadcasts.KEY_ACTIVITY_UPDATE:
                         updateActivity(intent);
                         break;
+                    case InternalBroadcasts.KEY_REQUEST_PLAY_RE_ESTABLISH:
+                        if (mPlayServiceInterface!=null) mPlayServiceInterface.disconnect();
+                        mPlayServiceInterface = new PlayServiceInterface();
+                        break;
                 }
             }
         };
@@ -265,6 +266,7 @@ public class TrafficSenseService extends Service {
         intentFilter.addAction(InternalBroadcasts.KEY_UPLOAD_SUCCEEDED);
         intentFilter.addAction(InternalBroadcasts.KEY_UPLOAD_FAILED);
         intentFilter.addAction(InternalBroadcasts.KEY_ACTIVITY_UPDATE);
+        intentFilter.addAction(InternalBroadcasts.KEY_REQUEST_PLAY_RE_ESTABLISH);
 
         if (mLocalBroadcastManager != null) {
             mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, intentFilter);

@@ -1,11 +1,13 @@
 package fi.aalto.trafficsense.trafficsense.backend.sensors;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.location.Location;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -13,6 +15,7 @@ import com.google.android.gms.location.LocationServices;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
 import fi.aalto.trafficsense.trafficsense.backend.TrafficSenseService;
+import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
 import timber.log.Timber;
 
 import static android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences;
@@ -32,10 +35,12 @@ public class LocationSensor implements LocationListener {
     private SensorFilter mSensorFilter;
     private SharedPreferences mSettings;
     private Resources mRes;
+    private LocalBroadcastManager mLocalBroadcastManager;
 
     /* Constructor */
     public LocationSensor(GoogleApiClient apiClient, SensorFilter controller) {
         mGoogleApiClient = apiClient;
+        mLocalBroadcastManager = LocalBroadcastManager.getInstance(TrafficSenseService.getContext());
         mSensorFilter = controller;
         mRes = TrafficSenseService.getContext().getResources();
         mSettings = getDefaultSharedPreferences(TrafficSenseService.getContext());
@@ -71,7 +76,11 @@ public class LocationSensor implements LocationListener {
 
             } else {
                 Timber.w("locationRequest called, but GoogleApiClient is not connected");
+                requestPlayReEstablish();
             }
+        } else {
+            Timber.w("locationRequest called, but GoogleApiClient is null");
+            requestPlayReEstablish();
         }
     }
 
@@ -89,6 +98,12 @@ public class LocationSensor implements LocationListener {
             mGoogleApiClient = null;
         }
         Timber.d("LocationSensor stopped");
+    }
+
+    // Request TrafficSenseService to re-establish the whole play services & sensor chain
+    // Used when there is a problem with GoogleApiClient
+    private void requestPlayReEstablish() {
+        mLocalBroadcastManager.sendBroadcast(new Intent(InternalBroadcasts.KEY_REQUEST_PLAY_RE_ESTABLISH));
     }
 
 }
