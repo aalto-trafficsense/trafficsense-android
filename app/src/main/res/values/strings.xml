@@ -226,6 +226,7 @@
     <string name="path_future_date_request">Your future path is unknown to me.</string>
     <string name="error_creating_map">Error in map creation!</string>
     <string name="path_no_data_for_date">No path data for selected date.</string>
+    <string name="path_edit_hint">Click again to edit or confirm.</string>
     <!-- <string name="path_no_public_transport">Public transport not recognised for current day.</string> -->
     <string name="dest_no_data">No destinations available.</string>
     <string name="dest_visits">Visits</string>

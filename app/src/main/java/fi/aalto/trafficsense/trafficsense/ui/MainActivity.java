@@ -64,7 +64,7 @@ import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_S
 public class MainActivity extends AppCompatActivity
         implements  NavigationView.OnNavigationItemSelectedListener,
                     OnMapReadyCallback,
-        GoogleMap.OnMarkerClickListener,
+        GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener,
         GoogleMap.OnMapLoadedCallback,
                     DatePickerDialog.OnDateSetListener {
 
@@ -110,6 +110,8 @@ public class MainActivity extends AppCompatActivity
     private List<Marker> destMarkers = new ArrayList<>();
 
     private GeoJsonLayer pathLayer=null;
+    private Marker clickedLegMarker;
+    private GeoJsonFeature clickedLegFeature;
 
     // Very first view opens in Otaniemi :-)
     private final float initLat = 60.1841396f;
@@ -413,12 +415,58 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
+        if (pathLayer!=null) {
+            if (clickedLegMarker!=null) {
+                if (clickedLegMarker.equals(clickedMarker)) {
+                    Timber.d("Clicked twice! Edit!");
+
+                    clickedLegMarker = null;
+                    return false;
+                }
+            }
+            clickedLegMarker = null;
+            String markerId = (String)clickedMarker.getTag();
+            if (markerId==null) {
+                markerId = clickedMarker.getSnippet();
+            } else {
+                if (markerId.length()<1) {
+                    markerId = clickedMarker.getSnippet();
+                }
+            }
+            if (markerId!=null) {
+                Iterator i = pathLayer.getFeatures().iterator();
+                GeoJsonFeature feature;
+                Boolean cnt = true;
+                while (cnt) {
+                    feature = (GeoJsonFeature)i.next();
+                    if (feature.hasProperty("id")) {
+                        if (feature.getProperty("id").equals(markerId)) {
+                            clickedMarker.setTag(markerId);
+                            clickedMarker.setSnippet(null);
+                            clickedLegMarker = clickedMarker;
+                            clickedLegFeature = feature;
+                            Toast.makeText(this, R.string.path_edit_hint, Toast.LENGTH_SHORT).show();
+                            cnt = false;
+                        }
+                    }
+                    if (!i.hasNext()) cnt = false;
+                }
+            }
+        }
+
 
         // Return false to indicate that we have not consumed the event and that we wish
         // for the default behavior to occur (which is for the camera to move such that the
         // marker is centered and for the marker's info window to open, if it has one).
         return false;
     }
+
+    @Override
+    public void onInfoWindowClick(final Marker clickedMarker) {
+
+
+    }
+
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -1297,7 +1345,7 @@ public class MainActivity extends AppCompatActivity
                 mStyle.setColor(ContextCompat.getColor(mContext, getActivityColorByString(activity)));
                 feature.setLineStringStyle(mStyle);
 //                if (!today) { // Update 20.12.2016: Show public transport also for current day
-                    if (publicTransport.contains(activity)) { // Special marker for public transport
+//                    if (publicTransport.contains(activity)) { // Special marker for public transport - update 31.1.2017 - show icons for all activities
                         if (coordinates != null) {
                             // Find mid-coordinates of the trip
                             LatLng pos = coordinates.get(coordinates.size()/2);
@@ -1310,14 +1358,22 @@ public class MainActivity extends AppCompatActivity
                                 if (!lineName.equals("null")) {
                                     title.append(": ").append(lineName);
                                 }
+                                transportIconFeature.setProperty("line_name", lineName);
                             }
                             pointStyle.setTitle(title.toString());
+                            transportIconFeature.setProperty("activity", activity);
+                            // Copy id also to the icons
+                            if (feature.hasProperty("id")) {
+                                String f = feature.getProperty("id");
+                                transportIconFeature.setProperty("id", f);
+                                pointStyle.setSnippet(f);
+                            }
                             Bitmap bitmap = getBitmap(mContext, getTransportIcon(activity));
                             pointStyle.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
                             transportIconFeature.setPointStyle(pointStyle);
                             newFeatures.add(transportIconFeature);
                         }
-                    }
+//                    }
 //                }
             }
             // Check that our route is included in the bounds
@@ -1371,6 +1427,8 @@ public class MainActivity extends AppCompatActivity
 
     private int getTransportIcon(String activity) {
         switch(activity) {
+            case "IN_VEHICLE":
+                return R.drawable.map_activity_vehicle;
             case "TRAIN":
                 return R.drawable.map_vehicle_train;
             case "TRAM":
@@ -1380,13 +1438,18 @@ public class MainActivity extends AppCompatActivity
                 return R.drawable.map_vehicle_bus;
             case "FERRY":
                 return R.drawable.md_activity_ferry_24dp;
-            // Non-public transport just for testing
             case "ON_BICYCLE":
                 return R.drawable.map_activity_bicycle;
-            case "IN_VEHICLE":
-                return R.drawable.map_activity_vehicle;
             case "WALKING":
                 return R.drawable.map_activity_walking;
+            case "RUNNING":
+                return R.drawable.map_activity_running;
+            case "STILL":
+                return R.drawable.map_activity_still;
+            case "TILTING":
+                return R.drawable.md_activity_tilting_24dp;
+            case "UNKNOWN":
+                return R.drawable.md_activity_unknown_24dp;
             default:
                 return R.drawable.md_activity_unknown_24dp;
         }
@@ -1394,6 +1457,8 @@ public class MainActivity extends AppCompatActivity
 
     private String getTransportString(String activity) {
         switch(activity) {
+            case "IN_VEHICLE":
+                return mRes.getString(R.string.in_vehicle);
             case "TRAIN":
                 return mRes.getString(R.string.train);
             case "TRAM":
@@ -1404,13 +1469,18 @@ public class MainActivity extends AppCompatActivity
                 return mRes.getString(R.string.bus);
             case "FERRY":
                 return mRes.getString(R.string.ferry);
-            // Non-public transport just for testing
             case "ON_BICYCLE":
                 return mRes.getString(R.string.on_bicycle);
-            case "IN_VEHICLE":
-                return mRes.getString(R.string.in_vehicle);
             case "WALKING":
                 return mRes.getString(R.string.walking);
+            case "RUNNING":
+                return mRes.getString(R.string.running);
+            case "STILL":
+                return mRes.getString(R.string.still);
+            case "TILTING":
+                return mRes.getString(R.string.tilting);
+            case "UNKNOWN":
+                return mRes.getString(R.string.unknown);
             default:
                 return mRes.getString(R.string.unknown);
         }
