@@ -41,6 +41,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences;
 
@@ -75,13 +77,14 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
 
     private final int MY_PERMISSIONS_WRITE_EXTERNAL_STORAGE = 1;
 
-    private static final String certTitlePre = "<text fill=\"rgb(0,0,0)\" font-family=\"Helvetica\" font-size=\"58\" stroke=\"rgb(0,0,0)\" stroke-width=\"1\" x=\"30\" y=\"830\">";
-    private static final String uriTitlePre = "<text fill=\"rgb(0,0,0)\" font-family=\"Helvetica\" font-size=\"34\" stroke=\"rgb(0,0,0)\" stroke-width=\"1\" x=\"35\" y=\"890\">";
+    private static final String svgExtractViewBox = "viewBox=\"\\d+,\\d+,(\\d+),(\\d+)\"";
+    private static final int svgYExtension = 110;
+    private static final String certTitlePre = "<text fill=\"rgb(0,0,0)\" font-family=\"Helvetica\" font-size=\"58\" stroke=\"rgb(0,0,0)\" stroke-width=\"1\" x=\"30\" y=\"%d\">";
+    private static final int certTitleYOffset = 30;
+    private static final String uriTitlePre = "<text fill=\"rgb(0,0,0)\" font-family=\"Helvetica\" font-size=\"34\" stroke=\"rgb(0,0,0)\" stroke-width=\"1\" x=\"35\" y=\"%d\">";
+    private static final int certUriYOffset = 90;
     private static final String titlePost = "</text>";
     private static String shareSvgTitle;
-    private static final String svgViewBoxOriginal = "viewBox=\"0,0,1000,800\"";
-    private static final String svgViewBoxNew = "viewBox=\"0,0,1000,910\"";
-
 
     private static final String[][] enFiDictionary = new String[][]{
             { "Ranking", "Sijoitus" },
@@ -384,22 +387,40 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
                 svgImageView.setSVG(svgImage);
 
                 if (externalStoragePermission) { // External storage permission exists, create certificate for sharing
-                    info = info.replace(svgViewBoxOriginal, svgViewBoxNew);  // Extend viewbox to reveal the title area
-                    info = info.replace("</svg>", shareSvgTitle + "</svg>");  // Append titles to end
-                    // Render with titles
-                    try {
-                        svgImage = SVG.getFromString(info);
-                    } catch(SVGParseException e) {
-                        Toast.makeText(TrafficSenseApplication.getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    // Extend viewbox and build the title area
+                    int xMaxOld = 1000;
+                    int yMaxOld = 800;
+                    Pattern r = Pattern.compile(svgExtractViewBox);
+                    Matcher m = r.matcher(info);
+                    if (m.find( )) {
+                        try {
+                            String viewBoxOld = m.group(0);
+                            xMaxOld = Integer.parseInt(m.group(1));
+                            yMaxOld = Integer.parseInt(m.group(2));
+                            info = info.replace(viewBoxOld, viewBoxOld.replace("," + Integer.toString(yMaxOld) + "\"", "," + Integer.toString(yMaxOld + svgYExtension) + "\""));
+                            info = info.replace("</svg>", String.format(shareSvgTitle, yMaxOld+certTitleYOffset, yMaxOld+certUriYOffset) + "</svg>");  // Append titles to end
+                        } catch(Exception e) {
+                            Timber.e("EnergyCertificate viewbox pattern matching error 2: %s", e.getMessage());
+                            return;
+                        }
+                        // Render with titles
+                        try {
+                            svgImage = SVG.getFromString(info);
+                        } catch(SVGParseException e) {
+                            Toast.makeText(TrafficSenseApplication.getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    } else {
+                        Timber.w("EnergyCertificate viewbox pattern matching error 1: Pattern not found.");
                         return;
                     }
-                    Bitmap newBM = Bitmap.createBitmap(1000, 800, Bitmap.Config.ARGB_8888);
+                    Bitmap newBM = Bitmap.createBitmap(xMaxOld, yMaxOld+svgYExtension, Bitmap.Config.ARGB_8888);
                     Canvas bmcanvas = new Canvas(newBM);
                     bmcanvas.drawRGB(255, 255, 255);  // White background
                     svgImage.renderToCanvas(bmcanvas);
                     // Draw the QR-code:
                     Drawable qr = ContextCompat.getDrawable(TrafficSenseApplication.getContext(), R.drawable.energy_uri_qr);
-                    qr.setBounds(850, 770, 990, 910);
+                    qr.setBounds(850, yMaxOld-30, 990, yMaxOld+110);
                     qr.draw(bmcanvas);
                     // Save it as a jpg
                     try {
