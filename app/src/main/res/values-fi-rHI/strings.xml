@@ -62,7 +62,7 @@
     <string name="unidentifiable_activity">Ei tajuu: %1$d</string>
 
     <string name="train">Stoge</string>
-    <string name="tram">Spora</string>
+    <string name="tram">Spåra</string>
     <string name="subway">Tuubi</string>
     <string name="bus">Dösä</string>
     <string name="ferry">Lautta</string>
@@ -234,5 +234,14 @@
     <string name="energy_write_permission_persistently_refused">Tallennusoikeudet tarvitaan energiatodistuksen jakamiseen.</string>
     <string name="energy_dates_prefix">Päivät:</string>
     <string name="energy_button_select">valitse</string>
+    <string name="path_edit_button">Säädä</string>
+    <string name="path_edit_activity">Vehje:</string>
+    <string name="path_edit_confirm_choice">Duunaa</string>
+    <string name="path_edit_dialog_title">Fiksaa kämmit</string>
+    <string name="path_edit_cancel_choice">Eivaiskaa</string>
+    <string name="path_edit_line_name">Linja:</string>
+    <string name="path_edit_update_failed">Fiksi bugaa.</string>
+    <string name="path_edit_url_broken">Fiksauksen nettiosoite ei futaa.</string>
+    <string name="path_url_broken">Nettiosoite ei futaa.</string>
 
 </resources>

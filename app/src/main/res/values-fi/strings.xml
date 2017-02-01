@@ -39,7 +39,7 @@
     <string name="path_future_date_request">Tulevaisuutesi on minulta salattu.</string>
     <string name="path_no_data_for_date">Ei tietoja valitulle päivälle.</string>
     <!-- <string name="path_no_public_transport">Joukkoliikennevälineet tunnistetaan huomiseksi.</string> -->
-    <string name="path_url_broken">Verkko-osoite viallinen</string>
+    <string name="path_url_broken">Verkko-osoite viallinen.</string>
     <string name="play_services_error">Google Play Services ei saatavilla. Ohjelma sulkeutuu.</string>
     <string name="plus_disconnect">Peru tilinkäyttöoikeus</string>
     <string name="plus_sign_out">Kirjaudu ulos</string>
@@ -133,4 +133,14 @@
     <string name="energy_write_permission_persistently_refused">Tallennusoikeudet tarvitaan energiatodistuksen jakamiseen.</string>
     <string name="energy_dates_prefix">Päivät:</string>
     <string name="energy_button_select">valitse</string>
+    <string name="path_edit_activity">Kulkutapa:</string>
+    <string name="path_edit_button">Muokkaa/Vahvista</string>
+    <string name="path_edit_cancel_choice">Peru</string>
+    <string name="path_edit_confirm_choice">Vahvista</string>
+    <string name="path_edit_dialog_title">Muokkaa tai vahvista kulkutapa</string>
+    <string name="path_edit_line_name">Linjan tunnus:</string>
+    <string name="path_edit_update_failed">Kulkutavan päivitys epäonnistui.</string>
+    <string name="path_edit_url_broken">Ongelma kulkutavan muokkauksen verkko-osoitteessa.</string>
+    <string name="title_activity_debugview">Debug</string>
+    <string name="str_ok">Ok</string>
 </resources>

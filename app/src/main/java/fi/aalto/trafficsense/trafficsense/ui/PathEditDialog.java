@@ -198,10 +198,10 @@ public class PathEditDialog extends AppCompatActivity implements AdapterView.OnI
                     legUpdate.put("line_name", currentLineName);
                 }
 
-                DataOutputStream wr = new DataOutputStream(urlConnection.getOutputStream());
-                wr.writeBytes(legUpdate.toString());
-                wr.flush();
-                wr.close();
+                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream(), "UTF-8"));
+                bw.write(legUpdate.toString());
+                bw.flush();
+                bw.close();
 
                 responseCode = urlConnection.getResponseCode();
             } catch (IOException e) {
