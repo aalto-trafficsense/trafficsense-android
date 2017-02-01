@@ -227,6 +227,13 @@
     <string name="error_creating_map">Error in map creation!</string>
     <string name="path_no_data_for_date">No path data for selected date.</string>
     <string name="path_edit_hint">Click again to edit or confirm.</string>
+    <string name="path_edit_activity">Activity:</string>
+    <string name="path_edit_line_name">Line name:</string>
+    <string name="path_edit_dialog_title">Edit or confirm trip leg</string>
+    <string name="path_edit_confirm_choice">Confirm</string>
+    <string name="path_edit_cancel_choice">Cancel</string>
+    <string name="path_edit_url_broken">Problem with path edit address.</string>
+
     <!-- <string name="path_no_public_transport">Public transport not recognised for current day.</string> -->
     <string name="dest_no_data">No destinations available.</string>
     <string name="dest_visits">Visits</string>

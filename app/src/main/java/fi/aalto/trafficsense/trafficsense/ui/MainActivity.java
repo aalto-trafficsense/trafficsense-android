@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity
     private SharedPreferences.Editor mPrefEditor;
     private SharedPreferences mSettings; // Application settings
     private SharedPreferences mServerNotification; // Server notification prefs
+    private ActivityPathConverter mActivityPathConverter; // Helper to translate server-originated activities in path features
 
     private MenuItem mStartupItem;
     private MenuItem mShutdownItem;
@@ -130,6 +131,7 @@ public class MainActivity extends AppCompatActivity
         TrafficSenseApplication.refreshStadi();
         mContext = this;
         mRes = this.getResources();
+        mActivityPathConverter = new ActivityPathConverter();
         setContentView(R.layout.activity_main);
         new ConsentDialog(this).show(); // Only asks for consent if not agreed before
 
@@ -419,7 +421,12 @@ public class MainActivity extends AppCompatActivity
             if (clickedLegMarker!=null) {
                 if (clickedLegMarker.equals(clickedMarker)) {
                     Timber.d("Clicked twice! Edit!");
-
+                    Optional<String> token = mStorage.readSessionToken();
+                    if (!token.isPresent()) {
+                        Toast.makeText(this, R.string.not_signed_in, Toast.LENGTH_SHORT).show();
+                    } else {
+                        new PathEditDialog(this, token.get(), mStorage.getServerName(), mActivityPathConverter, clickedLegFeature).show(); // edit the path
+                    }
                     clickedLegMarker = null;
                     return false;
                 }
@@ -1342,7 +1349,7 @@ public class MainActivity extends AppCompatActivity
             if (feature.hasProperty("activity")) {
                 String activity = feature.getProperty("activity");
                 GeoJsonLineStringStyle mStyle = new GeoJsonLineStringStyle();
-                mStyle.setColor(ContextCompat.getColor(mContext, getActivityColorByString(activity)));
+                mStyle.setColor(ContextCompat.getColor(mContext, mActivityPathConverter.getColor(activity)));
                 feature.setLineStringStyle(mStyle);
 //                if (!today) { // Update 20.12.2016: Show public transport also for current day
 //                    if (publicTransport.contains(activity)) { // Special marker for public transport - update 31.1.2017 - show icons for all activities
@@ -1352,7 +1359,7 @@ public class MainActivity extends AppCompatActivity
                             GeoJsonFeature transportIconFeature = new GeoJsonFeature(new GeoJsonPoint(pos), null, null, null);
                             GeoJsonPointStyle pointStyle = new GeoJsonPointStyle();
                             StringBuilder title = new StringBuilder();
-                            title.append(getTransportString(activity));
+                            title.append(mRes.getString(mActivityPathConverter.getLocalizedNameRes(activity)));
                             if (feature.hasProperty("line_name")) {
                                 String lineName = feature.getProperty("line_name");
                                 if (!lineName.equals("null")) {
@@ -1368,7 +1375,7 @@ public class MainActivity extends AppCompatActivity
                                 transportIconFeature.setProperty("id", f);
                                 pointStyle.setSnippet(f);
                             }
-                            Bitmap bitmap = getBitmap(mContext, getTransportIcon(activity));
+                            Bitmap bitmap = getBitmap(mContext, mActivityPathConverter.getIcon(activity));
                             pointStyle.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
                             transportIconFeature.setPointStyle(pointStyle);
                             newFeatures.add(transportIconFeature);
@@ -1396,95 +1403,95 @@ public class MainActivity extends AppCompatActivity
         mBuildBounds.update(mMap);
     }
 
-    private int getActivityColorByString(String activity) {
-        switch(activity) {
-            case "IN_VEHICLE":
-                return R.color.colorInVehicle;
-            case "ON_BICYCLE":
-                return R.color.colorOnBicycle;
-            case "RUNNING":
-                return R.color.colorRunning;
-            case "STILL":
-                return R.color.colorStill;
-            case "TILTING":
-                return R.color.colorTilting;
-            case "UNKNOWN":
-                return R.color.colorUnknown;
-            case "WALKING":
-                return R.color.colorWalking;
-            case "TRAIN":
-                return R.color.colorTrain;
-            case "TRAM":
-            case "SUBWAY":
-                return R.color.colorSubway;
-            case "BUS":
-            case "FERRY":
-                return R.color.colorBus;
-            default:
-                return R.color.colorUnknown;
-        }
-    }
-
-    private int getTransportIcon(String activity) {
-        switch(activity) {
-            case "IN_VEHICLE":
-                return R.drawable.map_activity_vehicle;
-            case "TRAIN":
-                return R.drawable.map_vehicle_train;
-            case "TRAM":
-            case "SUBWAY":
-                return R.drawable.map_vehicle_subway;
-            case "BUS":
-                return R.drawable.map_vehicle_bus;
-            case "FERRY":
-                return R.drawable.md_activity_ferry_24dp;
-            case "ON_BICYCLE":
-                return R.drawable.map_activity_bicycle;
-            case "WALKING":
-                return R.drawable.map_activity_walking;
-            case "RUNNING":
-                return R.drawable.map_activity_running;
-            case "STILL":
-                return R.drawable.map_activity_still;
-            case "TILTING":
-                return R.drawable.md_activity_tilting_24dp;
-            case "UNKNOWN":
-                return R.drawable.md_activity_unknown_24dp;
-            default:
-                return R.drawable.md_activity_unknown_24dp;
-        }
-    }
-
-    private String getTransportString(String activity) {
-        switch(activity) {
-            case "IN_VEHICLE":
-                return mRes.getString(R.string.in_vehicle);
-            case "TRAIN":
-                return mRes.getString(R.string.train);
-            case "TRAM":
-                return mRes.getString(R.string.tram);
-            case "SUBWAY":
-                return mRes.getString(R.string.subway);
-            case "BUS":
-                return mRes.getString(R.string.bus);
-            case "FERRY":
-                return mRes.getString(R.string.ferry);
-            case "ON_BICYCLE":
-                return mRes.getString(R.string.on_bicycle);
-            case "WALKING":
-                return mRes.getString(R.string.walking);
-            case "RUNNING":
-                return mRes.getString(R.string.running);
-            case "STILL":
-                return mRes.getString(R.string.still);
-            case "TILTING":
-                return mRes.getString(R.string.tilting);
-            case "UNKNOWN":
-                return mRes.getString(R.string.unknown);
-            default:
-                return mRes.getString(R.string.unknown);
-        }
-    }
+//    private int getActivityColorByString(String activity) {
+//        switch(activity) {
+//            case "IN_VEHICLE":
+//                return R.color.colorInVehicle;
+//            case "ON_BICYCLE":
+//                return R.color.colorOnBicycle;
+//            case "RUNNING":
+//                return R.color.colorRunning;
+//            case "STILL":
+//                return R.color.colorStill;
+//            case "TILTING":
+//                return R.color.colorTilting;
+//            case "UNKNOWN":
+//                return R.color.colorUnknown;
+//            case "WALKING":
+//                return R.color.colorWalking;
+//            case "TRAIN":
+//                return R.color.colorTrain;
+//            case "TRAM":
+//            case "SUBWAY":
+//                return R.color.colorSubway;
+//            case "BUS":
+//            case "FERRY":
+//                return R.color.colorBus;
+//            default:
+//                return R.color.colorUnknown;
+//        }
+//    }
+//
+//    private int getTransportIcon(String activity) {
+//        switch(activity) {
+//            case "IN_VEHICLE":
+//                return R.drawable.map_activity_vehicle;
+//            case "TRAIN":
+//                return R.drawable.map_vehicle_train;
+//            case "TRAM":
+//            case "SUBWAY":
+//                return R.drawable.map_vehicle_subway;
+//            case "BUS":
+//                return R.drawable.map_vehicle_bus;
+//            case "FERRY":
+//                return R.drawable.md_activity_ferry_24dp;
+//            case "ON_BICYCLE":
+//                return R.drawable.map_activity_bicycle;
+//            case "WALKING":
+//                return R.drawable.map_activity_walking;
+//            case "RUNNING":
+//                return R.drawable.map_activity_running;
+//            case "STILL":
+//                return R.drawable.map_activity_still;
+//            case "TILTING":
+//                return R.drawable.md_activity_tilting_24dp;
+//            case "UNKNOWN":
+//                return R.drawable.md_activity_unknown_24dp;
+//            default:
+//                return R.drawable.md_activity_unknown_24dp;
+//        }
+//    }
+//
+//    private String getTransportString(String activity) {
+//        switch(activity) {
+//            case "IN_VEHICLE":
+//                return mRes.getString(R.string.in_vehicle);
+//            case "TRAIN":
+//                return mRes.getString(R.string.train);
+//            case "TRAM":
+//                return mRes.getString(R.string.tram);
+//            case "SUBWAY":
+//                return mRes.getString(R.string.subway);
+//            case "BUS":
+//                return mRes.getString(R.string.bus);
+//            case "FERRY":
+//                return mRes.getString(R.string.ferry);
+//            case "ON_BICYCLE":
+//                return mRes.getString(R.string.on_bicycle);
+//            case "WALKING":
+//                return mRes.getString(R.string.walking);
+//            case "RUNNING":
+//                return mRes.getString(R.string.running);
+//            case "STILL":
+//                return mRes.getString(R.string.still);
+//            case "TILTING":
+//                return mRes.getString(R.string.tilting);
+//            case "UNKNOWN":
+//                return mRes.getString(R.string.unknown);
+//            default:
+//                return mRes.getString(R.string.unknown);
+//        }
+//    }
 
     private void addLine(LatLng start, LatLng end, int color) {
         if (pathLayer==null) { // This happens when today's path was selected with no data on the server
