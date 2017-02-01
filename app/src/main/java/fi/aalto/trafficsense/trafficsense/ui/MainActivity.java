@@ -64,7 +64,7 @@ import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_S
 public class MainActivity extends AppCompatActivity
         implements  NavigationView.OnNavigationItemSelectedListener,
                     OnMapReadyCallback,
-        GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener,
+        GoogleMap.OnMarkerClickListener,
         GoogleMap.OnMapLoadedCallback,
                     DatePickerDialog.OnDateSetListener {
 
@@ -91,7 +91,8 @@ public class MainActivity extends AppCompatActivity
     private MenuItem mTransportReportItem;
     private MenuItem mSurveyItem;
     private TextView mPathDate;
-    private FrameLayout mPathDateLayout;
+    private Button mPathEdit;
+    private RelativeLayout mPathDateLayout;
     private FrameLayout mServiceOffLayout;
     // private FloatingActionButton mFab;
 
@@ -174,7 +175,8 @@ public class MainActivity extends AppCompatActivity
         mSurveyItem = navMenu.findItem(R.id.nav_survey);
 
         mPathDate = (TextView) findViewById(R.id.main_path_date);
-        mPathDateLayout = (FrameLayout) findViewById(R.id.main_path_date_layout);
+        mPathEdit = (Button) findViewById(R.id.main_path_edit);
+        mPathDateLayout = (RelativeLayout) findViewById(R.id.main_path_date_layout);
         mServiceOffLayout = (FrameLayout) findViewById(R.id.main_service_off_layout);
 
 
@@ -418,20 +420,20 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (pathLayer!=null) {
-            if (clickedLegMarker!=null) {
-                if (clickedLegMarker.equals(clickedMarker)) {
-                    Timber.d("Clicked twice! Edit!");
-                    Optional<String> token = mStorage.readSessionToken();
-                    if (!token.isPresent()) {
-                        Toast.makeText(this, R.string.not_signed_in, Toast.LENGTH_SHORT).show();
-                    } else {
-                        new PathEditDialog(this, token.get(), mStorage.getServerName(), mActivityPathConverter, clickedLegFeature).show(); // edit the path
-                    }
-                    clickedLegMarker = null;
-                    return false;
-                }
-            }
-            clickedLegMarker = null;
+//            if (clickedLegMarker!=null) {
+//                if (clickedLegMarker.equals(clickedMarker)) {
+//                    Timber.d("Clicked twice! Edit!");
+//                    Optional<String> token = mStorage.readSessionToken();
+//                    if (!token.isPresent()) {
+//                        Toast.makeText(this, R.string.not_signed_in, Toast.LENGTH_SHORT).show();
+//                    } else {
+//                        new PathEditDialog(this, token.get(), mStorage.getServerName(), mActivityPathConverter, clickedLegFeature).show(); // edit the path
+//                    }
+//                    clickedLegMarker = null;
+//                    return false;
+//                }
+//            }
+//            clickedLegMarker = null;
             String markerId = (String)clickedMarker.getTag();
             if (markerId==null) {
                 markerId = clickedMarker.getSnippet();
@@ -450,13 +452,17 @@ public class MainActivity extends AppCompatActivity
                         if (feature.getProperty("id").equals(markerId)) {
                             clickedMarker.setTag(markerId);
                             clickedMarker.setSnippet(null);
-                            clickedLegMarker = clickedMarker;
+//                            clickedLegMarker = clickedMarker;
                             clickedLegFeature = feature;
-                            Toast.makeText(this, R.string.path_edit_hint, Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(this, R.string.path_edit_hint, Toast.LENGTH_SHORT).show();
+                            mPathEdit.setVisibility(View.VISIBLE);
                             cnt = false;
                         }
                     }
-                    if (!i.hasNext()) cnt = false;
+                    if (!i.hasNext()) { // Marker didn't match with a path feature
+                        mPathEdit.setVisibility(View.INVISIBLE);
+                        cnt = false;
+                    }
                 }
             }
         }
@@ -468,10 +474,13 @@ public class MainActivity extends AppCompatActivity
         return false;
     }
 
-    @Override
-    public void onInfoWindowClick(final Marker clickedMarker) {
-
-
+    public void pathEditClick(View view) { // Shortcut to change date
+        Optional<String> token = mStorage.readSessionToken();
+        if (!token.isPresent()) {
+            Toast.makeText(this, R.string.not_signed_in, Toast.LENGTH_SHORT).show();
+        } else {
+            new PathEditDialog(this, token.get(), mStorage.getServerName(), mActivityPathConverter, clickedLegFeature).show(); // edit the path
+        }
     }
 
 
@@ -851,6 +860,13 @@ public class MainActivity extends AppCompatActivity
                     case InternalBroadcasts.KEY_SERVICE_STATE_UPDATE:
                         updateServiceState (intent);
                         break;
+                    case InternalBroadcasts.KEY_REQUEST_PATH_UPDATE:
+                        if (pathLayer!=null) {
+                            pathLayer.removeLayerFromMap();
+                            pathLayer = null;
+                        }
+                        fetchPath();
+                        break;
                 }
             }
         };
@@ -861,6 +877,7 @@ public class MainActivity extends AppCompatActivity
         intentFilter.addAction(InternalBroadcasts.KEY_ACTIVITY_UPDATE);
         intentFilter.addAction(InternalBroadcasts.KEY_SENSORS_UPDATE);
         intentFilter.addAction(InternalBroadcasts.KEY_SERVICE_STATE_UPDATE);
+        intentFilter.addAction(InternalBroadcasts.KEY_REQUEST_PATH_UPDATE);
 
         if (mLocalBroadcastManager != null) {
             mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, intentFilter);
@@ -1314,6 +1331,7 @@ public class MainActivity extends AppCompatActivity
         mPathItem.setChecked(true);
         if (isTodaysPath()) mPathDate.setText(R.string.today);
         else mPathDate.setText(DateFormat.getDateInstance().format(pathCal.getTime()));
+        mPathEdit.setVisibility(View.INVISIBLE);
         mPathDateLayout.setVisibility(View.VISIBLE);
     }
 
@@ -1323,6 +1341,7 @@ public class MainActivity extends AppCompatActivity
         mPrefEditor.commit();
         mPathItem.setIcon(R.drawable.road_variant_off);
         mPathItem.setChecked(false);
+        mPathEdit.setVisibility(View.INVISIBLE);
         mPathDateLayout.setVisibility(View.GONE);
         if (pathLayer!=null) {
             pathLayer.removeLayerFromMap();

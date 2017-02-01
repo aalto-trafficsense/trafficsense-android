@@ -45,6 +45,9 @@ public class InternalBroadcasts {
     public static final String KEY_SERVICE_STOP = "SERVICE_STOP";
     public static final String KEY_REQUEST_PLAY_RE_ESTABLISH = "REQUEST_PLAY_RE_ESTABLISH";
 
+    public static final String KEY_REQUEST_PATH_UPDATE = "REQUEST_PATH_UPDATE";
+
+
     public static final String KEY_LOCATION_UPDATE = "LOCATION_UPDATE";
     public static final String KEY_ACTIVITY_UPDATE = "ACTIVITY_UPDATE";
     public static final String KEY_SENSORS_UPDATE = "SENSORS_UPDATE";

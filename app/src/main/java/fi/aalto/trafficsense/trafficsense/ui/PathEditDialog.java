@@ -3,7 +3,9 @@ package fi.aalto.trafficsense.trafficsense.ui;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -12,16 +14,14 @@ import android.widget.*;
 import com.google.maps.android.geojson.GeoJsonFeature;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.util.ActivityPathConverter;
+import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
 import fi.aalto.trafficsense.trafficsense.util.SharedPrefs;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import timber.log.Timber;
 
-import java.io.BufferedInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -170,14 +170,13 @@ public class PathEditDialog extends AppCompatActivity implements AdapterView.OnI
             LegEditSendTask downloader = new LegEditSendTask();
             downloader.execute(url);
         } catch (MalformedURLException e) {
-            Toast.makeText(this, R.string.dest_url_broken, Toast.LENGTH_SHORT).show();
+            Toast.makeText(mActivity, R.string.path_edit_url_broken, Toast.LENGTH_SHORT).show();
         }
-
     }
 
-    private class LegEditSendTask extends AsyncTask<URL, Void, JSONObject> {
-        protected JSONObject doInBackground(URL... urls) {
-            String responseString = null;
+    private class LegEditSendTask extends AsyncTask<URL, Void, Integer> {
+        protected Integer doInBackground(URL... urls) {
+            Integer responseCode = 0;
             if (urls.length != 1) {
                 Timber.e("Leg edit attempted to get more or less than one URL");
                 return null;
@@ -193,26 +192,18 @@ public class PathEditDialog extends AppCompatActivity implements AdapterView.OnI
 
                 JSONObject legUpdate = new JSONObject();
                 legUpdate.put("sessionToken", mSessionToken);
-                legUpdate.put("id", currentActivity.getProperty("id"));
+                legUpdate.put("id", Integer.parseInt(currentActivity.getProperty("id")));
                 legUpdate.put("activity", currentActString);
                 if (mActivityPathConverter.hasLineName(currentActString)) {
                     legUpdate.put("line_name", currentLineName);
                 }
-
 
                 DataOutputStream wr = new DataOutputStream(urlConnection.getOutputStream());
                 wr.writeBytes(legUpdate.toString());
                 wr.flush();
                 wr.close();
 
-                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                java.util.Scanner s = new java.util.Scanner(in).useDelimiter("\\A");
-                if (s.hasNext()) {
-                    responseString = s.next();
-                } else {
-                    Timber.e("LegEditSendTask received no response!");
-                }
-                in.close();
+                responseCode = urlConnection.getResponseCode();
             } catch (IOException e) {
                 Timber.e("LegEditSendTask error connecting to URL: %s", e.getMessage());
             } catch (JSONException e) {
@@ -223,24 +214,19 @@ public class PathEditDialog extends AppCompatActivity implements AdapterView.OnI
                 }
             }
 
-            JSONObject responseJson = null;
-            if (responseString != null) {
-                try {
-                    responseJson = new JSONObject(responseString);
-                } catch (JSONException e) {
-                    Timber.e("LegEditSendTask Json conversion returned an exception: %s", e.toString());
-                    return null;
-                }
-            }
-            return responseJson;
+            return responseCode; // responseString;
         }
 
-        protected void onPostExecute(JSONObject response) {
+        protected void onPostExecute(Integer responseCode) {
 //            Timber.d("DownloadDestTask Received a string of length: " + info.length());
 //            Timber.d("First 200 characters: \n" + info.substring(0,min(200,info.length())));
-            if (response != null) {
-                // Update paths from server somehow
-                Timber.d("LegEditSend response: %s", response.toString());
+            Timber.d("LegEditSend response: %d", responseCode);
+            if (responseCode == 200) {
+                // Success - refresh the paths on the screen.
+                LocalBroadcastManager mLB = LocalBroadcastManager.getInstance(mActivity);
+                mLB.sendBroadcast(new Intent(InternalBroadcasts.KEY_REQUEST_PATH_UPDATE));
+            } else {
+                Toast.makeText(mActivity, R.string.path_edit_update_failed, Toast.LENGTH_SHORT).show();
             }
         }
     }

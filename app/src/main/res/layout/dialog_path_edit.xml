@@ -14,7 +14,7 @@
         <TextView android:text="@string/path_edit_activity"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  style="@android:style/TextAppearance.Medium"
+                  style="@android:style/TextAppearance.Small"
                   android:textColor="@color/black"/>
         <android.support.v7.widget.AppCompatSpinner
             android:id="@+id/path_edit_activity_list"
@@ -31,9 +31,10 @@
         <TextView android:text="@string/path_edit_line_name"
                   android:layout_width="wrap_content"
                   android:layout_height="match_parent"
-                  style="@android:style/TextAppearance.Medium"
+                  style="@android:style/TextAppearance.Small"
                   android:textColor="@color/black"
-                  android:gravity="bottom"/>
+                  android:gravity="center_vertical"
+                  android:paddingRight="12dp"/>
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

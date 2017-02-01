@@ -13,25 +13,44 @@
     tools:context=".ui.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-        <fragment android:id="@+id/map"
-                  android:name="com.google.android.gms.maps.SupportMapFragment"
-                  xmlns:android="http://schemas.android.com/apk/res/android"
-                  xmlns:tools="http://schemas.android.com/tools"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  tools:context=".ui.MainActivity"
-                  android:layout_alignParentTop="true"/>
+    <fragment android:id="@+id/map"
+              android:name="com.google.android.gms.maps.SupportMapFragment"
+              xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              tools:context=".ui.MainActivity"
+              android:layout_alignParentTop="true"/>
 
-        <FrameLayout
-            android:id="@+id/main_path_date_layout"
+    <RelativeLayout
+        android:id="@+id/main_path_date_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+        android:visibility="gone">
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="16dp"
-            android:layout_marginRight="16dp"
-            android:visibility="gone">
+            android:orientation="horizontal">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorSubtitleText"
+                android:background="@drawable/ts_button1"
+                android:textAllCaps="false"
+                android:visibility="invisible"
+                android:layout_marginRight="24dp"
+                android:id="@+id/main_path_edit"
+                android:text="@string/path_edit_button"
+                android:onClick="pathEditClick"
+                android:elevation="4dp"
+                android:theme="@style/AppTheme"/>
 
             <Button
                 android:layout_width="wrap_content"
@@ -44,23 +63,26 @@
                 android:elevation="4dp"
                 android:theme="@style/AppTheme"/>
 
-        </FrameLayout>
+        </LinearLayout>
 
-        <FrameLayout
-            android:id="@+id/main_service_off_layout"
+
+    </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/main_service_off_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:background="@drawable/border"
+        android:layout_centerInParent="true"
+        android:visibility="gone">
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:background="@drawable/border"
-            android:layout_centerInParent="true"
-            android:visibility="gone">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="@string/service_off"
-                    android:textColor="@color/white"
-                    android:background="@color/colorInVehicle"/>
-        </FrameLayout>
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/service_off"
+            android:textColor="@color/white"
+            android:background="@color/colorInVehicle"/>
+    </FrameLayout>
 
 </RelativeLayout>
