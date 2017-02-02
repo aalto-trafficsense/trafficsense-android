@@ -65,7 +65,7 @@
     <string name="tram">Spåra</string>
     <string name="subway">Tuubi</string>
     <string name="bus">Dösä</string>
-    <string name="ferry">Lautta</string>
+    <string name="ferry">Flotta</string>
 
     <string name="service_state_starting">Heräilee</string>
     <string name="service_state_running">Skulaa</string>
@@ -243,5 +243,8 @@
     <string name="path_edit_update_failed">Fiksi bugaa.</string>
     <string name="path_edit_url_broken">Fiksauksen nettiosoite ei futaa.</string>
     <string name="path_url_broken">Nettiosoite ei futaa.</string>
+    <string name="car">Fiude</string>
+    <string name="certificate_url_broken">URLissa feelua.</string>
+    <string name="bicycle">Fillari</string>
 
 </resources>

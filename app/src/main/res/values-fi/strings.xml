@@ -141,6 +141,8 @@
     <string name="path_edit_line_name">Linjan tunnus:</string>
     <string name="path_edit_update_failed">Kulkutavan päivitys epäonnistui.</string>
     <string name="path_edit_url_broken">Ongelma kulkutavan muokkauksen verkko-osoitteessa.</string>
-    <string name="title_activity_debugview">Debug</string>
     <string name="str_ok">Ok</string>
+    <string name="car">Auto</string>
+    <string name="bicycle">Polkupyörä</string>
+    <string name="title_activity_debugview">Testaus</string>
 </resources>

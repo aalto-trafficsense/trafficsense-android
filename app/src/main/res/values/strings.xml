@@ -69,7 +69,6 @@
     <string name="debug_show_upload_latest_upload_label">Latest:</string>
 
     <string name="in_vehicle">Vehicle</string>
-    <string name="on_bicycle">Bicycle</string>
     <string name="running">Running</string>
     <string name="still">Still</string>
     <string name="tilting">Tilting</string>
@@ -77,6 +76,8 @@
     <string name="walking">Walking</string>
     <string name="unidentifiable_activity">Unidentified: %1$d</string>
 
+    <string name="car">Car</string>
+    <string name="bicycle">Bicycle</string>
     <string name="train">Train</string>
     <string name="tram">Tram</string>
     <string name="subway">Subway</string>
@@ -294,5 +295,6 @@
     <string name="energy_button_week">week</string>
     <string name="energy_uri">trafficsense.aalto.fi</string>
     <string name="energy_share_filename">energy_certificate.jpg</string>
+    <string name="on_bicycle">Bicycle</string>
 
 </resources>

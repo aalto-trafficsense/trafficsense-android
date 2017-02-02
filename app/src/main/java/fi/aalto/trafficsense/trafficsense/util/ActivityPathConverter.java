@@ -20,18 +20,18 @@ public class ActivityPathConverter {
 
     public ActivityPathConverter() {
         // String serverName, boolean hasLineName, int localizedNameResource, int lineColor, int icon
-        activityList.add(new PathActivity("ON_BICYCLE",false, R.string.on_bicycle, R.color.colorOnBicycle, R.drawable.map_activity_bicycle));
-        activityList.add(new PathActivity("WALKING",   false, R.string.walking,    R.color.colorWalking,   R.drawable.map_activity_walking));
-        activityList.add(new PathActivity("RUNNING",   false, R.string.running,    R.color.colorRunning,   R.drawable.map_activity_running));
-        activityList.add(new PathActivity("IN_VEHICLE",false, R.string.in_vehicle, R.color.colorInVehicle, R.drawable.map_activity_vehicle));
-        activityList.add(new PathActivity("TRAIN",     true,  R.string.train,      R.color.colorTrain,     R.drawable.map_vehicle_train));
-        activityList.add(new PathActivity("TRAM",      true,  R.string.tram,       R.color.colorSubway,    R.drawable.map_vehicle_subway));
-        activityList.add(new PathActivity("SUBWAY",    true,  R.string.subway,     R.color.colorSubway,    R.drawable.map_vehicle_subway));
-        activityList.add(new PathActivity("BUS",       true,  R.string.bus,        R.color.colorBus,       R.drawable.map_vehicle_bus));
-        activityList.add(new PathActivity("FERRY",     true,  R.string.ferry,      R.color.colorBus,       R.drawable.md_activity_ferry_24dp));
-        activityList.add(new PathActivity("STILL",     false, R.string.still,      R.color.colorStill,     R.drawable.map_activity_still));
-        activityList.add(new PathActivity("TILTING",   false, R.string.tilting,    R.color.colorTilting,   R.drawable.md_activity_tilting_24dp));
-        activityList.add(new PathActivity("UNKNOWN",   false, R.string.unknown,    R.color.colorUnknown,   R.drawable.md_activity_unknown_24dp));
+        activityList.add(new PathActivity("ON_BICYCLE",false, R.string.bicycle, R.color.colorOnBicycle, R.drawable.map_activity_bicycle));
+        activityList.add(new PathActivity("WALKING",   false, R.string.walking, R.color.colorWalking,   R.drawable.map_activity_walking));
+        activityList.add(new PathActivity("RUNNING",   false, R.string.running, R.color.colorRunning,   R.drawable.map_activity_running));
+        activityList.add(new PathActivity("IN_VEHICLE",false, R.string.car,     R.color.colorInVehicle, R.drawable.map_activity_vehicle));
+        activityList.add(new PathActivity("TRAIN",     true,  R.string.train,   R.color.colorTrain,     R.drawable.map_vehicle_train));
+        activityList.add(new PathActivity("TRAM",      true,  R.string.tram,    R.color.colorSubway,    R.drawable.map_vehicle_subway));
+        activityList.add(new PathActivity("SUBWAY",    true,  R.string.subway,  R.color.colorSubway,    R.drawable.map_vehicle_subway));
+        activityList.add(new PathActivity("BUS",       true,  R.string.bus,     R.color.colorBus,       R.drawable.map_vehicle_bus));
+        activityList.add(new PathActivity("FERRY",     true,  R.string.ferry,   R.color.colorBus,       R.drawable.md_activity_ferry_24dp));
+        activityList.add(new PathActivity("STILL",     false, R.string.still,   R.color.colorStill,     R.drawable.map_activity_still));
+        activityList.add(new PathActivity("TILTING",   false, R.string.tilting, R.color.colorTilting,   R.drawable.md_activity_tilting_24dp));
+        activityList.add(new PathActivity("UNKNOWN",   false, R.string.unknown, R.color.colorUnknown,   R.drawable.md_activity_unknown_24dp));
     }
 
     public int getLocalizedNameRes(String sName) {
