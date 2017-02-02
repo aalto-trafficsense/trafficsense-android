@@ -40,7 +40,7 @@ public class ActivityPathConverter {
         if (pa!=null) {
             return pa.getLocalizedNameRes();
         } else {
-            return 0;
+            return R.string.unknown;
         }
     }
 
@@ -49,7 +49,7 @@ public class ActivityPathConverter {
         if (pa!=null) {
             return pa.getColor();
         } else {
-            return 0;
+            return R.color.colorUnknown;
         }
     }
 
@@ -58,7 +58,7 @@ public class ActivityPathConverter {
         if (pa!=null) {
             return pa.getIcon();
         } else {
-            return 0;
+            return R.drawable.md_activity_unknown_24dp;
         }
     }
 

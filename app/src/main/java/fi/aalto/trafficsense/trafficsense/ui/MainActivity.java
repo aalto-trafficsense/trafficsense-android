@@ -107,13 +107,11 @@ public class MainActivity extends AppCompatActivity
     private LatLng pathEnd;
     private static Calendar pathCal = Calendar.getInstance();
     private final SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    private Set<String> publicTransport = new HashSet<>(Arrays.asList(new String[]
-            {"BUS", "TRAIN", "TRAM", "SUBWAY", "FERRY"}));
-    // Count as public transport for testing: , "ON_BICYCLE", "IN_VEHICLE", "WALKING"
+    private Set<String> nonEditableActivity = new HashSet<>(Arrays.asList(new String[]
+            {"TILTING", "UNKNOWN"}));
     private List<Marker> destMarkers = new ArrayList<>();
 
     private GeoJsonLayer pathLayer=null;
-    private Marker clickedLegMarker;
     private GeoJsonFeature clickedLegFeature;
 
     // Very first view opens in Otaniemi :-)
@@ -1359,7 +1357,7 @@ public class MainActivity extends AppCompatActivity
                 mStyle.setColor(ContextCompat.getColor(mContext, mActivityPathConverter.getColor(activity)));
                 feature.setLineStringStyle(mStyle);
 //                if (!today) { // Update 20.12.2016: Show public transport also for current day
-//                    if (publicTransport.contains(activity)) { // Special marker for public transport - update 31.1.2017 - show icons for all activities
+                    if (!nonEditableActivity.contains(activity)) { // Add markers and ID:s only for those activities that can be edited
                         if (coordinates != null) {
                             // Find mid-coordinates of the trip
                             LatLng pos = coordinates.get(coordinates.size()/2);
@@ -1387,7 +1385,7 @@ public class MainActivity extends AppCompatActivity
                             transportIconFeature.setPointStyle(pointStyle);
                             newFeatures.add(transportIconFeature);
                         }
-//                    }
+                    }
 //                }
             }
             // Check that our route is included in the bounds
