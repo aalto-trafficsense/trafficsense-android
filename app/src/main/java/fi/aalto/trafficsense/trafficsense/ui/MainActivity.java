@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity
 
     private GoogleMap mMap;
     private LatLngBounds mBounds; // Tracks user's visibility
+    private boolean updateMapBoundsPath=true;
     private Marker mMarker=null;
     private Marker mTrafficAlertMarker =null;
     private Circle mCircle=null;
@@ -328,6 +329,7 @@ public class MainActivity extends AppCompatActivity
                 // Timber.d("GeoJsonString: " + geoJsonString);
                 if (geoJsonString == null) {
                     // Path on but no cached path (probably today) - fetch a fresh path from the server
+                    updateMapBoundsPath = true;
                     fetchPath();
                 } else {
                     try {
@@ -419,21 +421,8 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
+        int pathEditButtonVisibility = View.INVISIBLE; // Default outcome
         if (pathLayer!=null) {
-//            if (clickedLegMarker!=null) {
-//                if (clickedLegMarker.equals(clickedMarker)) {
-//                    Timber.d("Clicked twice! Edit!");
-//                    Optional<String> token = mStorage.readSessionToken();
-//                    if (!token.isPresent()) {
-//                        Toast.makeText(this, R.string.not_signed_in, Toast.LENGTH_SHORT).show();
-//                    } else {
-//                        new PathEditDialog(this, token.get(), mStorage.getServerName(), mActivityPathConverter, clickedLegFeature).show(); // edit the path
-//                    }
-//                    clickedLegMarker = null;
-//                    return false;
-//                }
-//            }
-//            clickedLegMarker = null;
             String markerId = (String)clickedMarker.getTag();
             if (markerId==null) {
                 markerId = clickedMarker.getSnippet();
@@ -449,24 +438,21 @@ public class MainActivity extends AppCompatActivity
                 while (cnt) {
                     feature = (GeoJsonFeature)i.next();
                     if (feature.hasProperty("id")) {
-                        if (feature.getProperty("id").equals(markerId)) {
+                        if (feature.getProperty("id").equals(markerId)) { // The clicked marker had an id
                             clickedMarker.setTag(markerId);
                             clickedMarker.setSnippet(null);
-//                            clickedLegMarker = clickedMarker;
                             clickedLegFeature = feature;
-//                            Toast.makeText(this, R.string.path_edit_hint, Toast.LENGTH_SHORT).show();
-                            mPathEdit.setVisibility(View.VISIBLE);
+                            pathEditButtonVisibility = View.VISIBLE;
                             cnt = false;
                         }
                     }
                     if (!i.hasNext()) { // Marker didn't match with a path feature
-                        mPathEdit.setVisibility(View.INVISIBLE);
                         cnt = false;
                     }
                 }
             }
         }
-
+        mPathEdit.setVisibility(pathEditButtonVisibility);
 
         // Return false to indicate that we have not consumed the event and that we wish
         // for the default behavior to occur (which is for the camera to move such that the
@@ -474,7 +460,7 @@ public class MainActivity extends AppCompatActivity
         return false;
     }
 
-    public void pathEditClick(View view) { // Shortcut to change date
+    public void pathEditClick(View view) { // Path edit button pressed
         Optional<String> token = mStorage.readSessionToken();
         if (!token.isPresent()) {
             Toast.makeText(this, R.string.not_signed_in, Toast.LENGTH_SHORT).show();
@@ -653,6 +639,7 @@ public class MainActivity extends AppCompatActivity
         if (pathCal.after(Calendar.getInstance())) {
             setPreviousMatchingWeekday(); // Max date set to today = should no longer happen
         }
+        updateMapBoundsPath = true;
         fetchPath();
     }
 
@@ -865,6 +852,7 @@ public class MainActivity extends AppCompatActivity
                             pathLayer.removeLayerFromMap();
                             pathLayer = null;
                         }
+                        updateMapBoundsPath = false;
                         fetchPath();
                         break;
                 }
@@ -1403,7 +1391,7 @@ public class MainActivity extends AppCompatActivity
 //                }
             }
             // Check that our route is included in the bounds
-            if (coordinates != null) {
+            if (updateMapBoundsPath && (coordinates != null)) {
                 for (LatLng pos : coordinates) {
                     mBuildBounds.include(pos);
                 }
@@ -1419,98 +1407,8 @@ public class MainActivity extends AppCompatActivity
             // Quick-n-dirty solution to bypass all the queued points with one line
             if (pathEnd!=null) addLine(pathEnd, latestPosition, ActivityType.getActivityColor(latestActivityType));
         }
-        mBuildBounds.update(mMap);
+        if (updateMapBoundsPath) mBuildBounds.update(mMap);
     }
-
-//    private int getActivityColorByString(String activity) {
-//        switch(activity) {
-//            case "IN_VEHICLE":
-//                return R.color.colorInVehicle;
-//            case "ON_BICYCLE":
-//                return R.color.colorOnBicycle;
-//            case "RUNNING":
-//                return R.color.colorRunning;
-//            case "STILL":
-//                return R.color.colorStill;
-//            case "TILTING":
-//                return R.color.colorTilting;
-//            case "UNKNOWN":
-//                return R.color.colorUnknown;
-//            case "WALKING":
-//                return R.color.colorWalking;
-//            case "TRAIN":
-//                return R.color.colorTrain;
-//            case "TRAM":
-//            case "SUBWAY":
-//                return R.color.colorSubway;
-//            case "BUS":
-//            case "FERRY":
-//                return R.color.colorBus;
-//            default:
-//                return R.color.colorUnknown;
-//        }
-//    }
-//
-//    private int getTransportIcon(String activity) {
-//        switch(activity) {
-//            case "IN_VEHICLE":
-//                return R.drawable.map_activity_vehicle;
-//            case "TRAIN":
-//                return R.drawable.map_vehicle_train;
-//            case "TRAM":
-//            case "SUBWAY":
-//                return R.drawable.map_vehicle_subway;
-//            case "BUS":
-//                return R.drawable.map_vehicle_bus;
-//            case "FERRY":
-//                return R.drawable.md_activity_ferry_24dp;
-//            case "ON_BICYCLE":
-//                return R.drawable.map_activity_bicycle;
-//            case "WALKING":
-//                return R.drawable.map_activity_walking;
-//            case "RUNNING":
-//                return R.drawable.map_activity_running;
-//            case "STILL":
-//                return R.drawable.map_activity_still;
-//            case "TILTING":
-//                return R.drawable.md_activity_tilting_24dp;
-//            case "UNKNOWN":
-//                return R.drawable.md_activity_unknown_24dp;
-//            default:
-//                return R.drawable.md_activity_unknown_24dp;
-//        }
-//    }
-//
-//    private String getTransportString(String activity) {
-//        switch(activity) {
-//            case "IN_VEHICLE":
-//                return mRes.getString(R.string.in_vehicle);
-//            case "TRAIN":
-//                return mRes.getString(R.string.train);
-//            case "TRAM":
-//                return mRes.getString(R.string.tram);
-//            case "SUBWAY":
-//                return mRes.getString(R.string.subway);
-//            case "BUS":
-//                return mRes.getString(R.string.bus);
-//            case "FERRY":
-//                return mRes.getString(R.string.ferry);
-//            case "ON_BICYCLE":
-//                return mRes.getString(R.string.on_bicycle);
-//            case "WALKING":
-//                return mRes.getString(R.string.walking);
-//            case "RUNNING":
-//                return mRes.getString(R.string.running);
-//            case "STILL":
-//                return mRes.getString(R.string.still);
-//            case "TILTING":
-//                return mRes.getString(R.string.tilting);
-//            case "UNKNOWN":
-//                return mRes.getString(R.string.unknown);
-//            default:
-//                return mRes.getString(R.string.unknown);
-//        }
-//    }
 
     private void addLine(LatLng start, LatLng end, int color) {
         if (pathLayer==null) { // This happens when today's path was selected with no data on the server
