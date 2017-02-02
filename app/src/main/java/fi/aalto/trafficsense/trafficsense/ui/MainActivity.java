@@ -1356,7 +1356,7 @@ public class MainActivity extends AppCompatActivity
                 GeoJsonLineStringStyle mStyle = new GeoJsonLineStringStyle();
                 mStyle.setColor(ContextCompat.getColor(mContext, mActivityPathConverter.getColor(activity)));
                 feature.setLineStringStyle(mStyle);
-//                if (!today) { // Update 20.12.2016: Show public transport also for current day
+//                if (!today) { // Uncomment to remove markers and disable editing for current day
                     if (!nonEditableActivity.contains(activity)) { // Add markers and ID:s only for those activities that can be edited
                         if (coordinates != null) {
                             // Find mid-coordinates of the trip
