@@ -20,6 +20,7 @@ public class ActivityPathConverter {
 
     public ActivityPathConverter() {
         // String serverName, boolean hasLineName, int localizedNameResource, int lineColor, int icon
+        // Note!! getEditList() exclusions (currently TILTING and UNKNOWN) have to be last in the list, as spinner selection is based on index!
         activityList.add(new PathActivity("ON_BICYCLE",false, R.string.bicycle, R.color.colorOnBicycle, R.drawable.map_activity_bicycle));
         activityList.add(new PathActivity("WALKING",   false, R.string.walking, R.color.colorWalking,   R.drawable.map_activity_walking));
         activityList.add(new PathActivity("RUNNING",   false, R.string.running, R.color.colorRunning,   R.drawable.map_activity_running));
@@ -120,7 +121,7 @@ public class ActivityPathConverter {
             if (!i.hasNext()) {
                 cnt = false;
                 pa = null;
-                Timber.e("ActivityPathConverter / getPathActivityFromSName got an unknown server activity name: %s", sName);
+                Timber.e("ActivityPathConverter / findFromSName got an unknown server activity name: %s", sName);
             }
         }
         return pa;

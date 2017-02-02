@@ -259,9 +259,11 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
 
             // Create a new instance of DatePickerDialog
             DatePickerDialog dpd = new DatePickerDialog(getActivity(), (DatePickerDialog.OnDateSetListener) getActivity(), year, month, day);
-            // Set maximum to current date
+            // Set maximum to yesterday
             DatePicker dp = dpd.getDatePicker();
-            dp.setMaxDate(currentDate.getTimeInMillis());
+            Calendar yesterday = Calendar.getInstance();
+            yesterday.add(Calendar.DATE, -1);
+            dp.setMaxDate(yesterday.getTimeInMillis());
             return dpd;
         }
     }
@@ -278,9 +280,11 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
 
             // Create a new instance of DatePickerDialog
             DatePickerDialog dpd = new DatePickerDialog(getActivity(), (DatePickerDialog.OnDateSetListener) getActivity(), year, month, day);
-            // Set maximum to current date, minimum to start date
+            // Set maximum to yesterday, minimum to start date
             DatePicker dp = dpd.getDatePicker();
-            dp.setMaxDate(currentDate.getTimeInMillis());
+            Calendar yesterday = Calendar.getInstance();
+            yesterday.add(Calendar.DATE, -1);
+            dp.setMaxDate(yesterday.getTimeInMillis());
             dp.setMinDate(startDate.getTimeInMillis());
             return dpd;
         }
@@ -436,9 +440,8 @@ public class EnergyCertificateActivity extends AppCompatActivity implements Date
                             newBM.compress(Bitmap.CompressFormat.JPEG, 90, fos);
                             fos.flush();
                             fos.close();
-                            // String imageUrlStr = MediaStore.Images.Media.insertImage(getContentResolver(), file.getAbsolutePath(), file.getName(), "TrafficSense Energy Certificate");
                             mEnergyShareItem.setVisible(true);
-                            setShareIntent(Uri.fromFile(file));  // This probably didn't give enough permissions: "file://" + file.getAbsolutePath()
+                            setShareIntent(Uri.fromFile(file));
                         }
                     } catch (Exception e) {
                         Timber.e("Energy Certificate Bitmap save failed: %s", e.getMessage());
