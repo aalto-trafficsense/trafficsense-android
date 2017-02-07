@@ -1108,16 +1108,16 @@ public class MainActivity extends AppCompatActivity
                     Timber.e("Destination feature object extraction threw a JSONException: %s", e.toString());
                     useMarker = false;
                 }
-                if ((latestPosition != null) && (markerPos != null)) {
-                    Location.distanceBetween(latestPosition.latitude,
-                            latestPosition.longitude,
-                            markerPos.latitude,
-                            markerPos.longitude,
-                            distResults);
-                    // Skip markers too close and too far
-                    // TODO: Remove this after coordinates are sent to server and the server does the filtering
-                    if (distResults[0]<minDistToDest || distResults[0]>maxDistToDest) useMarker=false;
-                }
+                // Commenting out the following filter - to be done by the server
+//                if ((latestPosition != null) && (markerPos != null)) {
+//                    Location.distanceBetween(latestPosition.latitude,
+//                            latestPosition.longitude,
+//                            markerPos.latitude,
+//                            markerPos.longitude,
+//                            distResults);
+//                    // Skip markers too close and too far
+//                    if (distResults[0]<minDistToDest || distResults[0]>maxDistToDest) useMarker=false;
+//                }
 
                 // Test code for the emulator with Mikko's coordinates - comment out!!
                 /*
