@@ -1406,14 +1406,14 @@ public class MainActivity extends AppCompatActivity
                             StringBuilder snip = new StringBuilder(idProperty);
                             snip.append(snipSeparator); // Snippet separator between id and time
                             // trip start - end times to marker
-                            if (feature.hasProperty("trip_start")) {
-                                String tripStart = feature.getProperty("trip_start");
+                            if (feature.hasProperty("time_start")) {
+                                String tripStart = feature.getProperty("time_start");
                                 if (!tripStart.equals("null")) {
                                     snip.append(tripStart.substring(11,16)); // Parse from "2016-01-17 12:43:54.837" --> HH:MM
                                 }
                             }
-                            if (feature.hasProperty("trip_end")) {
-                                String tripEnd = feature.getProperty("trip_end");
+                            if (feature.hasProperty("time_end")) {
+                                String tripEnd = feature.getProperty("time_end");
                                 if (!tripEnd.equals("null")) {
                                     snip.append("-").append(tripEnd.substring(11,16));
                                 }
