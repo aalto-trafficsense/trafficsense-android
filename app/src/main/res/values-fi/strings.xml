@@ -120,10 +120,9 @@
     <string name="navigation_broadcast_survey">Uusin käyttäjäkysely</string>
     <string name="feedback_form_address">https://docs.google.com/forms/d/e/1FAIpQLSc5SwgTEDB3NMfiNjoWjpO_vih7OyePwxNmRaR3socdRCKCPg/viewform?entry.1453132440&amp;entry.1290358306=client_number&amp;entry.1714883594=client_version&amp;entry.3621406=phone_model</string>
     <string name="client_number_label">Asennuksen numero:</string>
-    <string name="navigation_debug">Debug</string>
     <string name="meters">metriä</string>
     <string name="minutes">min.</string>
-    <string name="debug_mode_open">Debug-tila avattu</string>
+    <string name="debug_mode_open">Testaustila avattu.</string>
     <string name="energy_button_year">vuosi</string>
     <string name="energy_button_week">vko</string>
     <string name="energy_button_prefix">Viimeisin:</string>
@@ -145,4 +144,5 @@
     <string name="car">Auto</string>
     <string name="bicycle">Polkupyörä</string>
     <string name="title_activity_debugview">Testaus</string>
+    <string name="navigation_debug">Testaus</string>
 </resources>

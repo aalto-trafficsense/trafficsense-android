@@ -91,8 +91,10 @@ public class LocationSensor implements LocationListener {
 
     public void disconnect() {
         if(mGoogleApiClient != null) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-            mGoogleApiClient = null;
+            if (mGoogleApiClient.isConnected()) {
+                LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+                mGoogleApiClient = null;
+            }
         }
         Timber.d("LocationSensor stopped");
     }
