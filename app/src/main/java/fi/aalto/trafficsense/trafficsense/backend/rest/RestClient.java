@@ -585,19 +585,6 @@ public class RestClient {
 
 
         final Optional<String> installationId = mStorage.readInstallationId();
-/*
-        Optional <String> messagingTokenOpt = mStorage.readMessagingToken();
-        String messagingToken;
-        if (messagingTokenOpt.isPresent()) messagingToken = messagingTokenOpt.get();
-        else messagingToken = "";
-        if (messagingToken.length()<5) { // Doesn't look like a valid messaging token
-            messagingToken = FirebaseInstanceId.getInstance().getToken();
-            if (messagingToken.length()>5) { // Better - save it
-                Timber.d("RestClient got messaging token: %s", messagingToken);
-                mStorage.writeMessagingToken(messagingToken);
-            }
-        }
-*/
         String messagingToken = FirebaseInstanceId.getInstance().getToken();
         Timber.d("RestClient got messaging token: %s", messagingToken);
         AuthenticateRequest request = new AuthenticateRequest(userId.get(), mAndroidDeviceId, installationId.get(), EnvInfo.getClientVersionString(), messagingToken);

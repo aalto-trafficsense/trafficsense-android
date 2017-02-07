@@ -1,30 +1,21 @@
 package fi.aalto.trafficsense.trafficsense.ui;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.text.SpannedString;
 import android.text.method.LinkMovementMethod;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
 import fi.aalto.trafficsense.trafficsense.util.EnvInfo;
-import timber.log.Timber;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,21 +34,16 @@ public class AboutActivity extends AppCompatActivity {
         mContext = this;
 
         setContentView(R.layout.activity_about);
-        // setupActionBar(); // Not in application theme, throws an exception
         Toolbar myToolbar = (Toolbar) findViewById(R.id.about_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-//        final View controlsView = findViewById(R.id.abt_Buttons);
-//        final View titleView = findViewById(R.id.abt_pageTitleField);
         final Button okButton = (Button) findViewById(R.id.abt_ok_button);
         final TextView legal = (TextView) findViewById(R.id.abt_legalNotice);
 
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
-//        okButton.setOnTouchListener(mTouchListener);
-
         legal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

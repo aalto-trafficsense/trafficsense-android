@@ -52,11 +52,6 @@ public class TrafficSenseApplication extends Application {
 
         initializeDefaultSettings();
 
-//        Timber.d("--- TrafficSenseApplication pre-def sees activitysensor interval as: %d", mSettings.getInt(mRes.getString(R.string.debug_settings_activity_interval_key), -1));
-
-
-//        Timber.d("--- TrafficSenseApplication post-def sees activitysensor interval as: %d", mSettings.getInt(mRes.getString(R.string.debug_settings_activity_interval_key), -1));
-
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
         initBroadcastReceiver();
 

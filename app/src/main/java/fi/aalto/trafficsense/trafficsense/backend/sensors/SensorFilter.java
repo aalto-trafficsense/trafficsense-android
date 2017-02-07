@@ -28,10 +28,6 @@ public class SensorFilter {
 
     private SensorController mSensorController;
 
-    // private long stillLimitSeconds=40;
-    // private long queuePingThresholdMinutes=60;
-    // private double queueAccuracyThreshold=1000.0; // meters
-
     private Location lastReceivedLocation;
     private ActivityData lastReceivedActivity = null;
     private ActivityType lastReceivedActType;

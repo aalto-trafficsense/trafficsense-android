@@ -11,7 +11,7 @@ import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
 import java.util.*;
 
 /**
- * Created by rinnem2 on 11/04/16.
+ * Created by mikko.rinne@aalto.fi on 11/04/16.
  */
 public class ActivityRecognitionIntentService extends IntentService {
     public ActivityRecognitionIntentService() {

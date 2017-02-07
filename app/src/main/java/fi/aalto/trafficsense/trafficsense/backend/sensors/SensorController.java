@@ -6,10 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import com.google.android.gms.common.api.GoogleApiClient;
-import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
 import fi.aalto.trafficsense.trafficsense.backend.TrafficSenseService;
-import fi.aalto.trafficsense.trafficsense.backend.uploader.RegularRoutesPipeline;
-import fi.aalto.trafficsense.trafficsense.util.ActivityData;
 import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
 import timber.log.Timber;
 

@@ -19,16 +19,13 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
     private int mCurrentValue;
     private int mMinValue;
     private int mMaxValue;
-//    private int mDefaultValue;
     private String mUnit;
 
     private TextView mCurrentText;
 
     private static final String SBP_NS =
             "http://schemas.android.com/apk/lib/fi.aalto.trafficsense.trafficsense.ui.SeekBarPreference";
-//    private static final String ANDROID_NS = "http://schemas.android.com/apk/res/android";
 
-//    private static final String ATTR_DEFAULT_VALUE = "defaultValue";
     private static final String ATTR_MIN_VALUE = "minValue";
     private static final String ATTR_MAX_VALUE = "maxValue";
     private static final String ATTR_UNIT = "unit";

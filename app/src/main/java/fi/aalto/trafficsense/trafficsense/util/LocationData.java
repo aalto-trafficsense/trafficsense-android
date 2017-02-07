@@ -1,7 +1,5 @@
 package fi.aalto.trafficsense.trafficsense.util;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import com.google.gson.annotations.SerializedName;
 
 
@@ -25,21 +23,6 @@ public final class LocationData {
     @SerializedName("time")
     public final long mTime;
 
-    /*
-    public static Optional<LocationData> parseJson(IJsonObject data) {
-        for (String key : KEYS) {
-            if (!data.has(key))
-                return Optional.absent();
-        }
-
-        double accuracy = data.get(KEY_ACCURACY).getAsDouble();
-        double latitude = data.get(KEY_LATITUDE).getAsDouble();
-        double longitude = data.get(KEY_LONGITUDE).getAsDouble();
-        long time = data.get(KEY_TIME).getAsLong();
-
-        return Optional.of(new LocationData(accuracy, latitude, longitude, time));
-    }
-*/
     public LocationData(double accuracy, double latitude, double longitude, long time) {
         this.mAccuracy = accuracy;
         this.mLatitude = latitude;
@@ -86,6 +69,6 @@ public final class LocationData {
         return result;
     }
 
-    public double getAccuracy() { return mAccuracy; }
+    // public double getAccuracy() { return mAccuracy; }
 
 }

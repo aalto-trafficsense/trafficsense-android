@@ -15,13 +15,13 @@ import com.google.maps.android.geojson.GeoJsonFeature;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.util.ActivityPathConverter;
 import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
-import fi.aalto.trafficsense.trafficsense.util.SharedPrefs;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import timber.log.Timber;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;

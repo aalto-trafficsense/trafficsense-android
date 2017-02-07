@@ -3,18 +3,15 @@ package fi.aalto.trafficsense.trafficsense.backend.uploader;
 import android.content.*;
 import android.content.res.Resources;
 import android.support.v4.content.LocalBroadcastManager;
-import com.google.common.collect.EvictingQueue;
 import com.google.common.collect.ImmutableList;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.backend.TrafficSenseService;
 import fi.aalto.trafficsense.trafficsense.util.DataPacket;
 import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
-import timber.log.Timber;
 
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Queue;
 
 import static android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences;
 
@@ -35,7 +32,7 @@ public class DataQueue {
         mSettings = getDefaultSharedPreferences(TrafficSenseService.getContext());
 
         mMaxSize = mRes.getInteger(R.integer.queue_size);
-        // Evictingqueue seems to automatically allocates the full size!!
+        // Evictingqueue seems to automatically allocate the full size!!
 //        this.mDeque = EvictingQueue.create(mMaxSize);
         this.mDeque = new LinkedList<>();
         initThreshold();

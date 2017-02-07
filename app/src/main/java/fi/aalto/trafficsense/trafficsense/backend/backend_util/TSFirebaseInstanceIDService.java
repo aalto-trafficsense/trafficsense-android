@@ -6,19 +6,12 @@ package fi.aalto.trafficsense.trafficsense.backend.backend_util;
 
 import android.os.AsyncTask;
 import android.widget.Toast;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.common.base.Optional;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
-import com.google.firebase.messaging.FirebaseMessaging;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
-import fi.aalto.trafficsense.trafficsense.ui.MainActivity;
 import fi.aalto.trafficsense.trafficsense.util.BackendStorage;
-import fi.aalto.trafficsense.trafficsense.util.SharedPrefs;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import timber.log.Timber;
 
 import java.io.BufferedInputStream;

@@ -5,7 +5,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Throwables;
 import com.google.common.util.concurrent.Atomics;
 import fi.aalto.trafficsense.trafficsense.util.Callback;
-import fi.aalto.trafficsense.trafficsense.util.DataPacket;
 import timber.log.Timber;
 
 import java.util.concurrent.atomic.AtomicReference;

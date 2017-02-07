@@ -25,9 +25,6 @@ import static android.support.v7.preference.PreferenceManager.getDefaultSharedPr
  */
 public class LocationSensor implements LocationListener {
 
-    // Configurations //
-    // private int interval = 10; // unit, seconds
-    // private int fastestInterval = 5000; // milliseconds
     private final int AWAKE_PRIORITY = LocationRequest.PRIORITY_HIGH_ACCURACY;
     private final int SLEEP_PRIORITY = LocationRequest.PRIORITY_NO_POWER;
 

@@ -47,7 +47,6 @@ public class TrafficSenseService extends Service {
     private AtomicReference<Boolean> mClientNumberFetchOngoing = new AtomicReference<>(false);
 
     private static boolean viewActive = false;
-    private static boolean surveyNotification = false; // Are we displaying a survey notification
 
     private ActivityType mPreviousActivity = STILL;
 

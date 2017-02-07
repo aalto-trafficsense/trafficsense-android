@@ -1,12 +1,8 @@
 package fi.aalto.trafficsense.trafficsense.util;
 
-import android.content.res.Resources;
 import android.os.Parcel;
 import android.os.Parcelable;
-import com.google.android.gms.location.DetectedActivity;
 import com.google.gson.annotations.SerializedName;
-import fi.aalto.trafficsense.trafficsense.R;
-import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
 
 /**
  * Created by rinnem2 on 09/04/16.

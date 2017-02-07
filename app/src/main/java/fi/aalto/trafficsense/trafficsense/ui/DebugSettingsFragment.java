@@ -4,14 +4,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.preference.*;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v7.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.backend.uploader.RegularRoutesPipeline;
 import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
-import timber.log.Timber;
 
 /**
  * Created by mikko.rinne@aalto.fi on 17/05/16.
@@ -98,22 +99,6 @@ public class DebugSettingsFragment extends PreferenceFragmentCompat implements S
             Toast.makeText(getActivity(), R.string.upload_threshold_change, Toast.LENGTH_LONG).show();
         }
 
-//        Preference preference = findPreference(key);
-//        if (preference instanceof CheckBoxPreference) {
-//            CheckBoxPreference cb = (CheckBoxPreference) preference;
-//            if (cb.isChecked()) Timber.i("Checkbox true");
-//            else Timber.i("Checkbox false");
-//        }
-//        if (preference instanceof ListPreference) {
-//            ListPreference listPreference = (ListPreference) preference;
-//            int prefIndex = listPreference.findIndexOfValue(sharedPreferences.getString(key, ""));
-//            if (prefIndex >= 0) {
-//                preference.setSummary(listPreference.getEntries()[prefIndex]);
-//            }
-//        } else {
-//            preference.setSummary(sharedPreferences.getString(key, ""));
-//
-//        }
     }
 
     @Override
