@@ -125,6 +125,8 @@ public class MainActivity extends AppCompatActivity
 
     private final int MY_PERMISSIONS_ACCESS_FINE_LOCATION = 1;
 
+    private final static String snipSeparator = "!";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -421,12 +423,26 @@ public class MainActivity extends AppCompatActivity
 
         int pathEditButtonVisibility = View.INVISIBLE; // Default outcome
         if (pathLayer!=null) {
+            // Extract feature ID from marker tag
             String markerId = (String)clickedMarker.getTag();
-            if (markerId==null) {
-                markerId = clickedMarker.getSnippet();
+            String tmpSnip = null;
+            Boolean updateTag = false;
+            if (markerId==null) { // If not in marker tag, get candidate from the snippet
+                tmpSnip = clickedMarker.getSnippet();
             } else {
                 if (markerId.length()<1) {
-                    markerId = clickedMarker.getSnippet();
+                    tmpSnip = clickedMarker.getSnippet();
+                }
+            }
+            if (tmpSnip!=null) { // Marker tag did not qualify, obtained ID candidate from snippet
+                updateTag = true;
+                String[] parts = tmpSnip.split(snipSeparator); // Try to split ID and end-user snippet
+                if (parts.length>1) { // Snippet had more than one part
+                    markerId = parts[0]; // First part is the ID
+                    tmpSnip = parts[1]; // Second part should be the end-user snippet
+                } else { // Only one part; shouldn't normally happen
+                    markerId = parts[0]; // See if there is an ID in there anyway
+                    tmpSnip = null; // Reset snippet if it was an ID
                 }
             }
             if (markerId!=null) {
@@ -436,9 +452,11 @@ public class MainActivity extends AppCompatActivity
                 while (cnt) {
                     feature = (GeoJsonFeature)i.next();
                     if (feature.hasProperty("id")) {
-                        if (feature.getProperty("id").equals(markerId)) { // The clicked marker had an id
-                            clickedMarker.setTag(markerId);
-                            clickedMarker.setSnippet(null);
+                        if (feature.getProperty("id").equals(markerId)) { // The clicked marker had a matching id
+                            if (updateTag) { // ID did not come from marker tag -> put it there
+                                clickedMarker.setTag(markerId);
+                                clickedMarker.setSnippet(tmpSnip); // Id moved to marker tag, reduce snippet to end-user content or null
+                            }
                             clickedLegFeature = feature;
                             pathEditButtonVisibility = View.VISIBLE;
                             cnt = false;
@@ -983,7 +1001,11 @@ public class MainActivity extends AppCompatActivity
             mDestItem.setEnabled(true);
         } else {
             try {
-                URL url = new URL(mStorage.getServerName() + "/destinations/" + token.get());
+                String lPos = "";
+                if (latestPosition!=null) {
+                  lPos = "?lat=" + Double.toString(latestPosition.latitude) + "&lng=" + Double.toString(latestPosition.longitude);
+                }
+                URL url = new URL(mStorage.getServerName() + "/destinations/" + token.get() + lPos);
                 DownloadDestTask downloader = new DownloadDestTask();
                 downloader.execute(url);
             } catch (MalformedURLException e) {
@@ -1356,13 +1378,19 @@ public class MainActivity extends AppCompatActivity
                 GeoJsonLineStringStyle mStyle = new GeoJsonLineStringStyle();
                 mStyle.setColor(ContextCompat.getColor(mContext, mActivityPathConverter.getColor(activity)));
                 feature.setLineStringStyle(mStyle);
+                String idProperty = "null";
+                if (feature.hasProperty("id")) {
+                    idProperty = feature.getProperty("id");
+                }
 //                if (!today) { // Uncomment to remove markers and disable editing for current day
-                    if (!nonEditableActivity.contains(activity)) { // Add markers and ID:s only for those activities that can be edited
+                    if ((!idProperty.equals("null")) && (!nonEditableActivity.contains(activity))) { // Add markers and ID:s only for those activities that can be edited
                         if (coordinates != null) {
                             // Find mid-coordinates of the trip
                             LatLng pos = coordinates.get(coordinates.size()/2);
                             GeoJsonFeature transportIconFeature = new GeoJsonFeature(new GeoJsonPoint(pos), null, null, null);
                             GeoJsonPointStyle pointStyle = new GeoJsonPointStyle();
+                            transportIconFeature.setProperty("activity", activity);
+                            // title to marker
                             StringBuilder title = new StringBuilder();
                             title.append(mRes.getString(mActivityPathConverter.getLocalizedNameRes(activity)));
                             if (feature.hasProperty("line_name")) {
@@ -1373,13 +1401,24 @@ public class MainActivity extends AppCompatActivity
                                 transportIconFeature.setProperty("line_name", lineName);
                             }
                             pointStyle.setTitle(title.toString());
-                            transportIconFeature.setProperty("activity", activity);
-                            // Copy id also to the icons
-                            if (feature.hasProperty("id")) {
-                                String f = feature.getProperty("id");
-                                transportIconFeature.setProperty("id", f);
-                                pointStyle.setSnippet(f);
+                            // id to marker
+                            transportIconFeature.setProperty("id", idProperty);
+                            StringBuilder snip = new StringBuilder(idProperty);
+                            snip.append(snipSeparator); // Snippet separator between id and time
+                            // trip start - end times to marker
+                            if (feature.hasProperty("trip_start")) {
+                                String tripStart = feature.getProperty("trip_start");
+                                if (!tripStart.equals("null")) {
+                                    snip.append(tripStart.substring(11,16)); // Parse from "2016-01-17 12:43:54.837" --> HH:MM
+                                }
                             }
+                            if (feature.hasProperty("trip_end")) {
+                                String tripEnd = feature.getProperty("trip_end");
+                                if (!tripEnd.equals("null")) {
+                                    snip.append("-").append(tripEnd.substring(11,16));
+                                }
+                            }
+                            pointStyle.setSnippet(snip.toString());
                             Bitmap bitmap = getBitmap(mContext, mActivityPathConverter.getIcon(activity));
                             pointStyle.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
                             transportIconFeature.setPointStyle(pointStyle);
