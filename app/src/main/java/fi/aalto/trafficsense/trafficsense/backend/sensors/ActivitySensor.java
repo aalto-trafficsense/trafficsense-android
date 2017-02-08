@@ -52,8 +52,11 @@ public class ActivitySensor implements ResultCallback<Status> {
     }
 
     private void stopActivityRecognitionUpdates() {
-        if(mGoogleApiClient != null)
-            ActivityRecognition.ActivityRecognitionApi.removeActivityUpdates(mGoogleApiClient, mCallbackIntent).setResultCallback(this);
+        if(mGoogleApiClient != null) {
+            if (mGoogleApiClient.isConnected()) {
+                ActivityRecognition.ActivityRecognitionApi.removeActivityUpdates(mGoogleApiClient, mCallbackIntent).setResultCallback(this);
+            }
+        }
     }
 
     public void restartActivityRecognition() {

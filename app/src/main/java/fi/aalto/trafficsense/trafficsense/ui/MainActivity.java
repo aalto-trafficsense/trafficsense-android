@@ -1005,6 +1005,9 @@ public class MainActivity extends AppCompatActivity
                 if (latestPosition!=null) {
                   lPos = "?lat=" + Double.toString(latestPosition.latitude) + "&lng=" + Double.toString(latestPosition.longitude);
                 }
+                // Additional parameters:
+                // If "lat" or "lng" is empty, results are not filtered. "lat" or "lng" missing, use last position in device_data to filter destinations (too near + too far). "lat" and "lng" given, filter based on those.
+                // "limit=" specified as: <Empty> ("limit=") returns all destinations, <No limit-parameter> returns 5 destinations, <Number> ("limit=NUM") returns NUM destinations. If NUM is negative, NUM last destinations are omitted.
                 URL url = new URL(mStorage.getServerName() + "/destinations/" + token.get() + lPos);
                 DownloadDestTask downloader = new DownloadDestTask();
                 downloader.execute(url);
@@ -1226,7 +1229,11 @@ public class MainActivity extends AppCompatActivity
             mPathItem.setEnabled(true);
         } else {
             try {
-                URL url = new URL(mStorage.getServerName() + "/path/" + token.get() + "?date=" + pathDate + "&maxpts=20000&mindist=20");
+                // Additional parameters
+                // "maxpts" = maximum number of points accepted for a single feature
+                // "mindist" = minimum distance between points
+                // Example: "&maxpts=20000&mindist=20"
+                URL url = new URL(mStorage.getServerName() + "/path/" + token.get() + "?date=" + pathDate);
                 DownloadPathTask downloader = new DownloadPathTask();
                 downloader.execute(url);
             } catch (MalformedURLException e) {

@@ -193,6 +193,7 @@ public class PathEditDialog extends AppCompatActivity implements AdapterView.OnI
                 JSONObject legUpdate = new JSONObject();
                 legUpdate.put("sessionToken", mSessionToken);
                 legUpdate.put("id", Integer.parseInt(currentActivity.getProperty("id")));
+                // User edits can be removed by setting "activity" and "line_name" to "null"
                 legUpdate.put("activity", currentActString);
                 if (mActivityPathConverter.hasLineName(currentActString)) {
                     legUpdate.put("line_name", currentLineName);
