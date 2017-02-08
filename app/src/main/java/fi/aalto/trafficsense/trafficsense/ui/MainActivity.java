@@ -308,7 +308,7 @@ public class MainActivity extends AppCompatActivity
         Timber.d("Map loaded.");
         if (mMap != null) {
             if (getSharedBoolean(SharedPrefs.KEY_SHOW_DEST)) { // Redraw current destinations, if displayed.
-                String destString = mPref.getString(SharedPrefs.KEY_DEST_OBJECT, null);
+                String destString = null; // Always reload from server: mPref.getString(SharedPrefs.KEY_DEST_OBJECT, null);
                 // Timber.d("GeoJsonString: " + geoJsonString);
                 if (destString == null) {
                     // Destinations on but nothing fetched - get again
@@ -1094,7 +1094,7 @@ public class MainActivity extends AppCompatActivity
             JSONArray lngLat;
             LatLng markerPos = null;
             int visits = 0;
-            float[] distResults = new float[5];
+            // float[] distResults = new float[5];
             boolean useMarker;
             destMarkers.clear();
             int i = 0;
