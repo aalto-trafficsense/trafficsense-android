@@ -19,20 +19,20 @@ public class ActivityPathConverter {
     List<PathActivity> activityList = new ArrayList<>();
 
     public ActivityPathConverter() {
-        // String serverName, boolean hasLineName, int localizedNameResource, int lineColor, int icon
-        // Note!! getEditList() exclusions (currently TILTING and UNKNOWN) have to be last in the list, as spinner selection is based on index!
-        activityList.add(new PathActivity("ON_BICYCLE",false, R.string.bicycle, R.color.colorOnBicycle, R.drawable.map_activity_bicycle));
-        activityList.add(new PathActivity("WALKING",   false, R.string.walking, R.color.colorWalking,   R.drawable.map_activity_walking));
-        activityList.add(new PathActivity("RUNNING",   false, R.string.running, R.color.colorRunning,   R.drawable.map_activity_running));
-        activityList.add(new PathActivity("IN_VEHICLE",false, R.string.car,     R.color.colorInVehicle, R.drawable.map_activity_vehicle));
-        activityList.add(new PathActivity("TRAIN",     true,  R.string.train,   R.color.colorTrain,     R.drawable.map_vehicle_train));
-        activityList.add(new PathActivity("TRAM",      true,  R.string.tram,    R.color.colorSubway,    R.drawable.map_vehicle_subway));
-        activityList.add(new PathActivity("SUBWAY",    true,  R.string.subway,  R.color.colorSubway,    R.drawable.map_vehicle_subway));
-        activityList.add(new PathActivity("BUS",       true,  R.string.bus,     R.color.colorBus,       R.drawable.map_vehicle_bus));
-        activityList.add(new PathActivity("FERRY",     true,  R.string.ferry,   R.color.colorBus,       R.drawable.md_activity_ferry_24dp));
-        activityList.add(new PathActivity("STILL",     false, R.string.still,   R.color.colorStill,     R.drawable.map_activity_still));
-        activityList.add(new PathActivity("TILTING",   false, R.string.tilting, R.color.colorTilting,   R.drawable.md_activity_tilting_24dp));
-        activityList.add(new PathActivity("UNKNOWN",   false, R.string.unknown, R.color.colorUnknown,   R.drawable.md_activity_unknown_24dp));
+        // String serverName, boolean hasLineName, int localizedNameResource, boolean isEditable, int lineColor, int icon
+        // Note!! non-editables have to be last in the list, as spinner selection is based on the list index!
+        activityList.add(new PathActivity("ON_BICYCLE",false, R.string.bicycle, true,  R.color.colorOnBicycle, R.drawable.map_activity_bicycle));
+        activityList.add(new PathActivity("WALKING",   false, R.string.walking, true,  R.color.colorWalking,   R.drawable.map_activity_walking));
+        activityList.add(new PathActivity("RUNNING",   false, R.string.running, true,  R.color.colorRunning,   R.drawable.map_activity_running));
+        activityList.add(new PathActivity("IN_VEHICLE",false, R.string.car,     true,  R.color.colorInVehicle, R.drawable.map_activity_vehicle));
+        activityList.add(new PathActivity("TRAIN",     true,  R.string.train,   true,  R.color.colorTrain,     R.drawable.map_vehicle_train));
+        activityList.add(new PathActivity("TRAM",      true,  R.string.tram,    true,  R.color.colorSubway,    R.drawable.map_vehicle_subway));
+        activityList.add(new PathActivity("SUBWAY",    true,  R.string.subway,  true,  R.color.colorSubway,    R.drawable.map_vehicle_subway));
+        activityList.add(new PathActivity("BUS",       true,  R.string.bus,     true,  R.color.colorBus,       R.drawable.map_vehicle_bus));
+        activityList.add(new PathActivity("FERRY",     true,  R.string.ferry,   true,  R.color.colorBus,       R.drawable.md_activity_ferry_24dp));
+        activityList.add(new PathActivity("STILL",     false, R.string.still,   false, R.color.colorStill,     R.drawable.map_activity_still));
+        activityList.add(new PathActivity("TILTING",   false, R.string.tilting, false, R.color.colorTilting,   R.drawable.md_activity_tilting_24dp));
+        activityList.add(new PathActivity("UNKNOWN",   false, R.string.unknown, false, R.color.colorUnknown,   R.drawable.md_activity_unknown_24dp));
     }
 
     public int getLocalizedNameRes(String sName) {
@@ -80,7 +80,7 @@ public class ActivityPathConverter {
         int idx = 0;
         int res = 0;
         Boolean cnt = true;
-        PathActivity pa = null;
+        PathActivity pa;
         while (cnt) {
             pa = (PathActivity)i.next();
             if (pa.getServerName().equals(sName)) {
@@ -99,24 +99,16 @@ public class ActivityPathConverter {
     public List<String> getEditList(Activity mActivity) {
         Resources mRes = mActivity.getResources();
         List<String> al = new ArrayList<>();
-        String sn;
         for (PathActivity pa: activityList) {
-            sn = pa.getServerName();
-            if (!(sn.equals("UNKNOWN") || sn.equals("TILTING"))) {
-                al.add(mRes.getString(pa.getLocalizedNameRes()));
-            }
+            if (pa.isEditable()) al.add(mRes.getString(pa.getLocalizedNameRes()));
         }
         return al;
     }
 
     public List<String> getEditableSNames() {
         List<String> al = new ArrayList<>();
-        String sn;
         for (PathActivity pa: activityList) {
-            sn = pa.getServerName();
-            if (!(sn.equals("UNKNOWN") || sn.equals("TILTING"))) {
-                al.add(sn);
-            }
+            if (pa.isEditable()) al.add(pa.getServerName());
         }
         return al;
     }
@@ -144,13 +136,15 @@ public class ActivityPathConverter {
         private String serverName;
         private boolean hasLineNameVar;
         private int localizedNameResource;
+        private boolean isEditableVar;
         private int color;
         private int icon;
 
-        public PathActivity(String sName, boolean hln, int lNameRes, int color, int icn) {
+        public PathActivity(String sName, boolean hln, int lNameRes, boolean ie, int color, int icn) {
             this.serverName = sName;
             this.hasLineNameVar = hln;
             this.localizedNameResource = lNameRes;
+            this.isEditableVar = ie;
             this.color = color;
             this.icon = icn;
         }
@@ -161,6 +155,10 @@ public class ActivityPathConverter {
 
         public boolean hasLineName() {
             return this.hasLineNameVar;
+        }
+
+        public boolean isEditable() {
+            return this.isEditableVar;
         }
 
         public int getLocalizedNameRes() {
