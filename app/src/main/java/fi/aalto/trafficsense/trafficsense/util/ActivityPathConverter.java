@@ -78,7 +78,7 @@ public class ActivityPathConverter {
     public int getIndex(String sName) {
         Iterator i = activityList.iterator();
         int idx = 0;
-        int res = -1;
+        int res = 0;
         Boolean cnt = true;
         PathActivity pa = null;
         while (cnt) {
