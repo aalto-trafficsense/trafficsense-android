@@ -233,8 +233,8 @@
     <string name="path_edit_dialog_title">Edit Or Confirm Mode of Transport</string>
     <string name="path_edit_confirm_choice">Confirm</string>
     <string name="path_edit_cancel_choice">Cancel</string>
-    <string name="path_edit_url_broken">Problem with activity edit network address.</string>
-    <string name="path_edit_update_failed">Activity update failed.</string>
+    <string name="path_edit_url_broken">Problem with transport mode edit network address.</string>
+    <string name="path_edit_update_failed">Transport mode update failed.</string>
 
     <!-- <string name="path_no_public_transport">Public transport not recognised for current day.</string> -->
     <string name="dest_no_data">No destinations available.</string>

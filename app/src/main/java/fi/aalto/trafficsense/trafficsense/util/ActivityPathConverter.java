@@ -109,6 +109,18 @@ public class ActivityPathConverter {
         return al;
     }
 
+    public List<String> getEditableSNames() {
+        List<String> al = new ArrayList<>();
+        String sn;
+        for (PathActivity pa: activityList) {
+            sn = pa.getServerName();
+            if (!(sn.equals("UNKNOWN") || sn.equals("TILTING"))) {
+                al.add(sn);
+            }
+        }
+        return al;
+    }
+
     private PathActivity findFromSName(String sName) {
         Iterator i = activityList.iterator();
         Boolean cnt = true;

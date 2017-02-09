@@ -107,8 +107,10 @@ public class MainActivity extends AppCompatActivity
     private LatLng pathEnd;
     private static Calendar pathCal = Calendar.getInstance();
     private final SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    private Set<String> nonEditableActivity = new HashSet<>(Arrays.asList(new String[]
-            {"TILTING", "UNKNOWN"}));
+    // All currently known activities except TILTING and UNKNOWN
+    private Set<String> editableActivities;
+//    = new HashSet<>(Arrays.asList(new String[]
+//            {"ON_BICYCLE", "UNKNOWN"}));
     private List<Marker> destMarkers = new ArrayList<>();
 
     private GeoJsonLayer pathLayer=null;
@@ -120,8 +122,8 @@ public class MainActivity extends AppCompatActivity
     private final float initZoom = 12;
 
     private final int DEST_ON_MAP = 5; // TODO: Add into settings
-    private final float minDistToDest = 200.0f; // meters
-    private final float maxDistToDest = 200000.0f; // meters
+    // private final float minDistToDest = 200.0f; // meters
+    // private final float maxDistToDest = 200000.0f; // meters
 
     private final int MY_PERMISSIONS_ACCESS_FINE_LOCATION = 1;
 
@@ -134,6 +136,7 @@ public class MainActivity extends AppCompatActivity
         mContext = this;
         mRes = this.getResources();
         mActivityPathConverter = new ActivityPathConverter();
+        editableActivities = new HashSet<>(mActivityPathConverter.getEditableSNames());
         setContentView(R.layout.activity_main);
         new ConsentDialog(this).show(); // Only asks for consent if not agreed before
 
@@ -1390,7 +1393,7 @@ public class MainActivity extends AppCompatActivity
                     idProperty = feature.getProperty("id");
                 }
 //                if (!today) { // Uncomment to remove markers and disable editing for current day
-                    if ((!idProperty.equals("null")) && (!nonEditableActivity.contains(activity))) { // Add markers and ID:s only for those activities that can be edited
+                    if ((!idProperty.equals("null")) && editableActivities.contains(activity)) { // Add markers and ID:s only for those activities that can be edited
                         if (coordinates != null) {
                             // Find mid-coordinates of the trip
                             LatLng pos = coordinates.get(coordinates.size()/2);
