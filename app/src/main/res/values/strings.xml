@@ -227,10 +227,10 @@
     <string name="path_future_date_request">Your future path is unknown to me.</string>
     <string name="error_creating_map">Error in map creation!</string>
     <string name="path_no_data_for_date">No path data for selected date.</string>
-    <string name="path_edit_button">Edit/Confirm Activity</string>
-    <string name="path_edit_activity">Activity:</string>
+    <string name="path_edit_button">Edit/Confirm</string>
+    <string name="path_edit_activity">Mode of Transport:</string>
     <string name="path_edit_line_name">Line name:</string>
-    <string name="path_edit_dialog_title">Edit Or Confirm Activity</string>
+    <string name="path_edit_dialog_title">Edit Or Confirm Mode of Transport</string>
     <string name="path_edit_confirm_choice">Confirm</string>
     <string name="path_edit_cancel_choice">Cancel</string>
     <string name="path_edit_url_broken">Problem with activity edit network address.</string>
