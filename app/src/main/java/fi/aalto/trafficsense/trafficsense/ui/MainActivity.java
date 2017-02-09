@@ -107,10 +107,7 @@ public class MainActivity extends AppCompatActivity
     private LatLng pathEnd;
     private static Calendar pathCal = Calendar.getInstance();
     private final SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    // All currently known activities except TILTING and UNKNOWN
     private Set<String> editableActivities;
-//    = new HashSet<>(Arrays.asList(new String[]
-//            {"ON_BICYCLE", "UNKNOWN"}));
     private List<Marker> destMarkers = new ArrayList<>();
 
     private GeoJsonLayer pathLayer=null;
@@ -246,6 +243,7 @@ public class MainActivity extends AppCompatActivity
                     break;
                 default:
                     mSurveyItem.setIcon(R.mipmap.ic_launcher);
+                    mSurveyItem.setTitle(R.string.navigation_broadcast_message);
             }
 
         } else {
