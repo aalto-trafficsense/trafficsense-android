@@ -252,7 +252,11 @@ public class MainActivity extends AppCompatActivity
         }
 
         // In case alert comes when the map is already drawn
-        if (mMap!=null && mTrafficAlertMarker==null) checkTrafficAlert();
+        // In case the map is already loaded
+        if (mMap!=null) {
+            if (mTrafficAlertMarker==null) checkTrafficAlert();
+            checkDestinations();
+        }
 
     }
 
@@ -297,9 +301,6 @@ public class MainActivity extends AppCompatActivity
                 return info;
             }
         });
-
-        Timber.d("Map ready");
-
     }
 
     /**
@@ -307,24 +308,9 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onMapLoaded() {
-        Timber.d("Map loaded.");
         if (mMap != null) {
-            if (getSharedBoolean(SharedPrefs.KEY_SHOW_DEST)) { // Redraw current destinations, if displayed.
-                String destString = null; // Always reload from server: mPref.getString(SharedPrefs.KEY_DEST_OBJECT, null);
-                // Timber.d("GeoJsonString: " + geoJsonString);
-                if (destString == null) {
-                    // Destinations on but nothing fetched - get again
-                    fetchDest();
-                } else {
-                    //Draw destinations to map
-                    try {
-                        processDest(new JSONObject(destString));
-                    } catch (JSONException e) {
-                        Timber.e("onMapLoaded: Destination GeoJson conversion returned an exception: %s", e.toString());
-                        setDestOff();
-                    }
-                }
-            }
+
+            checkDestinations();
 
             if (getSharedBoolean(SharedPrefs.KEY_SHOW_PATH)) { // Redraw current path, if displayed.
                 String geoJsonString = mPref.getString(SharedPrefs.KEY_PATH_OBJECT, null);
@@ -354,6 +340,25 @@ public class MainActivity extends AppCompatActivity
             // In case alert could not be drawn at resume due to lack of map
             if (mTrafficAlertMarker == null) checkTrafficAlert();
 
+        }
+    }
+
+    private void checkDestinations() {
+        if (getSharedBoolean(SharedPrefs.KEY_SHOW_DEST)) { // Redraw current destinations, if displayed.
+            String destString = null; // Always reload from server: mPref.getString(SharedPrefs.KEY_DEST_OBJECT, null);
+            // Timber.d("GeoJsonString: " + geoJsonString);
+            if (destString == null) {
+                // Destinations on but nothing fetched - get again
+                fetchDest();
+            } else {
+                //Draw destinations to map
+                try {
+                    processDest(new JSONObject(destString));
+                } catch (JSONException e) {
+                    Timber.e("onMapLoaded: Destination GeoJson conversion returned an exception: %s", e.toString());
+                    setDestOff();
+                }
+            }
         }
     }
 
