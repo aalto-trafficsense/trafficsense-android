@@ -105,10 +105,7 @@ public class PathEditDialog extends AppCompatActivity implements AdapterView.OnI
                         currentLineName = mLineNameEdit.getText().toString();
                         Timber.d("Server activity: %s Line name: %s", currentActString, currentLineName);
                         // Send to server
-                        if (!(defaultActivityIndex==currentActivityIndex && defaultLineName.equals(currentLineName))) {
-                            sendLegEdit();
-                        }
-                        // Reload path data
+                        sendLegEdit();
                         dialogInterface.dismiss();
                     }
                 })
@@ -223,14 +220,16 @@ public class PathEditDialog extends AppCompatActivity implements AdapterView.OnI
 //            Timber.d("First 200 characters: \n" + info.substring(0,min(200,info.length())));
             Timber.d("LegEditSend response: %d", responseCode);
             if (responseCode == 200) {
-                // Success - refresh the paths on the screen.
-                LocalBroadcastManager mLB = LocalBroadcastManager.getInstance(mActivity);
-                mLB.sendBroadcast(new Intent(InternalBroadcasts.KEY_REQUEST_PATH_UPDATE));
+                // Success - refresh the paths on the screen, if something was changed
+                if (defaultActivityIndex==currentActivityIndex && defaultLineName.equals(currentLineName)) {
+                    Toast.makeText(mActivity, R.string.path_edit_confirmed, Toast.LENGTH_SHORT).show();
+                } else {
+                    LocalBroadcastManager mLB = LocalBroadcastManager.getInstance(mActivity);
+                    mLB.sendBroadcast(new Intent(InternalBroadcasts.KEY_REQUEST_PATH_UPDATE));
+                }
             } else {
                 Toast.makeText(mActivity, R.string.path_edit_update_failed, Toast.LENGTH_SHORT).show();
             }
         }
     }
-
-
 }

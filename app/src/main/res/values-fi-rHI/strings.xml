@@ -246,5 +246,6 @@
     <string name="car">Fiude</string>
     <string name="certificate_url_broken">URLissa feelua.</string>
     <string name="bicycle">Fillari</string>
+    <string name="path_edit_confirmed">Reilassa.</string>
 
 </resources>

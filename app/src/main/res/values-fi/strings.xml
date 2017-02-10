@@ -145,4 +145,5 @@
     <string name="bicycle">Polkupyörä</string>
     <string name="title_activity_debugview">Testaus</string>
     <string name="navigation_debug">Testaus</string>
+    <string name="path_edit_confirmed">Vahvistettu.</string>
 </resources>
