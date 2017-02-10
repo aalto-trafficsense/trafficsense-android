@@ -281,24 +281,35 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public View getInfoContents(Marker marker) {
+                String ttl = marker.getTitle();
+                String snp = marker.getSnippet();
+                boolean hasContent = false;
+                if (ttl!=null) {
+                    if (ttl.length()>0) hasContent=true;
+                }
+                if (!hasContent) {
+                    if (snp!=null) {
+                        if (snp.length()>0) hasContent=true;
+                    }
+                }
 
-                LinearLayout info = new LinearLayout(mContext);
-                info.setOrientation(LinearLayout.VERTICAL);
-
-                TextView title = new TextView(mContext);
-                title.setTextColor(Color.BLACK);
-                title.setGravity(Gravity.CENTER);
-                title.setTypeface(null, Typeface.BOLD);
-                title.setText(marker.getTitle());
-
-                TextView snippet = new TextView(mContext);
-                snippet.setTextColor(Color.GRAY);
-                snippet.setText(marker.getSnippet());
-
-                info.addView(title);
-                info.addView(snippet);
-
-                return info;
+                if (hasContent) {
+                    LinearLayout info = new LinearLayout(mContext);
+                    info.setOrientation(LinearLayout.VERTICAL);
+                    TextView title = new TextView(mContext);
+                    title.setTextColor(Color.BLACK);
+                    title.setGravity(Gravity.CENTER);
+                    title.setTypeface(null, Typeface.BOLD);
+                    title.setText(ttl);
+                    TextView snippet = new TextView(mContext);
+                    snippet.setTextColor(Color.GRAY);
+                    snippet.setText(snp);
+                    info.addView(title);
+                    info.addView(snippet);
+                    return info;
+                } else {
+                    return null;
+                }
             }
         });
     }
@@ -939,10 +950,12 @@ public class MainActivity extends AppCompatActivity
                     mMarker = mMap.addMarker(new MarkerOptions()
                             .position(latestPosition)
                             .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
-                            .title(ActivityType.getActivityString(latestActivityType))
-                            .snippet(mTimeFormat.format(new Date())));
+                            // .title(ActivityType.getActivityString(latestActivityType))
+                            // .snippet(mTimeFormat.format(new Date()))
+                    );
                 } else {
                     mMarker.setPosition(latestPosition);
+                    // mMarker.setSnippet(mTimeFormat.format(new Date()));
                 }
                 if (l.getAccuracy() > (float) mSettings.getInt(mRes.getString(R.string.debug_settings_location_accuracy_key), 50)) {
                     if (mCircle == null) {
@@ -985,8 +998,8 @@ public class MainActivity extends AppCompatActivity
                 // mMarker.setIcon(BitmapDescriptorFactory.fromResource(ActivityType.getMapActivityIcon(topActivity)));
                 Bitmap bitmap = getBitmap(mContext, ActivityType.getMapActivityIcon(topActivity));
                 mMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
-                mMarker.setTitle(ActivityType.getActivityString(latestActivityType));
-                mMarker.setSnippet(mTimeFormat.format(new Date()));
+                // mMarker.setTitle(ActivityType.getActivityString(latestActivityType));
+                // mMarker.setSnippet(mTimeFormat.format(new Date()));
                 latestActivityType = topActivity;
             }
         }
