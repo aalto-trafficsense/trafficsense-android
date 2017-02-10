@@ -356,6 +356,7 @@ public class MainActivity extends AppCompatActivity
 
     private void checkDestinations() {
         if (getSharedBoolean(SharedPrefs.KEY_SHOW_DEST)) { // Redraw current destinations, if displayed.
+            clearDestMarkers(); // Remove previous, if any
             String destString = null; // Always reload from server: mPref.getString(SharedPrefs.KEY_DEST_OBJECT, null);
             // Timber.d("GeoJsonString: " + geoJsonString);
             if (destString == null) {
@@ -1197,7 +1198,11 @@ public class MainActivity extends AppCompatActivity
         mPrefEditor.commit();
         mDestItem.setIcon(R.drawable.ic_dest_off);
         mDestItem.setChecked(false);
-        /* Remove destinations from map */
+        clearDestMarkers();
+    }
+
+    /* Remove destinations from map */
+    private void clearDestMarkers() {
         if (destMarkers.size() > 0) {
             for (Marker m: destMarkers) {
                 m.remove();
