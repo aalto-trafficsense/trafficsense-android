@@ -219,11 +219,12 @@ public class PathEditDialog extends AppCompatActivity implements AdapterView.OnI
 //            Timber.d("DownloadDestTask Received a string of length: " + info.length());
 //            Timber.d("First 200 characters: \n" + info.substring(0,min(200,info.length())));
             Timber.d("LegEditSend response: %d", responseCode);
-            if (responseCode == 200) {
-                // Success - refresh the paths on the screen, if something was changed
+            if (responseCode == 200) { // Success
                 if (defaultActivityIndex==currentActivityIndex && defaultLineName.equals(currentLineName)) {
+                    // No change - show a confirmation
                     Toast.makeText(mActivity, R.string.path_edit_confirmed, Toast.LENGTH_SHORT).show();
                 } else {
+                    // Something changed - request to refresh the path on the screen
                     LocalBroadcastManager mLB = LocalBroadcastManager.getInstance(mActivity);
                     mLB.sendBroadcast(new Intent(InternalBroadcasts.KEY_REQUEST_PATH_UPDATE));
                 }

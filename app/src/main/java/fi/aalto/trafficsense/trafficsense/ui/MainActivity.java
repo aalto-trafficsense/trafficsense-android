@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity
     private LatLng pathEnd;
     private static Calendar pathCal = Calendar.getInstance();
     private final SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private final SimpleDateFormat mTimeFormat = new SimpleDateFormat("HH:mm:ss");
     private Set<String> editableActivities;
     private List<Marker> destMarkers = new ArrayList<>();
 
@@ -932,7 +933,9 @@ public class MainActivity extends AppCompatActivity
                     Bitmap bitmap = getBitmap(mContext, ActivityType.getMapActivityIcon(latestActivityType));
                     mMarker = mMap.addMarker(new MarkerOptions()
                             .position(latestPosition)
-                            .icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
+                            .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                            .title(ActivityType.getActivityString(latestActivityType))
+                            .snippet(mTimeFormat.format(new Date())));
                 } else {
                     mMarker.setPosition(latestPosition);
                 }
@@ -977,6 +980,8 @@ public class MainActivity extends AppCompatActivity
                 // mMarker.setIcon(BitmapDescriptorFactory.fromResource(ActivityType.getMapActivityIcon(topActivity)));
                 Bitmap bitmap = getBitmap(mContext, ActivityType.getMapActivityIcon(topActivity));
                 mMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
+                mMarker.setTitle(ActivityType.getActivityString(latestActivityType));
+                mMarker.setSnippet(mTimeFormat.format(new Date()));
                 latestActivityType = topActivity;
             }
         }
