@@ -72,6 +72,7 @@ public class PathEditDialog extends AppCompatActivity implements AdapterView.OnI
         }
         if (currentActivity.hasProperty("line_name")) {
             defaultLineName = currentActivity.getProperty("line_name");
+            if (defaultLineName.equals("null")) defaultLineName="";
             currentLineName = defaultLineName;
         }
 

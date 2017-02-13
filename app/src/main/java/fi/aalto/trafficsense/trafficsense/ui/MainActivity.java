@@ -1431,7 +1431,9 @@ public class MainActivity extends AppCompatActivity
                             title.append(mRes.getString(mActivityPathConverter.getLocalizedNameRes(activity)));
                             if (feature.hasProperty("line_name")) {
                                 String lineName = feature.getProperty("line_name");
-                                if (!lineName.equals("null")) {
+                                if (lineName.equals("null")) {
+                                    lineName="";
+                                } else {
                                     title.append(": ").append(lineName);
                                 }
                                 transportIconFeature.setProperty("line_name", lineName);
@@ -1443,15 +1445,15 @@ public class MainActivity extends AppCompatActivity
                             snip.append(snipSeparator); // Snippet separator between id and time
                             // trip start - end times to marker
                             if (feature.hasProperty("time_start")) {
-                                String tripStart = feature.getProperty("time_start");
-                                if (!tripStart.equals("null")) {
-                                    snip.append(tripStart.substring(11,16)); // Parse from "2016-01-17 12:43:54.837" --> HH:MM
+                                String timeStart = feature.getProperty("time_start");
+                                if (!timeStart.equals("null")) {
+                                    snip.append(timeStart.substring(11,16)); // Parse from "2016-01-17 12:43:54.837" --> HH:MM
                                 }
                             }
                             if (feature.hasProperty("time_end")) {
-                                String tripEnd = feature.getProperty("time_end");
-                                if (!tripEnd.equals("null")) {
-                                    snip.append("-").append(tripEnd.substring(11,16));
+                                String timeEnd = feature.getProperty("time_end");
+                                if (!timeEnd.equals("null")) {
+                                    snip.append("-").append(timeEnd.substring(11,16));
                                 }
                             }
                             pointStyle.setSnippet(snip.toString());
