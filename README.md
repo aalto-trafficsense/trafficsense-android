@@ -12,18 +12,24 @@ The second Android client to access the [TrafficSense](https://github.com/aalto-
     + Tools
       + Android SDK Tools
       + Android SDK Platform-tools
-      + Android SDK Build-tools 21.1.1
-    + Android 5.0 (API 21)
-      + SDK Platform
-    + Android 4.0.3 (API 15)
-      + SDK Platform
+      + Android SDK Build-tools (Many versions ok, currently building with 26.0.2)
+    + Android 6.0 (API 23, "Marshmallow")
+      + Google APIs
+      + Android SDK Platform 23
     + Extras
       + Android Support Repository
       + Android Support Library
       + Google Play services
       + Google Repository
       
-      
+   If running in an emulator, install also:
+   
+   + Tools
+     + Android Emulator
+     + Intel x86 Emulator Accelerator (HAXM installer)
+   + Android 6.0 (API 23, "Marshmallow")
+     + Google APIs Intel x86 Atom_64 System Image
+   
 # 2. Documentation
       
 ## 2.1 Authentication
@@ -57,21 +63,24 @@ The main configuration file to put all your Google service id:s (allocated in th
 * [app/src/debug/res/values/google_service_keys.xml](https://github.com/aalto-trafficsense/trafficsense-android/blob/master/app/src/debug/res/values/google_service_keys.xml)
 * [app/src/release/res/values/google_service_keys.xml](https://github.com/aalto-trafficsense/trafficsense-android/blob/master/app/src/release/res/values/google_service_keys.xml)
 
-Gradle picks up the first one when compiling a debug version and the second one for release builds, which allows to play with different configurations. Generation of the credentials is normally during server installation and explained in the [reguler-routes-devops Readme.markdown](https://github.com/aalto-trafficsense/regular-routes-devops/blob/master/README.markdown). The keys are configured in the [Google developer console](https://console.developers.google.com/). The preparation of some credentials requires that the keystore is configured, please check instructions for that in the next section, if needed.
+Gradle picks up the first one when compiling a debug version and the second one for release builds, which allows to play with different configurations. Generation of the credentials is normally during server installation and explained in the [regular-routes-devops Readme.markdown](https://github.com/aalto-trafficsense/regular-routes-devops/blob/master/README.markdown). The keys are configured in the [Google developer console](https://console.developers.google.com/). The preparation of some credentials requires that the keystore is configured, please check instructions for that in the next section, if needed.
 
 * `google_app_id`: Also called `project number`, can be found under the Google developer console "information". Separate projects can be used for the debug and release configurations.
-* `google_maps_key`: The client is using Google Maps and therefore requires maps API to be enabled. On the [Google developer console](https://console.developers.google.com/) for your project under [Menu] "API Manager" / "Overview" select "Google Maps Android API" and "Enable API". Then, under "API Manager" / "Credentials" / "Credentials": "Create credentials" create an "API Key", select "Android" and enter the following information:
-    * Signing-certificate fingerprint: Paste the SHA1 as extracted above
-    * Package name: From the "AndroidManifest.xml" file in the client: "fi.aalto.trafficsense.regularroutes"
+* `google_maps_key`: The client is using Google Maps and therefore requires maps API to be enabled. On the [Google developer console](https://console.developers.google.com/) for your project under [Menu] "APIs and services" / "Dashboard" select "ENABLE APIS AND SERVICES". Find "Google Maps Android API" and "Enable API". Then, under "APIs and services" / "Credentials" / "Credentials": "Create credentials" create an "API Key", select "Android" and enter the following information:
+    * Signing-certificate fingerprint: Paste the SHA1 (instructions for keystore configuration and extraction below 3.2-3.3)
+    * Package name: From the "AndroidManifest.xml" file in the client: "fi.aalto.trafficsense.trafficsense" (or "...debug")
     * Press "Create". Copy the generated key (starting with "AIza...") to `google_maps_key`.
-    * Separate keys can be allocated for debug and release configurations.
+    * Separate keys can be allocated for debug and release configurations (note the different package names).
+    * It is practical to do the other key allocation instructed in 3.2-3.3 at this time.
 * `server_address_test` and `server_address_production`: Insert the http(s)-address of the server (terminate with `/api`) the client is being built for. The first address is for a test server, the second for a production server. If there is no separate test server, the addresses can be the same.
-* `web_client_id_test` and `web_client_id_production`: Under "APIs & Auth" / "Credentials" / "OAuth 2.0 client IDs" / "Web client 1". "client id for web application" / "client".
+* `web_client_id_test` and `web_client_id_production`: Instructed to be generated during server setup in [devops instructions](https://github.com/aalto-trafficsense/regular-routes-devops/blob/master/README.markdown). Can be found from under "APIs & services" / "Credentials" / "OAuth 2.0 client IDs" / "Web client 1" / "Client ID".
 
 Current versions of the system also support [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging/) for pushing traffic disruption notices to clients. The [Firebase console](https://console.firebase.google.com/) generates new credentials and configuration files named `google-services.json`, when the project is imported to Firebase (or generated on Firebase from scratch). The debug and production build copies of these files should be located in:
 
 * [app/src/debug](https://github.com/aalto-trafficsense/trafficsense-android/blob/master/app/src/debug/google-services.json)
 * [app/src/release](https://github.com/aalto-trafficsense/trafficsense-android/blob/master/app/src/release/google-services.json)
+
+If there are no separate configurations for test and production server, a single `google-services.json` file can be placed directly into the `app` directory.
 
 Whether to use the test server or production server is selected in `ts_configuration.xml`, again separately for debug and production builds. There are also two separate template copies in:
 
@@ -98,12 +107,14 @@ The SHA1 of a release keystore is extracted with:
 
     $ keytool -list -v -keystore my-release-key.keystore -alias alias-name
 
-On the console under "API Manager" / "Credentials" / "Credentials": "Create credentials" create an "OAuth 2.0 client ID" with the following information:
+On the console under "APIs & services" / "Credentials" / "Credentials": "Create credentials" create an "OAuth client ID" with the following information:
 * Application type: Android
 * Signing-certificate fingerprint: Paste the SHA1 as extracted above
-* Package name: From the "AndroidManifest.xml" file in the client: "fi.aalto.trafficsense.regularroutes"
+* Package name: From the "AndroidManifest.xml" file in the client: "fi.aalto.trafficsense.trafficsense" (...".debug" for a debug client)
 * Google+ deep linking is not used.
 * Press "Create"
+
+This key does not need to be entered anywhere, but it has to exist on the Google console for the project for the sign-in to work.
 
 ## 3.4 Build
 
@@ -121,3 +132,10 @@ Problem: Opening the client with Intellij IDEA after a new pull from repo, the f
     Compilation is not supported for following modules: regularroutes. Unfortunately you can't have non-Gradle Java modules and Android-Gradle modules in one project.
 
 Solution: Make an arbitrary modification to "settings.gradle" (e.g. add an empty line) and respond "sync now" to the message that appears. The problem should disappear.
+
+### 3.5.2 Gradle doesn't "see" the app
+
+Problem: Gradle seems to be ignoring the application (in Android Studio under "Project" / "Android" there is only a "Gradle scripts" folder, no "app" folder).
+
+Solution: Check that there is a top-level file "settings.gradle" with the content "include ':app'".
+
