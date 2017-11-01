@@ -1,9 +1,16 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        hsl_debug_key {
+            keyAlias 'hsl_debug'
+            keyPassword 'ud:rNKLdP@8?z=.nqk.-'
+            storeFile file('/Users/Mikko/Dev/dinador/hsl/keys/hsl-debug-key1.keystore')
+            storePassword 'e`vYUMU]689zEJ3/3p>3'
+        }
+    }
     compileSdkVersion 23
     buildToolsVersion "26.0.2"
-
     defaultConfig {
         applicationId "fi.aalto.trafficsense.trafficsense"
         minSdkVersion 15
@@ -15,6 +22,7 @@ android {
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
+            signingConfig signingConfigs.hsl_debug_key
         }
         release {
             shrinkResources true
@@ -25,9 +33,8 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-
     // List of play services components available here: https://developers.google.com/android/guides/setup#add_google_play_services_to_your_project
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.android.support:preference-v7:23.3.0'
