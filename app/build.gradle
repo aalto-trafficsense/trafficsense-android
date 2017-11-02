@@ -3,10 +3,16 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
         hsl_debug_key {
-            keyAlias 'hsl_debug'
+            keyAlias 'hsl-debug-1'
             keyPassword 'ud:rNKLdP@8?z=.nqk.-'
             storeFile file('/Users/Mikko/Dev/dinador/hsl/keys/hsl-debug-key1.keystore')
             storePassword 'e`vYUMU]689zEJ3/3p>3'
+        }
+        hsl_release_key {
+            keyAlias 'hsl-release1'
+            keyPassword 'N/]9g=mdLB%\'eD@u47`w'
+            storeFile file('/Users/Mikko/Dev/dinador/hsl/keys/hsl-release-key1.keystore')
+            storePassword '_R2peU\'xV`rT\43hE}fS'
         }
     }
     compileSdkVersion 23
@@ -28,6 +34,7 @@ android {
             shrinkResources true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.hsl_release_key
         }
     }
 }
