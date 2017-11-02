@@ -89,6 +89,17 @@ Whether to use the test server or production server is selected in `ts_configura
 
 The current default in the files is to use the test server for debug builds and production server for release builds.
 
+A number of string resources (under `app/res/values/strings.xml`) have installation-specific information and need to be checked for changes:
+* app_name: Name of the application.
+* title_activity_main: Main activity title (currently the same as the name of the application).
+* title-activity_about: The English label contains the name of the application.
+* trafficsense_web_page: Page link to open (with language variants) when clicking on the drawer logo.
+* navigation_header_name: Navigation drawer header
+* navigation_header_email: The email-address shown on the navigation header
+* feedback_form_address: The URL of the page to open, when feedback sending is selected from the main drawer.
+* transport_form_address: The URL of the page to open, when "Register transport" is selected from the main drawer. _Note: This option is only visible, when debug mode is active in the client._
+* energy_uri: The contact URI to print on an energy certificate.
+
 ## 3.2 Configure your keystore (if needed)
 
 Please check [further instructions on signing apps from Google](https://developer.android.com/tools/publishing/app-signing.html). Both debug- and release keys are ok. If using the debug-key, it is normally located in `~/.android/debug.keystore`. A keystore for a release key is generated with:
