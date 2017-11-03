@@ -89,7 +89,7 @@ Whether to use the test server or production server is selected in `ts_configura
 
 The current default in the files is to use the test server for debug builds and production server for release builds.
 
-A number of string resources (under `app/res/values/strings.xml`) have installation-specific information and need to be checked for changes:
+A number of string resources (under `app/res/values/strings.xml`) have installation-specific information and need to be checked for changes (in three language variants English / Finnish / Stadi):
 * app_name: Name of the application.
 * title_activity_main: Main activity title (currently the same as the name of the application).
 * title-activity_about: The English label contains the name of the application.
@@ -97,6 +97,9 @@ A number of string resources (under `app/res/values/strings.xml`) have installat
 * navigation_header_name: Navigation drawer header
 * navigation_header_email: The email-address shown on the navigation header
 * feedback_form_address: The URL of the page to open, when feedback sending is selected from the main drawer.
+* research_consent: End-user license agreement text for approval during first start after installing the application.
+* research_consent_title: The EULA title.
+* research_consent_dismissed: Text shown if EULA is not accepted. Check also this one, since it currently talks about "consent", which may not be the case for all EULA.
 * transport_form_address: The URL of the page to open, when "Register transport" is selected from the main drawer. _Note: This option is only visible, when debug mode is active in the client._
 * energy_uri: The contact URI to print on an energy certificate.
 
