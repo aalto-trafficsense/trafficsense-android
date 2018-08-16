@@ -10,6 +10,10 @@ android {
         versionName "pa0.1"
         resConfigs "en", "fi", "fi-rHI"
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
