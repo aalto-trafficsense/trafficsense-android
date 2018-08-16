@@ -6,6 +6,7 @@ import android.content.*;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.preference.PreferenceManager;
@@ -165,7 +166,12 @@ public class TrafficSenseApplication extends Application {
         mTSServiceState = STARTING;
         updateServiceState();
         Intent serviceIntent = new Intent(this, TrafficSenseService.class);
-        startService(serviceIntent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            serviceIntent.addFlags(Intent.FLAG_FROM_BACKGROUND);
+            startForegroundService(serviceIntent);
+        } else {
+            startService(serviceIntent);
+        }
         bindService(serviceIntent, mServiceConnection, BIND_AUTO_CREATE | BIND_IMPORTANT);
         mTSServiceState = RUNNING;
     }
