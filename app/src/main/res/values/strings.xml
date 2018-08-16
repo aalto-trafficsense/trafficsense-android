@@ -297,5 +297,9 @@
     <string name="energy_uri">trafficsense.aalto.fi</string>
     <string name="energy_share_filename">energy_certificate.jpg</string>
     <string name="on_bicycle">Bicycle</string>
+    <string name="notif_chan_perm_name">Permanent Notification</string>
+    <string name="notif_chan_perm_desc">Shows the current state of the service.</string>
+    <string name="notif_chan_service_name">Information from Server</string>
+    <string name="notif_chan_service_desc">For example traffic disruption bulletings.</string>
 
 </resources>

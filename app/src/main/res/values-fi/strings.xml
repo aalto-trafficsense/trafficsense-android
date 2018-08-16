@@ -146,4 +146,8 @@
     <string name="title_activity_debugview">Testaus</string>
     <string name="navigation_debug">Testaus</string>
     <string name="path_edit_confirmed">Vahvistettu.</string>
+    <string name="notif_chan_perm_name">Pysyvä Ilmoitus</string>
+    <string name="notif_chan_perm_desc">Näyttää palvelun nykyisen tilan.</string>
+    <string name="notif_chan_service_name">Palvelun tiedotteet</string>
+    <string name="notif_chan_service_desc">Esimerkiksi liikenteen häiriötiedotteet.</string>
 </resources>

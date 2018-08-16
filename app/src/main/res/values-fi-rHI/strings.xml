@@ -247,5 +247,9 @@
     <string name="certificate_url_broken">URLissa feelua.</string>
     <string name="bicycle">Fillari</string>
     <string name="path_edit_confirmed">Reilassa.</string>
+    <string name="notif_chan_perm_name">Pysyvä Ilmoitus</string>
+    <string name="notif_chan_perm_desc">Näyttää palvelun nykyisen tilan.</string>
+    <string name="notif_chan_service_name">Palvelun tiedotteet</string>
+    <string name="notif_chan_service_desc">Esimerkiksi liikenteen häiriötiedotteet.</string>
 
 </resources>

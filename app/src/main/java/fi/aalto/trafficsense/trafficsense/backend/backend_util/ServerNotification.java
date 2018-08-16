@@ -1,6 +1,7 @@
 package fi.aalto.trafficsense.trafficsense.backend.backend_util;
 
 import android.app.AlarmManager;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -8,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import com.google.firebase.messaging.RemoteMessage;
@@ -79,6 +81,7 @@ public class ServerNotification {
     private static final String PTP_NOTIFICATION = "PTP_NOTIFICATION";
 
     public static final String NOTIFICATION_PREFS_FILE_NAME = "SurveyPrefs";
+    private static String CHANNEL_ID = "trafficsense_server";
 
     private SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
@@ -279,7 +282,17 @@ public class ServerNotification {
         }
 
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(TrafficSenseApplication.getContext())
+        Context ctx = TrafficSenseApplication.getContext();
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = ctx.getText(R.string.app_name) + " " + ctx.getText(R.string.notif_chan_service_name);
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription(ctx.getString(R.string.notif_chan_service_desc));
+            NotificationManager notificationManager = ctx.getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(TrafficSenseApplication.getContext(), CHANNEL_ID)
                 .setSmallIcon(notificationIcon)
                 .setColor(ContextCompat.getColor(TrafficSenseApplication.getContext(),R.color.colorTilting))
                 .setContentTitle(messageTitle)

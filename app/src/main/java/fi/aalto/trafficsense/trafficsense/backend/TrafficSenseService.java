@@ -1,10 +1,12 @@
 package fi.aalto.trafficsense.trafficsense.backend;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.*;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
@@ -19,6 +21,7 @@ import fi.aalto.trafficsense.trafficsense.util.*;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+import static android.support.v4.app.NotificationCompat.VISIBILITY_SECRET;
 import static fi.aalto.trafficsense.trafficsense.util.ActivityType.STILL;
 import static fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts.LABEL_STATE_INDEX;
 import static fi.aalto.trafficsense.trafficsense.util.TSServiceState.RUNNING;
@@ -51,6 +54,7 @@ public class TrafficSenseService extends Service {
     private ActivityType mPreviousActivity = STILL;
 
     private static final int ONGOING_NOTIFICATION_ID = 1212; // Not zero, pulled from sleeve
+    private static String CHANNEL_ID = "trafficsense_permanent";
 
     /* Overridden Methods */
     @Override
@@ -165,30 +169,37 @@ public class TrafficSenseService extends Service {
     public static TSServiceState getServiceState() { return mServiceState; }
 
     private Notification buildActivityNotification(ActivityType act) {
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-        return builder.setContentIntent(pendingIntent)
-                .setSmallIcon(ActivityType.getActivityIcon(act))
-                .setColor(ContextCompat.getColor(this,R.color.colorWalking))
-                .setWhen(System.currentTimeMillis())
-                .setContentTitle(getText(R.string.app_name))
+        return createNotificationCommon(this).setSmallIcon(ActivityType.getActivityIcon(act))
                 .setContentText(ActivityType.getActivityString(act)).build();
     }
 
     private static Notification buildServiceStateNotification() {
-        Context ctx = TrafficSenseService.getContext();
-        Intent notificationIntent = new Intent(ctx, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(ctx, 0, notificationIntent, 0);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(ctx);
         int nIcon = R.mipmap.ic_launcher;
         if (mServiceState == SLEEPING) nIcon = R.drawable.md_sleep;
-        return builder.setContentIntent(pendingIntent)
-                .setSmallIcon(nIcon)
-                .setColor(ContextCompat.getColor(ctx,R.color.colorWalking))
-                .setWhen(System.currentTimeMillis())
-                .setContentTitle(ctx.getText(R.string.app_name))
+        return createNotificationCommon(TrafficSenseService.getContext()).setSmallIcon(nIcon)
                 .setContentText(getServiceStateString(getServiceState())).build();
+    }
+
+    private static NotificationCompat.Builder createNotificationCommon(Context ctx) {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = ctx.getText(R.string.app_name) + " " + ctx.getText(R.string.notif_chan_perm_name);
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_MIN);
+            channel.setDescription(ctx.getString(R.string.notif_chan_perm_desc));
+            NotificationManager notificationManager = ctx.getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+        Intent notificationIntent = new Intent(ctx, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(ctx, 0, notificationIntent, 0);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(ctx, CHANNEL_ID);
+        return builder.setContentIntent(pendingIntent)
+                .setVisibility(VISIBILITY_SECRET) // No need to show this on the lock screen
+                .setWhen(System.currentTimeMillis())
+                .setCategory(NotificationCompat.CATEGORY_SERVICE)
+                .setPriority(NotificationCompat.PRIORITY_MIN)
+                .setColor(ContextCompat.getColor(ctx,R.color.colorWalking))
+                .setContentTitle(ctx.getText(R.string.app_name));
     }
 
     /*************************
