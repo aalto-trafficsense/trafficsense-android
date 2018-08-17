@@ -26,6 +26,9 @@
 -keep class com.caverock.androidsvg.** { *; }
 -dontwarn com.caverock.androidsvg.**
 
+-keep class com.google.errorprone.annotations.** { *; }
+-dontwarn com.google.errorprone.annotations.**
+
 -keep class android.support.v7.** { *; }
 -keep class android.support.v4.** { *; }
 
