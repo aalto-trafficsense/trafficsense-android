@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">TrafficSense</string>
+    <string name="app_name">TrafficSense Aalto</string>
     <string name="accounts_permission_explanation">Lupa tarvitaan palveluun kirjautumiseen. Emme käytä muita yhteystietoja.</string>
     <string name="accounts_permission_persistently_refused">Palveluun ei voi kirjautua ilman tätä lupaa.</string>
     <string name="action_signIn">Kirjaudu</string>

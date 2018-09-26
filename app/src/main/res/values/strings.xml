@@ -1,8 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools"
            tools:ignore="MissingTranslation">
 
-    <string name="app_name">TrafficSense</string>
-    <string name="title_activity_main" translatable="false">TrafficSense</string>
+    <string name="app_name">TrafficSense Aalto</string>
+    <string name="title_activity_main" translatable="false">TrafficSense Aalto</string>
     <string name="title_activity_debugview">Debug</string>
     <string name="title_activity_login">Sign in</string>
     <string name="title_activity_about">About TrafficSense</string>
@@ -12,7 +12,7 @@
     <string name="text_continue">Continue</string>
 
     <string name="trafficsense_web_page">https://aaltotrafficsense.wordpress.com/about/</string>
-    <string name="navigation_header_name" translatable="false">TrafficSense</string>
+    <string name="navigation_header_name" translatable="false">TrafficSense Aalto</string>
     <string name="navigation_header_email" translatable="false">trafficsense.aalto@gmail.com</string>
     <string name="email_subject">Sent from client</string>
     <string name="email_startactivity_text">Preparing to send email...</string>
