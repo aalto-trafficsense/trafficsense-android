@@ -250,36 +250,12 @@
     <string name="service_off">Service off</string>
     <string name="upload_button">Upload</string>
 
-    <string name="research_consent_title">Informed Consent</string>
+    <string name="research_consent_title">General Terms of Use</string>
     <string name="research_consent">
-        By giving my consent I confirm my voluntary participation in a study belonging
-        to the TrafficSense project and I consent to anonymous research data collected
-        about me being processed in the ways described in the research description.\n\n
-        I also
-        confirm that I am at least 15 years old. If I am under 18 years old I confirm that I
-        have the consent of my guardian for participation.\n\n
-        I have read and understood <a href="https://aaltotrafficsense.wordpress.com/research/">the research description</a>
-        and confirm that I have received sufficient information on the study. I have understood
-        that my participation is completely voluntary and I am aware of the fact that I have
-        the right to cancel my participation in the study at any time without providing
-        a reason, and without any consequences. I have understood that I can ask for
-        more information about the study from the researcher named below.\n\n
-        The research data collected about me is only available for processing
-        by the TrafficSense –project researchers. However, the project leader may give
-        permission for third parties to analyze my research data for scientific purposes
-        without my separate additional approval. In such a case, the anonymity of the
-        results must be ensured. Any commercial use of my research data is not allowed.\n\n
-        I have understood that by continuing to use the TrafficSense application I participate
-        in the study and that I can discontinue my participation in the study by uninstalling
-        the application and that the data collected up to that point can be used in the
-        research. I have understood that I may also cancel my participation in study in the
-        way described in the research description.\n\n
-        I am not aware of any medical or health condition that would prevent me from
-        participating in the study.\n\n
-        For more information on the study or in case of any questions, please contact:\n
-        Project leader, Seppo Törmä\n
-        Phone (switch): (09) 47001\n
-        Email: <a href="mailto:trafficsense.aalto@gmail.com?Subject=Question%20about%20the%20project">trafficsense.aalto@gmail.com</a>
+        By giving my consent I confirm that I have read and understood
+        <a href="https://aaltotrafficsense.wordpress.com/research/">the general terms of use</a> and
+        <a href="https://aaltotrafficsense.wordpress.com/research/">the privacy notice</a>
+        and accept them as legally binding agreements between myself and the Aalto University.
     </string>
     <string name="research_consent_agree_button">I agree</string>
     <string name="research_consent_disagree_button">Not acceptable</string>
