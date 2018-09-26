@@ -224,7 +224,7 @@
     <string name="navigation_broadcast_survey">Vika kyssäri</string>
     <string name="feedback_form_address">https://docs.google.com/forms/d/e/1FAIpQLSc5SwgTEDB3NMfiNjoWjpO_vih7OyePwxNmRaR3socdRCKCPg/viewform?entry.1453132440&amp;entry.1290358306=client_number&amp;entry.1714883594=client_version&amp;entry.3621406=phone_model</string>
     <string name="client_number_label">Asennuksen numero:</string>
-    <string name="trafficsense_web_page">https://aaltotrafficsense.wordpress.com/yleista/</string>
+    <string name="trafficsense_web_page">https://trafficsense.aalto.fi/</string>
     <string name="energy_button_month">kk</string>
     <string name="energy_button_prefix">Viimeisin:</string>
     <string name="energy_button_week">vko</string>

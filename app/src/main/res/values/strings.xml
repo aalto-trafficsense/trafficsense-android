@@ -11,7 +11,7 @@
     <string name="text_close">Close</string>
     <string name="text_continue">Continue</string>
 
-    <string name="trafficsense_web_page">https://aaltotrafficsense.wordpress.com/about/</string>
+    <string name="trafficsense_web_page">https://trafficsense.aalto.fi/</string>
     <string name="navigation_header_name" translatable="false">TrafficSense Aalto</string>
     <string name="navigation_header_email" translatable="false">trafficsense.aalto@gmail.com</string>
     <string name="email_subject">Sent from client</string>
