@@ -774,8 +774,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setDrawerLanguage(boolean stadi) {
-        mLangStadiItem.setVisible(!stadi);
-        mLangDefaultItem.setVisible(stadi);
+        // Disabling selection of Helsinki dialect ("stadi" language)
+        // Remove the two lines below and uncomment the two following ones to restore
+        mLangStadiItem.setVisible(false);
+        mLangDefaultItem.setVisible(false);
+//        mLangStadiItem.setVisible(!stadi);
+//        mLangDefaultItem.setVisible(stadi);
     }
 
     // Carry out all service start/stop request tasks
