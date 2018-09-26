@@ -253,8 +253,7 @@
     <string name="research_consent_title">General Terms of Use</string>
     <string name="research_consent">
         By giving my consent I confirm that I have read and understood
-        <a href="https://aaltotrafficsense.wordpress.com/research/">the general terms of use</a> and
-        <a href="https://aaltotrafficsense.wordpress.com/research/">the privacy notice</a>
+        <a href="https://aaltotrafficsense.wordpress.com/research/">the general terms of use and the privacy notice</a>
         and accept them as legally binding agreements between myself and the Aalto University.
     </string>
     <string name="research_consent_agree_button">I agree</string>
