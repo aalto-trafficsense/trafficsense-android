@@ -43,14 +43,14 @@
     <string name="play_services_error">Google Play Services ei saatavilla. Ohjelma sulkeutuu.</string>
     <string name="plus_disconnect">Peru tilinkäyttöoikeus</string>
     <string name="plus_sign_out">Kirjaudu ulos</string>
-    <string name="research_consent_agree_button">Suostun</string>
+    <string name="research_consent_agree_button">Hyväksyn</string>
     <string name="research_consent_disagree_button">En hyväksy</string>
-    <string name="research_consent_dismissed">Valitettavasti tätä sovellusta voi käyttää ainoastaan suostumuksen antamalla.</string>
+    <string name="research_consent_dismissed">Valitettavasti tätä sovellusta voi käyttää ainoastaan ehdot hyväksymällä.</string>
     <string name="research_consent_title">Yleiset käyttöehdot</string>
     <string name="research_consent">
-        Suostumuksellani vahvistan, että olen lukenut ja ymmärtänyt
+        Olen lukenut ja ymmärtänyt
         <a href="https://aaltotrafficsense.wordpress.com/tutkimuksen-kuvaus/">yleiset käyttöehdot ja tietosuojakuvauksen</a>
-        ja hyväksyn ne sitoviksi sopimuksiksi itseni ja Aalto-yliopiston välillä.
+        ja hyväksyn sopimusehdot.
     </string>
     <string name="service_off">Palvelu suljettu</string>
     <string name="service_state_running">Päällä</string>

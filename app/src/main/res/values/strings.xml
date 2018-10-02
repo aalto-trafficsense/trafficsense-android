@@ -252,13 +252,13 @@
 
     <string name="research_consent_title">General Terms of Use</string>
     <string name="research_consent">
-        By giving my consent I confirm that I have read and understood
+        I confirm that I have read and understood
         <a href="https://aaltotrafficsense.wordpress.com/research/">the general terms of use and the privacy notice</a>
-        and accept them as legally binding agreements between myself and the Aalto University.
+        and I accept the terms.
     </string>
-    <string name="research_consent_agree_button">I agree</string>
-    <string name="research_consent_disagree_button">Not acceptable</string>
-    <string name="research_consent_dismissed">Sorry, but this application can only be used if the research consent has been agreed.</string>
+    <string name="research_consent_agree_button">I accept</string>
+    <string name="research_consent_disagree_button">I do not accept</string>
+    <string name="research_consent_dismissed">Sorry, but this application can only be used if the terms of use have been agreed.</string>
 
     <string name="energy_button_prefix">Latest:</string>
     <string name="energy_button_month">month</string>
