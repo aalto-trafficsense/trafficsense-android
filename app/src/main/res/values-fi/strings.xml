@@ -49,7 +49,7 @@
     <string name="research_consent_title">Yleiset käyttöehdot</string>
     <string name="research_consent">
         Olen lukenut ja ymmärtänyt
-        <a href="https://aaltotrafficsense.wordpress.com/tutkimuksen-kuvaus/">yleiset käyttöehdot ja tietosuojakuvauksen</a>
+        <a href="https://www.aalto.fi/department-of-built-environment/trafficsense-terms-of-use-and-privacy-notice">yleiset käyttöehdot ja tietosuojakuvauksen</a>
         ja hyväksyn sopimusehdot.
     </string>
     <string name="service_off">Palvelu suljettu</string>

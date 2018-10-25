@@ -11,7 +11,7 @@
     <string name="text_close">Close</string>
     <string name="text_continue">Continue</string>
 
-    <string name="trafficsense_web_page">https://trafficsense.aalto.fi/</string>
+    <string name="trafficsense_web_page">https://www.aalto.fi/department-of-built-environment/trafficsense</string>
     <string name="navigation_header_name" translatable="false">TrafficSense Aalto</string>
     <string name="navigation_header_email" translatable="false">trafficsense.aalto@gmail.com</string>
     <string name="email_subject">Sent from client</string>
@@ -253,7 +253,7 @@
     <string name="research_consent_title">General Terms of Use</string>
     <string name="research_consent">
         I confirm that I have read and understood
-        <a href="https://aaltotrafficsense.wordpress.com/research/">the general terms of use and the privacy notice</a>
+        <a href="https://www.aalto.fi/department-of-built-environment/trafficsense-terms-of-use-and-privacy-notice">the general terms of use and the privacy notice</a>
         and I accept the terms.
     </string>
     <string name="research_consent_agree_button">I accept</string>
