@@ -4,10 +4,10 @@
     <item
         android:drawable="@color/colorWalking"/>
 
-    <item>
-        <bitmap
+    <item
             android:gravity="center"
-            android:src="@mipmap/ic_launcher"/>
-    </item>
+            android:drawable="@drawable/ic_trafficsense_icon"
+            android:width="@dimen/splash_icon_dp"
+            android:height="@dimen/splash_icon_dp" />
 
 </layer-list>

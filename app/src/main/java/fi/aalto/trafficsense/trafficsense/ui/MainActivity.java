@@ -1234,7 +1234,7 @@ public class MainActivity extends AppCompatActivity
                 res = R.drawable.map_dest5;
                 break;
             default:
-                res = R.mipmap.ic_launcher;
+                res = R.drawable.ic_warning_black_24dp;
         }
 
         return BitmapDescriptorFactory.fromResource(res);
