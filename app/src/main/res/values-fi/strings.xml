@@ -49,7 +49,7 @@
     <string name="research_consent_title">Yleiset käyttöehdot</string>
     <string name="research_consent">
         Olen lukenut ja ymmärtänyt
-        <a href="https://www.aalto.fi/department-of-built-environment/trafficsense-terms-of-use-and-privacy-notice">yleiset käyttöehdot ja tietosuojakuvauksen</a>
+        <a href="https://www.aalto.fi/fi/rakennetun-ympariston-laitos/trafficsense-sovelluksen-kayttoehdot-ja-tietoturvalauseke">yleiset käyttöehdot ja tietosuojakuvauksen</a>
         ja hyväksyn sopimusehdot.
     </string>
     <string name="service_off">Palvelu suljettu</string>
@@ -84,7 +84,7 @@
     <string name="unknown">Tuntematon</string>
     <string name="walking">Kävely</string>
     <string name="not_available"></string>
-    <string name="trafficsense_web_page">https://trafficsense.aalto.fi/</string>
+    <string name="trafficsense_web_page">https://www.aalto.fi/fi/rakennetun-ympariston-laitos/trafficsense</string>
     <string name="main_toolbar_dest_label">Kohteet</string>
     <string name="dest_no_data">Ei kohteita.</string>
     <string name="dest_url_broken">Kohteiden hakuosoite viallinen.</string>
