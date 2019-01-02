@@ -12,19 +12,30 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+
 import fi.aalto.trafficsense.trafficsense.R;
 import fi.aalto.trafficsense.trafficsense.TrafficSenseApplication;
 import fi.aalto.trafficsense.trafficsense.backend.uploader.RegularRoutesPipeline;
 import fi.aalto.trafficsense.trafficsense.util.BackendStorage;
 import fi.aalto.trafficsense.trafficsense.util.Callback;
+import fi.aalto.trafficsense.trafficsense.util.HashUtil;
 import fi.aalto.trafficsense.trafficsense.util.InternalBroadcasts;
 import fi.aalto.trafficsense.trafficsense.util.PlusSignInHelper;
 import timber.log.Timber;
@@ -41,11 +52,10 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class LoginActivity extends AppCompatActivity
         implements
-            GoogleApiClient.ConnectionCallbacks,
-            GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
+            View.OnClickListener {
 
     /* Request code used to invoke sign in user interactions. */
-    private static final int RC_SIGN_IN = 0;
+    private static final int RC_SIGN_IN = 9001;
 
     /* States used in Google Authentication process (not covering LRR server call phase)
        to prevent multiple concurrent calls when process in already ongoing
@@ -96,8 +106,9 @@ public class LoginActivity extends AppCompatActivity
     private int mSignInProgress;
 
     private AtomicReference<Boolean> mClearAccountTriggered = new AtomicReference<>(false);
-    private GoogleApiClient mGoogleApiClient;
-    private PlusSignInHelper mPlusSignInHelper;
+//    private GoogleApiClient mGoogleApiClient;
+    private GoogleSignInClient mGoogleSignInClient;
+//    private PlusSignInHelper mPlusSignInHelper;
     private BackendStorage mStorage;
     private boolean mUploadEnabledState;
     private Handler mHandler = new Handler();
@@ -166,6 +177,14 @@ public class LoginActivity extends AppCompatActivity
             RegularRoutesPipeline.setUploadEnabledState(false);
 
         initBroadcastReceiver();
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//                .requestIdToken(getWebClientId())
+                .requestServerAuthCode(getWebClientId())
+                .build();
+        // Build a GoogleSignInClient with the options specified by gso.
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
     }
 
     @Override
@@ -175,10 +194,11 @@ public class LoginActivity extends AppCompatActivity
         if (isSignedIn()) {
             mSignInButton.setEnabled(false);
             setStatusAsAuthenticated();
-        } else {
-            // Check account permissions
-            checkAccountPermission();
         }
+//        else {
+//            // Check account permissions
+//            checkAccountPermission();
+//        }
     }
 
     @Override
@@ -188,48 +208,48 @@ public class LoginActivity extends AppCompatActivity
     }
 
 
-    private void checkAccountPermission() {
-        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.GET_ACCOUNTS)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission to get accounts is missing.
+//    private void checkAccountPermission() {
+//        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.GET_ACCOUNTS)
+//                != PackageManager.PERMISSION_GRANTED) {
+//            // Permission to get accounts is missing.
+//
+//            // Should we show an explanation?
+//            if (ActivityCompat.shouldShowRequestPermissionRationale(LoginActivity.this,
+//                    Manifest.permission.GET_ACCOUNTS)) {
+//                // Permission persistently refused by the user
+//                Toast.makeText(this, mRes.getString(R.string.accounts_permission_persistently_refused), Toast.LENGTH_LONG).show();
+//                finish();
+//            } else {
+//                // No explanation needed, we can request the permission.
+//                Toast.makeText(this, mRes.getString(R.string.accounts_permission_explanation), Toast.LENGTH_LONG).show();
+//                ActivityCompat.requestPermissions(LoginActivity.this,
+//                        new String[]{Manifest.permission.GET_ACCOUNTS},
+//                        MY_PERMISSIONS_GET_ACCOUNTS);
+//            }
+//        }
+//    }
 
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(LoginActivity.this,
-                    Manifest.permission.GET_ACCOUNTS)) {
-                // Permission persistently refused by the user
-                Toast.makeText(this, mRes.getString(R.string.accounts_permission_persistently_refused), Toast.LENGTH_LONG).show();
-                finish();
-            } else {
-                // No explanation needed, we can request the permission.
-                Toast.makeText(this, mRes.getString(R.string.accounts_permission_explanation), Toast.LENGTH_LONG).show();
-                ActivityCompat.requestPermissions(LoginActivity.this,
-                        new String[]{Manifest.permission.GET_ACCOUNTS},
-                        MY_PERMISSIONS_GET_ACCOUNTS);
-            }
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_GET_ACCOUNTS: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Timber.d("ACCESS_FINE_LOCATION permission granted.");
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    Toast.makeText(this, mRes.getString(R.string.accounts_permission_persistently_refused), Toast.LENGTH_LONG).show();
-                    finish();
-                }
-                return;
-            }
-            // other 'case' lines to check for other
-            // permissions this app might request
-        }
-    }
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode,
+//                                           String permissions[], int[] grantResults) {
+//        switch (requestCode) {
+//            case MY_PERMISSIONS_GET_ACCOUNTS: {
+//                // If request is cancelled, the result arrays are empty.
+//                if (grantResults.length > 0
+//                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    Timber.d("MY_PERMISSIONS_GET_ACCOUNTS permission granted.");
+//                } else {
+//                    // permission denied, boo! Disable the
+//                    // functionality that depends on this permission.
+//                    Toast.makeText(this, mRes.getString(R.string.accounts_permission_persistently_refused), Toast.LENGTH_LONG).show();
+//                    finish();
+//                }
+//                return;
+//            }
+//            // other 'case' lines to check for other
+//            // permissions this app might request
+//        }
+//    }
 
 
     @Override
@@ -241,18 +261,29 @@ public class LoginActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-        // Connect, if not authenticated already
-        mGoogleApiClient.connect();
 
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
+        // Check for existing Google Sign In account, if the user is already signed in
+        // the GoogleSignInAccount will be non-null.
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        if (isSignedIn()) {
+            mSignInButton.setEnabled(false);
+            setStatusAsAuthenticated();
         }
+//        updateUI(account);
+
+
+//        // Connect, if not authenticated already
+//        mGoogleApiClient.connect();
+
     }
+
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        if (mGoogleApiClient.isConnected()) {
+//            mGoogleApiClient.disconnect();
+//        }
+//    }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
@@ -265,148 +296,195 @@ public class LoginActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int responseCode, Intent intent) {
-        if (requestCode == RC_SIGN_IN
-                || requestCode == PlusSignInHelper.RC_RECOVER_PLAY_SERVICES ) {
-            if (responseCode == RESULT_OK) {
-                // If the error resolution was successful we should continue
-                // processing errors.
-                setGoogleSignInProgress(STATE_SIGN_IN);
-            }else {
-                // If the error resolution was not successful or the user canceled,
-                // we should stop processing errors.
-                onGoogleSignInCompleted();
-            }
+        super.onActivityResult(requestCode, responseCode, intent);
+
+        if (requestCode == RC_SIGN_IN) {
+            // The Task returned from this call is always completed, no need to attach
+            // a listener.
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(intent);
+            handleSignInResult(task);
+        }
 
 
-            if (!mGoogleApiClient.isConnecting()) {
-                // If Google Play services resolved the issue with a dialog then
-                // onStart is not called so we need to re-attempt connection here.
-                mGoogleApiClient.connect();
-            }
-            return;
-        }
-        if (requestCode == PlusSignInHelper.RC_ID_QUERY) {
-            if (responseCode == RESULT_OK) {
-                // Re-fetch authentication
-                fetchAndSetAuthenticationTokens(mFetchAndSetAuthenticationTokensCallback);
-            }
-            else
-                signOutUser();
-        }
+//        if (requestCode == RC_SIGN_IN
+//                || requestCode == PlusSignInHelper.RC_RECOVER_PLAY_SERVICES ) {
+//            if (responseCode == RESULT_OK) {
+//                // If the error resolution was successful we should continue
+//                // processing errors.
+//                setGoogleSignInProgress(STATE_SIGN_IN);
+//            }else {
+//                // If the error resolution was not successful or the user canceled,
+//                // we should stop processing errors.
+//                onGoogleSignInCompleted();
+//            }
+//
+//
+//            if (!mGoogleApiClient.isConnecting()) {
+//                // If Google Play services resolved the issue with a dialog then
+//                // onStart is not called so we need to re-attempt connection here.
+//                mGoogleApiClient.connect();
+//            }
+//            return;
+//        }
+//        if (requestCode == PlusSignInHelper.RC_ID_QUERY) {
+//            if (responseCode == RESULT_OK) {
+//                // Re-fetch authentication
+//                fetchAndSetAuthenticationTokens(mFetchAndSetAuthenticationTokensCallback);
+//            }
+//            else
+//                signOutUser();
+//        }
+
     }
 
-
-
-    @Override
-    public void onConnected(Bundle connectionHint) {
-        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.GET_ACCOUNTS)
-                == PackageManager.PERMISSION_GRANTED) {
-            if (mClearAccountTriggered.get()) {
-                // Connection was established to sign out
-                mClearAccountTriggered.set(false);
-                clearAccountAndReconnect();
-                return;
-            }
-
-            setUiControlStates(true);
-
-            if (isSignedIn()) {
-                // No need to get device authentication id
-                doSignInActions();
-                return;
-            }
-
-            if (mAuthenticationOngoing.get())
-                return;
-
-            mAuthenticationOngoing.set(true);
-            // Indicate that the sign in process is complete.
-            mStatus.setText(getResources().getString(R.string.status_fetch_auth_tokens));
-            Timber.i("Login: onConnected");
-            fetchAndSetAuthenticationTokens(mFetchAndSetAuthenticationTokensCallback);
-        }
-    }
-
-
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        // reconnect
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-        public void onConnectionFailed(ConnectionResult result) {
+    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
-            final int errorCode = result.getErrorCode();
-            if (errorCode == ConnectionResult.API_UNAVAILABLE) {
-                // An API requested for GoogleApiClient is not available. The device's current
-                // configuration might not be supported with the requested API or a required component
-                // may not be installed, such as the Android Wear application. You may need to use a
-                // second GoogleApiClient to manage the application's optional APIs.
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            if (account != null) {
+                // Signed in successfully, show authenticated UI.
+//            updateUI(account);
+                setUiControlStates(true);
 
-                mPlusSignInHelper.showError(errorCode, new Callback<String>() {
-                    @Override
-                    public void run(String result, RuntimeException error) {
-                        showErrorInDialog(result);
-                    }
-                });
-                return;
+                if (isSignedIn()) {
+                    // No need to get device authentication id
+                    doSignInActions();
+                    return;
+                }
+
+                if (mAuthenticationOngoing.get())
+                    return;
+
+                mAuthenticationOngoing.set(true);
+                // Indicate that the sign in process is complete.
+                mStatus.setText(getResources().getString(R.string.status_fetch_auth_tokens));
+                Timber.i("Login: onConnected");
+                mStorage.writeOneTimeTokenAndUserId(account.getServerAuthCode(), HashUtil.getHashStringFromId(account.getId()));
+                mFetchAndSetAuthenticationTokensCallback.run(true, null);
             }
-
-            if (mSignInProgress == STATE_IN_PROGRESS)
-                return; // Ignore, when connection attempt is ongoing
-
-
-            // We do not have an intent in progress so we should store the latest
-            // connection result for use when the sign in button is clicked.
-            mConnectionResult = result;
-
-
-
-            if (mSignInProgress == STATE_SIGN_IN) {
-                // STATE_SIGN_IN indicates the user already clicked the sign in button
-                // so we should continue processing errors until the user is signed in
-                // or they click cancel.
-                resolveSignInError();
-            }
-        } finally {
-            // user is signed out when it does not have working connection after connection attempt
-            onSignedOut();
+        } catch (ApiException e) {
+            // The ApiException status code indicates the detailed failure reason.
+            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+            Timber.w("signInResult:failed code=" + e.getStatusCode());
+            setUiControlStates(false);
+//            updateUI(null);
+            mFetchAndSetAuthenticationTokensCallback.run(false, new RuntimeException(e.getMessage()));
         }
-
-
     }
+
+
+
+//    @Override
+//    public void onConnected(Bundle connectionHint) {
+//        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.GET_ACCOUNTS)
+//                == PackageManager.PERMISSION_GRANTED) {
+////            if (mClearAccountTriggered.get()) {
+////                // Connection was established to sign out
+////                mClearAccountTriggered.set(false);
+////                clearAccountAndReconnect();
+////                return;
+////            }
+//
+//            setUiControlStates(true);
+//
+//            if (isSignedIn()) {
+//                // No need to get device authentication id
+//                doSignInActions();
+//                return;
+//            }
+//
+//            if (mAuthenticationOngoing.get())
+//                return;
+//
+//            mAuthenticationOngoing.set(true);
+//            // Indicate that the sign in process is complete.
+//            mStatus.setText(getResources().getString(R.string.status_fetch_auth_tokens));
+//            Timber.i("Login: onConnected");
+//            fetchAndSetAuthenticationTokens(mFetchAndSetAuthenticationTokensCallback);
+//        }
+//    }
+
+
+
+//    @Override
+//    public void onConnectionSuspended(int i) {
+//        // reconnect
+//        mGoogleApiClient.connect();
+//    }
+
+//    @Override
+//        public void onConnectionFailed(ConnectionResult result) {
+//        try {
+//            final int errorCode = result.getErrorCode();
+//            if (errorCode == ConnectionResult.API_UNAVAILABLE) {
+//                // An API requested for GoogleApiClient is not available. The device's current
+//                // configuration might not be supported with the requested API or a required component
+//                // may not be installed, such as the Android Wear application. You may need to use a
+//                // second GoogleApiClient to manage the application's optional APIs.
+//
+//                mPlusSignInHelper.showError(errorCode, new Callback<String>() {
+//                    @Override
+//                    public void run(String result, RuntimeException error) {
+//                        showErrorInDialog(result);
+//                    }
+//                });
+//                return;
+//            }
+//
+//            if (mSignInProgress == STATE_IN_PROGRESS)
+//                return; // Ignore, when connection attempt is ongoing
+//
+//
+//            // We do not have an intent in progress so we should store the latest
+//            // connection result for use when the sign in button is clicked.
+//            mConnectionResult = result;
+//
+//
+//
+//            if (mSignInProgress == STATE_SIGN_IN) {
+//                // STATE_SIGN_IN indicates the user already clicked the sign in button
+//                // so we should continue processing errors until the user is signed in
+//                // or they click cancel.
+//                resolveSignInError();
+//            }
+//        } finally {
+//            // user is signed out when it does not have working connection after connection attempt
+//            onSignedOut();
+//        }
+//
+//
+//    }
 
 
     @Override
     public void onClick(View v) {
         // login button click event handlers:
-        if (!mGoogleApiClient.isConnecting()) {
-            // We only process button clicks when GoogleApiClient is not transitioning
-            // between connected and not connected.
-            switch (v.getId()) {
-                case R.id.plus_sign_in_button:
-                    mStatus.setText(R.string.status_signing_in);
-
-                    if (v.getId() == R.id.plus_sign_in_button
-                            && !mGoogleApiClient.isConnecting()) {
-                        resolveSignInError();
-                    }
-                    //resolveSignInError();
-                    break;
-                case R.id.plus_sign_out_button:
-                    signOutUser();
-                    break;
-                case R.id.plus_disconnect_button:
-                    revokeAccess();
-                    break;
-                case R.id.login_continue_button:
-                case R.id.login_close_button:
-                    close(true);
-                    break;
-            }
+        switch (v.getId()) {
+            case R.id.plus_sign_in_button:
+                mStatus.setText(R.string.status_signing_in);
+                getIdToken();
+//
+//                if (v.getId() == R.id.plus_sign_in_button
+//                        && !mGoogleApiClient.isConnecting()) {
+//                    resolveSignInError();
+//                }
+                //resolveSignInError();
+                break;
+            case R.id.plus_sign_out_button:
+                signOut();
+                break;
+            case R.id.plus_disconnect_button:
+                revokeAccess();
+                break;
+            case R.id.login_continue_button:
+            case R.id.login_close_button:
+                close(true);
+                break;
         }
+
+//        if (!mGoogleApiClient.isConnecting()) {
+//            // We only process button clicks when GoogleApiClient is not transitioning
+//            // between connected and not connected.
+//        }
     }
 
     /* Private Helper Methods */
@@ -436,8 +514,8 @@ public class LoginActivity extends AppCompatActivity
         }
 
         /* Other Members */
-        mGoogleApiClient = buildGoogleApiClient();
-        mPlusSignInHelper = new PlusSignInHelper(this);
+//        mGoogleApiClient = buildGoogleApiClient();
+//        mPlusSignInHelper = new PlusSignInHelper(this);
         mStorage = BackendStorage.create(this);
     }
 
@@ -456,7 +534,7 @@ public class LoginActivity extends AppCompatActivity
                                 // The current state should be verified because this message may be delayed
                                 if (!mStorage.isUserIdAvailable()) {
                                     Toast.makeText(getBaseContext(), "Signed out (or sign-in failed)", Toast.LENGTH_LONG).show();
-                                    signOutUser();
+                                    signOut();
                                 }
                             }
                         });
@@ -589,193 +667,248 @@ public class LoginActivity extends AppCompatActivity
         mContinueButton.setVisibility(View.VISIBLE);
     }
 
+    private void getIdToken() {
+        // Show an account picker to let the user choose a Google account from the device.
+        // If the GoogleSignInOptions only asks for IDToken and/or profile and/or email then no
+        // consent screen will be shown here.
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    private void refreshIdToken() {
+        // Attempt to silently refresh the GoogleSignInAccount. If the GoogleSignInAccount
+        // already has a valid token this method may complete immediately.
+        //
+        // If the user has not previously signed in on this device or the sign-in has expired,
+        // this asynchronous branch will attempt to sign in the user silently and get a valid
+        // ID token. Cross-device single sign on will occur in this branch.
+        mGoogleSignInClient.silentSignIn()
+                .addOnCompleteListener(this, new OnCompleteListener<GoogleSignInAccount>() {
+                    @Override
+                    public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
+                        handleSignInResult(task);
+                    }
+                });
+    }
+
+
     private void revokeAccess() {
-        RegularRoutesPipeline.setUploadEnabledState(false);
-        mStorage.clearSessionToken();
-        mStorage.clearOneTimeToken();
-        mStorage.clearUserId();
-        // After we revoke permissions for the user with a GoogleApiClient
-        // instance, we must discard it and create a new one.
-        Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
-        // Our sample has caches no user data from Google+, however we
-        // would normally register a callback on revokeAccessAndDisconnect
-        // to delete user data so that we comply with Google developer
-        // policies.
-        Plus.AccountApi.revokeAccessAndDisconnect(mGoogleApiClient);
-        mGoogleApiClient = buildGoogleApiClient();
-        mGoogleApiClient.connect();
+        mGoogleSignInClient.revokeAccess()
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+//                        updateUI(null);
+                        RegularRoutesPipeline.setUploadEnabledState(false);
+                        mStorage.clearSessionToken();
+                        mStorage.clearOneTimeToken();
+                        mStorage.clearUserId();
+                    }
+                });
 
+
+//        RegularRoutesPipeline.setUploadEnabledState(false);
+//        mStorage.clearSessionToken();
+//        mStorage.clearOneTimeToken();
+//        mStorage.clearUserId();
+//        // After we revoke permissions for the user with a GoogleApiClient
+//        // instance, we must discard it and create a new one.
+//        Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+//        // Our sample has caches no user data from Google+, however we
+//        // would normally register a callback on revokeAccessAndDisconnect
+//        // to delete user data so that we comply with Google developer
+//        // policies.
+//        Plus.AccountApi.revokeAccessAndDisconnect(mGoogleApiClient);
+//        mGoogleApiClient = buildGoogleApiClient();
+//        mGoogleApiClient.connect();
+
+    }
+
+    private void signOut() {
+        mGoogleSignInClient.signOut()
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+//                        updateUI(null);
+                        mContinueButton.setVisibility(View.INVISIBLE);
+                        setUiControlStates(false);
+                        mStatus.setText(R.string.status_signed_out);
+                        RegularRoutesPipeline.setUploadEnabledState(false);
+                        mStorage.clearSessionToken();
+                        mStorage.clearOneTimeToken();
+                        mStorage.clearUserId();
+                    }
+                });
     }
 
 
 
-    private void signOutUser() {
-        mContinueButton.setVisibility(View.INVISIBLE);
-        RegularRoutesPipeline.setUploadEnabledState(false);
-        mStorage.clearSessionToken();
-        mStorage.clearOneTimeToken();
-        mStorage.clearUserId();
+//    private void signOutUser() {
+//        mContinueButton.setVisibility(View.INVISIBLE);
+//        RegularRoutesPipeline.setUploadEnabledState(false);
+//        mStorage.clearSessionToken();
+//        mStorage.clearOneTimeToken();
+//        mStorage.clearUserId();
+//
+//        // We clear the default account on sign out so that Google Play
+//        // services will not return an onConnected callback without user
+//        // interaction.
+//        if (mGoogleApiClient.isConnected()) {
+//            clearAccountAndReconnect();
+//        }
+//        else {
+//            mClearAccountTriggered.set(true);
+//            mGoogleApiClient.connect();
+//        }
+//
+//    }
 
-        // We clear the default account on sign out so that Google Play
-        // services will not return an onConnected callback without user
-        // interaction.
-        if (mGoogleApiClient.isConnected()) {
-            clearAccountAndReconnect();
-        }
-        else {
-            mClearAccountTriggered.set(true);
-            mGoogleApiClient.connect();
-        }
-
-    }
-
-    private void clearAccountAndReconnect() {
-        Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
-        mGoogleApiClient.disconnect();
-        mGoogleApiClient.connect();
-    }
+//    private void clearAccountAndReconnect() {
+//        Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+//        mGoogleApiClient.disconnect();
+//        mGoogleApiClient.connect();
+//    }
 
 
     /**
      * Method that triggers fetching authentication
      **/
-    private void fetchAndSetAuthenticationTokens(final Callback<Boolean> onCompleted) {
-        final int retryInterval = 2000;
+//    private void fetchAndSetAuthenticationTokens(final Callback<Boolean> onCompleted) {
+//        final int retryInterval = 2000;
+//
+//        final Runnable r = new Runnable() {
+//            @Override
+//            public void run() {
+//                if (!mGoogleApiClient.isConnected()) {
+//                    Timber.i("Reconnecting GoogleApiClient");
+//                    reconnectIfRequired();
+//                    mHandler.postDelayed(this, retryInterval);
+//                    return;
+//                }
+//
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        /**
+//                         * This call async task that must be executed on main thread by some
+//                         * Android version or runtime exception is raised
+//                         **/
+//                        mPlusSignInHelper.fetchAuthenticationInfo(mGoogleApiClient,
+//                                new Callback<PlusSignInHelper.AuthenticationInfo>() {
+//                                    @Override
+//                                    public void run(PlusSignInHelper.AuthenticationInfo result, RuntimeException error) {
+//                                        String resultErrorMessage = null;
+//                                        boolean succeeded = error == null;
+//                                        // Account info fetched
+//                                        if (error != null) {
+//                                            Timber.e("Error in authentication token fetch: " + error.getMessage());
+//                                            resultErrorMessage = error.getMessage();
+//                                        }
+//                                        else {
+//                                            if (result.oneTimeToken == null) {
+//                                                // no token received
+//                                                Timber.w("authentication token was null");
+//                                                return;
+//                                            }
+//                                            // Set device authentication values that are used in RestAPI
+//                                            Timber.i("Setting auth data: token=" + result.oneTimeToken + ", hash=" + result.hashValue);
+//                                            mStorage.writeOneTimeTokenAndUserId(result.oneTimeToken, result.hashValue);
+//                                        }
+//                                        if (onCompleted != null) {
+//                                            if (succeeded)
+//                                                onCompleted.run(true, null);
+//                                            else
+//                                                onCompleted.run(false, new RuntimeException(resultErrorMessage));
+//
+//                                        }
+//
+//                                    }
+//                                });
+//                    }
+//                });
+//
+//            }
+//        };
+//
+//        if (mGoogleApiClient.isConnected()) {
+//            new Thread(r).start();
+//            return;
+//        }
+//
+//        final Runnable delayed = new Runnable() {
+//            @Override
+//            public void run() {
+//                if (mGoogleApiClient.isConnected()) {
+//                    new Thread(r).start();
+//                } else {
+//                    reconnectIfRequired();
+//                    Timber.d("Postponing account name fetch by" + retryInterval + " milliseconds");
+//                    mHandler.postDelayed(this, retryInterval);
+//                }
+//
+//
+//            }
+//        };
+//        mHandler.postDelayed(delayed, retryInterval);
+//    }
 
-        final Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                if (!mGoogleApiClient.isConnected()) {
-                    Timber.i("Reconnecting GoogleApiClient");
-                    reconnectIfRequired();
-                    mHandler.postDelayed(this, retryInterval);
-                    return;
-                }
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        /**
-                         * This call async task that must be executed on main thread by some
-                         * Android version or runtime exception is raised
-                         **/
-                        mPlusSignInHelper.fetchAuthenticationInfo(mGoogleApiClient,
-                                new Callback<PlusSignInHelper.AuthenticationInfo>() {
-                                    @Override
-                                    public void run(PlusSignInHelper.AuthenticationInfo result, RuntimeException error) {
-                                        String resultErrorMessage = null;
-                                        boolean succeeded = error == null;
-                                        // Account info fetched
-                                        if (error != null) {
-                                            Timber.e("Error in authentication token fetch: " + error.getMessage());
-                                            resultErrorMessage = error.getMessage();
-                                        }
-                                        else {
-                                            if (result.oneTimeToken == null) {
-                                                // no token received
-                                                Timber.w("authentication token was null");
-                                                return;
-                                            }
-                                            // Set device authentication values that are used in RestAPI
-                                            Timber.i("Setting auth data: token=" + result.oneTimeToken + ", hash=" + result.hashValue);
-                                            mStorage.writeOneTimeTokenAndUserId(result.oneTimeToken, result.hashValue);
-                                        }
-                                        if (onCompleted != null) {
-                                            if (succeeded)
-                                                onCompleted.run(true, null);
-                                            else
-                                                onCompleted.run(false, new RuntimeException(resultErrorMessage));
-
-                                        }
-
-                                    }
-                                });
-                    }
-                });
-
-            }
-        };
-
-        if (mGoogleApiClient.isConnected()) {
-            new Thread(r).start();
-            return;
-        }
-
-        final Runnable delayed = new Runnable() {
-            @Override
-            public void run() {
-                if (mGoogleApiClient.isConnected()) {
-                    new Thread(r).start();
-                } else {
-                    reconnectIfRequired();
-                    Timber.d("Posting account name fetch by" + retryInterval + " milliseconds");
-                    mHandler.postDelayed(this, retryInterval);
-                }
-
-
-            }
-        };
-        mHandler.postDelayed(delayed, retryInterval);
-    }
-
-    private void reconnectIfRequired() {
-        if (mSignInProgress == STATE_IN_PROGRESS)
-            return;
-
-        if (mGoogleApiClient.isConnected() ||mGoogleApiClient.isConnecting())
-            return;
-
-        mGoogleApiClient.connect();
-    }
+//    private void reconnectIfRequired() {
+//        if (mSignInProgress == STATE_IN_PROGRESS)
+//            return;
+//
+//        if (mGoogleApiClient.isConnected() ||mGoogleApiClient.isConnecting())
+//            return;
+//
+//        mGoogleApiClient.connect();
+//    }
 
     /**
      * A helper method to resolve the current ConnectionResult error from Google+.
      */
-    private void resolveSignInError() {
-        if (mConnectionResult == null)
-            return;
+//    private void resolveSignInError() {
+//        if (mConnectionResult == null)
+//            return;
+//
+//        if (mConnectionResult.hasResolution()) {
+//            try {
+//                setGoogleSignInProgress(STATE_IN_PROGRESS);
+//                startIntentSenderForResult(mConnectionResult.getResolution().getIntentSender(),
+//                        RC_SIGN_IN, null, 0, 0, 0);
+//            } catch (IntentSender.SendIntentException e) {
+//                // The intent was canceled before it was sent.  Return to the default
+//                // state and attempt to connect to get an updated ConnectionResult.
+//                setGoogleSignInProgress(STATE_SIGN_IN);
+//                mGoogleApiClient.connect();
+//            }
+//        }
+//        else {
+//
+//            final int errorCode = mConnectionResult.getErrorCode();
+//            mPlusSignInHelper.showError(errorCode, new Callback<String>() {
+//                @Override
+//                public void run(String result, RuntimeException error) {
+//                    // No resolution found -> stop trying to sign in
+//                    onGoogleSignInCompleted();
+//                    showErrorInDialog(result);
+//                }
+//            });
+//        }
+//    }
 
-        if (mConnectionResult.hasResolution()) {
-            try {
-                setGoogleSignInProgress(STATE_IN_PROGRESS);
-                startIntentSenderForResult(mConnectionResult.getResolution().getIntentSender(),
-                        RC_SIGN_IN, null, 0, 0, 0);
-            } catch (IntentSender.SendIntentException e) {
-                // The intent was canceled before it was sent.  Return to the default
-                // state and attempt to connect to get an updated ConnectionResult.
-                setGoogleSignInProgress(STATE_SIGN_IN);
-                mGoogleApiClient.connect();
-            }
-        }
-        else {
+//    private void onGoogleSignInCompleted() {
+//        setGoogleSignInProgress(STATE_DEFAULT);
+//    }
 
-            final int errorCode = mConnectionResult.getErrorCode();
-            mPlusSignInHelper.showError(errorCode, new Callback<String>() {
-                @Override
-                public void run(String result, RuntimeException error) {
-                    // No resolution found -> stop trying to sign in
-                    onGoogleSignInCompleted();
-                    showErrorInDialog(result);
-                }
-            });
-        }
-    }
-
-    private void onGoogleSignInCompleted() {
-        setGoogleSignInProgress(STATE_DEFAULT);
-    }
-
-    private void onSignedOut() {
-        // Update the UI to reflect that the user is signed out.
-        setUiControlStates(false);
-        mStatus.setText(R.string.status_signed_out);
-
-        // Disable uploading
-        RegularRoutesPipeline.setUploadEnabledState(false);
-
-        Intent intent = new Intent(InternalBroadcasts.KEY_SIGNED_OUT);
-        mLocalBroadcastManager.sendBroadcast(intent);
-    }
+//    private void onSignedOut() {
+//        // Update the UI to reflect that the user is signed out.
+//        setUiControlStates(false);
+//        mStatus.setText(R.string.status_signed_out);
+//
+//        // Disable uploading
+//        RegularRoutesPipeline.setUploadEnabledState(false);
+//
+//        Intent intent = new Intent(InternalBroadcasts.KEY_SIGNED_OUT);
+//        mLocalBroadcastManager.sendBroadcast(intent);
+//    }
 
     private void setUiControlStates(boolean connected) {
         // Update the user interface to reflect that the user is signed in.
@@ -796,17 +929,17 @@ public class LoginActivity extends AppCompatActivity
         mProgressView.setVisibility(progressVisibility);
     }
 
-    private GoogleApiClient buildGoogleApiClient() {
-        // When we build the GoogleApiClient we specify where connected and
-        // connection failed callbacks should be returned, which Google APIs our
-        // app uses and which OAuth 2.0 scopes our app requests.
-        return new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(Plus.API, Plus.PlusOptions.builder().build())
-                .addScope(Plus.SCOPE_PLUS_PROFILE)
-                .build();
-    }
+//    private GoogleApiClient buildGoogleApiClient() {
+//        // When we build the GoogleApiClient we specify where connected and
+//        // connection failed callbacks should be returned, which Google APIs our
+//        // app uses and which OAuth 2.0 scopes our app requests.
+//        return new GoogleApiClient.Builder(this)
+//                .addConnectionCallbacks(this)
+//                .addOnConnectionFailedListener(this)
+//                .addApi(Plus.API, Plus.PlusOptions.builder().build())
+//                .addScope(Plus.SCOPE_PLUS_PROFILE)
+//                .build();
+//    }
 
     private void showErrorInDialog(String msg) {
         ErrorDialogFragment errFr = ErrorDialogFragment.createInstance(msg);
@@ -823,6 +956,15 @@ public class LoginActivity extends AppCompatActivity
         setResult(resultCode,returnIntent);
         finish();
     }
+
+    private String getWebClientId() {
+        if (mRes.getBoolean(R.bool.use_test_server)) {
+            return mRes.getString(R.string.web_client_id_test);
+        } else {
+            return mRes.getString(R.string.web_client_id_production);
+        }
+    }
+
 
 }
 

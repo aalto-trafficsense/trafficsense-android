@@ -6,8 +6,8 @@ android {
         applicationId "fi.aalto.trafficsense.trafficsense"
         minSdkVersion 15
         targetSdkVersion 27
-        versionCode 33
-        versionName "pa0.1.1"
+        versionCode 34
+        versionName "pa0.1.2"
         resConfigs "en", "fi", "fi-rHI"
     }
     compileOptions {
@@ -47,10 +47,10 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:preference-v7:27.1.1'
     implementation 'com.google.guava:guava:22.0'
-    implementation 'com.google.android.gms:play-services-plus:15.0.1'
-    implementation 'com.google.android.gms:play-services-location:15.0.1'
-    implementation 'com.google.android.gms:play-services-maps:15.0.1'
-    implementation 'com.google.android.gms:play-services-auth:15.0.1'
+    implementation 'com.google.android.gms:play-services-plus:16.0.0'
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
+    implementation 'com.google.android.gms:play-services-maps:16.0.0'
+    implementation 'com.google.android.gms:play-services-auth:16.0.0'
     implementation 'com.google.code.gson:gson:2.8.4'
     implementation 'com.android.support:support-v4:27.1.1'
     implementation 'com.android.support:design:27.1.1'
@@ -58,8 +58,8 @@ dependencies {
     implementation 'com.squareup.retrofit:retrofit:1.9.0'
     implementation 'com.caverock:androidsvg:1.2.1'
     implementation 'com.google.maps.android:android-maps-utils:0.4.3'
-    implementation 'com.google.firebase:firebase-core:16.0.1'
-    implementation 'com.google.firebase:firebase-messaging:17.3.0'
+    implementation 'com.google.firebase:firebase-core:16.0.6'
+    implementation 'com.google.firebase:firebase-messaging:17.3.4'
 }
 
 apply plugin: 'com.google.gms.google-services'
