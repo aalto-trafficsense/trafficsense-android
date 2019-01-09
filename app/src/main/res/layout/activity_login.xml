@@ -5,7 +5,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="fi.aalto.trafficsense.regularroutes.ui.LoginActivity"
+    tools:context="fi.aalto.trafficsense.trafficsense.ui.LoginActivity"
     android:background="@color/loginBackground">
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -16,9 +16,7 @@
             android:layout_height="wrap_content"
             style="@android:style/TextAppearance.Large"
             android:background="@android:color/transparent"
-            android:text="@string/login_headerText"
-            android:autoText="false"
-            android:clickable="true" />
+            android:text="@string/login_headerText" />
 
     <LinearLayout android:id="@+id/plus_sign_in_buttons" android:orientation="horizontal"
         android:layout_width="match_parent" android:layout_height="wrap_content"

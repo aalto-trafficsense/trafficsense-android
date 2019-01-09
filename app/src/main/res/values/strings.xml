@@ -220,8 +220,8 @@
     <string name="location_permission_refused">TrafficSense does not work meaningfully without location permissions.</string>
     <string name="no_location_permission">No location permission.</string>
 
-    <string name="accounts_permission_persistently_refused">Cannot login to service without permission to access accounts.</string>
-    <string name="accounts_permission_explanation">TrafficSense needs access to your Google account to log you in. It will not access any of your contacts.</string>
+    <!--<string name="accounts_permission_persistently_refused">Cannot login to service without permission to access accounts.</string>-->
+    <!--<string name="accounts_permission_explanation">TrafficSense needs access to your Google account to log you in. It will not access any of your contacts.</string>-->
 
     <string name="today">Today</string>
     <string name="path_future_date_request">Your future path is unknown to me.</string>
