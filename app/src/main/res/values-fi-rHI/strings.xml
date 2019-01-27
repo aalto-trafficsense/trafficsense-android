@@ -251,5 +251,7 @@
     <string name="notif_chan_perm_desc">Näyttää palvelun nykyisen tilan.</string>
     <string name="notif_chan_service_name">Palvelun tiedotteet</string>
     <string name="notif_chan_service_desc">Esimerkiksi liikenteen häiriötiedotteet.</string>
+    <string name="str_aboutInfoLinks"><a href="https://wiki.aalto.fi/x/O2ymC">Manuska</a>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+        <a href="https://www.aalto.fi/fi/rakennetun-ympariston-laitos/trafficsense">TrafficSensen saitti</a></string>
 
 </resources>

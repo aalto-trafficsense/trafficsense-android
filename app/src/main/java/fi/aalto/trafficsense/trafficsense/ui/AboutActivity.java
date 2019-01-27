@@ -108,6 +108,10 @@ public class AboutActivity extends AppCompatActivity {
         final TextView clientNumberField = (TextView) findViewById(R.id.abt_clientNumberField);
         clientNumberField.setText(EnvInfo.getClientNumberString());
 
+        final TextView infoLinkField = (TextView) findViewById(R.id.abt_infoLinkField);
+        infoLinkField.setText(R.string.str_aboutInfoLinks);
+        infoLinkField.setMovementMethod(LinkMovementMethod.getInstance());
+
         loadLicenseInfo();
         loadContributions();
     }

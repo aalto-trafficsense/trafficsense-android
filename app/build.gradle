@@ -6,8 +6,8 @@ android {
         applicationId "fi.aalto.trafficsense.trafficsense"
         minSdkVersion 15
         targetSdkVersion 27
-        versionCode 34
-        versionName "pa0.1.2"
+        versionCode 35
+        versionName "pa1.0.0"
         resConfigs "en", "fi", "fi-rHI"
     }
     compileOptions {

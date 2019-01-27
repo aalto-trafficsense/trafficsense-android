@@ -97,6 +97,8 @@
     <string name="meters">meters</string>
     <string name="points">points</string>
     <string name="str_clientVersionPrefix">Client Version:</string>
+    <string name="str_aboutInfoLinks"><a href="https://wiki.aalto.fi/x/erSQC">User Guide</a>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+        <a href="https://www.aalto.fi/department-of-built-environment/trafficsense">TrafficSense Home</a></string>
 
     <string name="str_legalNotice">Legal notice:</string>
     <string name="str_contributions">Contributions:</string>
